@@ -1,0 +1,75 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutHome.cshtml";
+}
+<div class="IMS-shell">
+
+    <!-- LEFT: brand / value prop -->
+    <div class="panel-brand">
+        <div class="brand-row">
+            <div class="brand-mark"><i class="bi bi-boxes"></i></div>
+            <span class="brand-name">IMS</span>
+        </div>
+
+        <div class="hero-copy">
+            <h1>Vendors and Stock,<br /><span class="accent">Under One Roof.</span></h1>
+            <p>A unified workspace for vendor onboarding, purchase orders, stock levels, and secure identity access &mdash; all in one place.</p>
+        </div>
+
+        <div class="feature-list">
+            <div class="feature-item">
+                <div class="feature-icon"><i class="bi bi-shield-lock"></i></div>
+                <div>
+                    <h6>Enterprise Grade OIDC</h6>
+                    <p>Secured natively with Keycloak single sign-on authorization policies.</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon"><i class="bi bi-diagram-3"></i></div>
+                <div>
+                    <h6>Vendor Lifecycle Management</h6>
+                    <p>Onboard suppliers, track contracts, and manage purchase orders end to end.</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon"><i class="bi bi-clipboard-data"></i></div>
+                <div>
+                    <h6>Live Inventory Visibility</h6>
+                    <p>Real-time stock levels, reorder alerts, and warehouse-wide tracking.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="brand-footer">&copy; @DateTime.Now.Year IMS. All rights reserved.</div>
+    </div>
+
+    <!-- RIGHT: sign-in card -->
+    <div class="panel-auth">
+        <button type="button" class="theme-toggle" aria-label="Toggle theme">
+            <i class="bi bi-moon-stars"></i>
+        </button>
+
+        <div class="auth-card">
+            <div class="auth-logo"><i class="bi bi-boxes"></i></div>
+            <h2>Sign In</h2>
+            <p class="sub">Access the IMS Vendor &amp; Inventory Gateway</p>
+
+            <div class="sso-divider">
+                <hr /><span>SINGLE SIGN-ON</span><hr />
+            </div>
+
+            @* <a class="btn-keycloak" href="@Url.Action("Login", "Home")">
+                <i class="bi bi-fingerprint"></i>
+                Authenticate with Keycloak SSO
+            </a> *@
+            <a class="btn-keycloak"
+                   asp-controller="Home"
+                   asp-action="Login">
+                <i class="bi bi-fingerprint"></i>
+                Authenticate with Keycloak SSO
+            </a>
+
+            <p class="auth-footnote">Authorized personnel only. Secure connection monitored.</p>
+        </div>
+    </div>
+
+</div>

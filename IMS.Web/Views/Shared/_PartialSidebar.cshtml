@@ -1,0 +1,114 @@
+﻿@{
+    var currentArea = ViewContext.RouteData.Values["area"]?.ToString() ?? "";
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+
+    Func<string, string, string> isActive = (area, controller) =>
+        string.Equals(currentArea, area, StringComparison.OrdinalIgnoreCase) &&
+        string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase)
+            ? "active" : "";
+}
+
+<aside class="IMS-sidebar" id="IMSSidebar">
+
+    <div class="IMS-sidebar-brand">
+        <i class="fa-solid fa-cubes IMS-brand-icon"></i>
+        <span class="brand-text">IMS</span>
+    </div>
+
+    <nav class="IMS-nav">
+
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link @isActive("", "Home")" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="fa-solid fa-gauge-high"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="nav-section-label"></div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link @isActive("Vendor", "Vendor")" asp-area="Vendor" asp-controller="Vendor" asp-action="Index">
+                    <i class="fa-solid fa-building"></i>
+                    <span>Vendor </span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @isActive("Inventory", "Inventory")" asp-area="Inventory" asp-controller="Inventory" asp-action="Index">
+                    <i class="fa-solid fa-boxes-stacked"></i>
+                    <span>Inventory</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @isActive("", "DbTest")" asp-area="" asp-controller="DbTest" asp-action="Index">
+                    <i class="fa-solid fa-vial"></i>
+                    <span>DB Test</span>
+                </a>
+            </li>
+        </ul>
+
+        @* <div class="nav-section-label">Procurement</div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span>Purchase</span>
+                    <span class="IMS-soon-badge">Soon</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fa-solid fa-file-circle-question"></i>
+                    <span>RFQ</span>
+                    <span class="IMS-soon-badge">Soon</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fa-solid fa-file-invoice"></i>
+                    <span>Purchase Orders</span>
+                    <span class="IMS-soon-badge">Soon</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fa-solid fa-truck-ramp-box"></i>
+                    <span>Goods Receipt</span>
+                    <span class="IMS-soon-badge">Soon</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fa-solid fa-money-check-dollar"></i>
+                    <span>Payments</span>
+                    <span class="IMS-soon-badge">Soon</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="nav-section-label">Insights</div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Reports</span>
+                    <span class="IMS-soon-badge">Soon</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="nav-section-label">System</div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fa-solid fa-gears"></i>
+                    <span>Administration</span>
+                    <span class="IMS-soon-badge">Soon</span>
+                </a>
+            </li>
+        </ul> *@
+
+    </nav>
+
+</aside>

@@ -1,0 +1,295 @@
+﻿:root {
+    --navy-950: #070b1a;
+    --navy-900: #0b1128;
+    --navy-800: #131a37;
+    --teal-400: #22d3ee;
+    --teal-300: #5eead4;
+    --ink-900: #0f1222;
+    --ink-600: #5b6072;
+    --ink-400: #9297a6;
+    --hair: #e9eaf0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--ink-900);
+}
+
+h1, h2, .brand-name, .display-font {
+    font-family: 'Space Grotesk', 'Inter', sans-serif;
+}
+
+.IMS-shell {
+    min-height: 100vh;
+    display: flex;
+}
+
+/* ---------- LEFT PANEL ---------- */
+.panel-brand {
+    position: relative;
+    flex: 1 1 55%;
+    background: radial-gradient(80% 60% at 15% 8%, rgba(34, 211, 238, 0.14), transparent 60%), radial-gradient(70% 55% at 100% 100%, rgba(94, 234, 212, 0.10), transparent 60%), linear-gradient(160deg, var(--navy-950) 0%, var(--navy-900) 55%, var(--navy-800) 100%);
+    color: #fff;
+    padding: 3rem 3.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+    .panel-brand::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+        background-size: 42px 42px;
+        mask-image: radial-gradient(60% 60% at 20% 20%, black, transparent 75%);
+        pointer-events: none;
+    }
+
+.brand-row {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    position: relative;
+    z-index: 1;
+}
+
+.brand-mark {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--teal-400), var(--teal-300));
+    color: var(--navy-950);
+    font-size: 1.1rem;
+}
+
+.brand-name {
+    font-weight: 700;
+    font-size: 1.15rem;
+    letter-spacing: 0.01em;
+}
+
+    .brand-name .accent {
+        color: var(--teal-300);
+    }
+
+.hero-copy {
+    position: relative;
+    z-index: 1;
+    margin-top: 2.5rem;
+}
+
+    .hero-copy h1 {
+        font-weight: 700;
+        font-size: clamp(2.1rem, 3.4vw, 2.9rem);
+        line-height: 1.15;
+        margin-bottom: 1.1rem;
+    }
+
+        .hero-copy h1 .accent {
+            background: linear-gradient(90deg, var(--teal-300), var(--teal-400));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+    .hero-copy p {
+        color: rgba(226, 232, 240, 0.72);
+        font-size: 1.02rem;
+        max-width: 34ch;
+        line-height: 1.55;
+    }
+
+.feature-list {
+    position: relative;
+    z-index: 1;
+    margin-top: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.35rem;
+}
+
+.feature-item {
+    display: flex;
+    gap: 0.9rem;
+    align-items: flex-start;
+}
+
+.feature-icon {
+    flex: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(94, 234, 212, 0.22);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--teal-300);
+    font-size: 1.05rem;
+}
+
+.feature-item h6 {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 0.2rem;
+    color: #fff;
+}
+
+.feature-item p {
+    font-size: 0.85rem;
+    color: rgba(226, 232, 240, 0.6);
+    margin: 0;
+    line-height: 1.45;
+}
+
+.brand-footer {
+    position: relative;
+    z-index: 1;
+    font-size: 0.78rem;
+    color: rgba(226, 232, 240, 0.45);
+}
+
+/* ---------- RIGHT PANEL ---------- */
+.panel-auth {
+    flex: 1 1 45%;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 2rem;
+}
+
+.theme-toggle {
+    position: absolute;
+    top: 1.75rem;
+    right: 1.75rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--hair);
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-600);
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 340px;
+    text-align: center;
+}
+
+.auth-logo {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 1.5rem;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--navy-900), var(--navy-800));
+    color: var(--teal-300);
+    font-size: 1.8rem;
+}
+
+.auth-card h2 {
+    font-weight: 700;
+    font-size: 1.55rem;
+    margin-bottom: 0.35rem;
+}
+
+.auth-card .sub {
+    color: var(--ink-400);
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+}
+
+.sso-divider {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+    .sso-divider hr {
+        flex: 1;
+        margin: 0;
+        border-top: 1px solid var(--hair);
+    }
+
+    .sso-divider span {
+        font-size: 0.68rem;
+        letter-spacing: 0.12em;
+        color: var(--ink-400);
+        font-weight: 600;
+    }
+
+.btn-keycloak {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--hair);
+    border-radius: 10px;
+    background: #fff;
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: var(--ink-900);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+    text-decoration: none;
+}
+
+    .btn-keycloak i {
+        color: #22c55e;
+        font-size: 1.05rem;
+    }
+
+    .btn-keycloak:hover {
+        border-color: var(--teal-400);
+        box-shadow: 0 6px 18px rgba(34, 211, 238, 0.16);
+        transform: translateY(-1px);
+        color: var(--ink-900);
+    }
+
+    .btn-keycloak:active {
+        transform: translateY(0);
+    }
+
+.auth-footnote {
+    margin-top: 1.5rem;
+    font-size: 0.74rem;
+    color: var(--ink-400);
+}
+
+@@media (max-width: 900px) {
+    .IMS-shell {
+        flex-direction: column;
+    }
+
+    .panel-brand, .panel-auth {
+        flex: none;
+    }
+
+    .panel-brand {
+        padding: 2.25rem;
+    }
+
+    .feature-list {
+        display: none;
+    }
+}

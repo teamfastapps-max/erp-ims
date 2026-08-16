@@ -1,0 +1,445 @@
+/* ============================================================================
+   IMS ADMIN SHELL — design tokens, layout, and reusable components
+   ============================================================================ */
+
+:root {
+    /* Brand */
+    --IMS-sidebar-bg: #111827;
+    --IMS-sidebar-bg-active: #1f2937;
+    --IMS-sidebar-text: #e5e7eb;
+    --IMS-sidebar-text-muted: #9ca3af;
+    --IMS-sidebar-text-faint: #6b7280;
+
+    --IMS-accent: #f59e0b;          /* the one signature accent — active nav state, brand mark, notification dot */
+    --IMS-accent-soft: rgba(245, 158, 11, .14);
+
+    --IMS-primary: #4f46e5;         /* used for buttons/links — distinct from the sidebar accent on purpose */
+    --IMS-primary-hover: #4338ca;
+
+    --IMS-bg: #f3f4f6;
+    --IMS-surface: #ffffff;
+    --IMS-border: #e5e7eb;
+    --IMS-text: #111827;
+    --IMS-text-muted: #6b7280;
+
+    --IMS-danger: #dc2626;
+    --IMS-success: #16a34a;
+    --IMS-warning: #d97706;
+
+    --IMS-sidebar-width: 260px;
+    --IMS-sidebar-width-collapsed: 76px;
+    --IMS-topbar-height: 64px;
+    --IMS-radius: 10px;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--IMS-bg);
+    color: var(--IMS-text);
+    margin: 0;
+}
+
+a {
+    color: var(--IMS-primary);
+}
+
+.btn-primary {
+    background-color: var(--IMS-primary);
+    border-color: var(--IMS-primary);
+}
+
+    .btn-primary:hover,
+    .btn-primary:focus {
+        background-color: var(--IMS-primary-hover);
+        border-color: var(--IMS-primary-hover);
+    }
+
+
+/* ============================================================================
+   APP SHELL
+============================================================================ */
+
+.IMS-app {
+    display: flex;
+    min-height: 100vh;
+}
+
+.IMS-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 24, 39, .45);
+    z-index: 1025;
+}
+
+
+/* ============================================================================
+   SIDEBAR
+============================================================================ */
+
+.IMS-sidebar {
+    width: var(--IMS-sidebar-width);
+    flex-shrink: 0;
+    background: var(--IMS-sidebar-bg);
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    overflow-y: auto;
+    z-index: 1030;
+    transition: width .2s ease, transform .2s ease;
+    scrollbar-width: thin;
+}
+
+    .IMS-sidebar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .IMS-sidebar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, .12);
+        border-radius: 3px;
+    }
+
+.IMS-sidebar-brand {
+    height: var(--IMS-topbar-height);
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    padding: 0 1.25rem;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: .02em;
+    border-bottom: 1px solid rgba(255, 255, 255, .06);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.IMS-brand-icon {
+    color: var(--IMS-accent);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.IMS-nav {
+    padding: .75rem 0 1.5rem;
+}
+
+.nav-section-label {
+    font-size: .68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--IMS-sidebar-text-faint);
+    padding: 1.1rem 1.25rem .4rem;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.IMS-nav .nav-link {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    padding: .6rem 1.25rem;
+    font-size: .875rem;
+    color: var(--IMS-sidebar-text-muted);
+    border-left: 3px solid transparent;
+    border-radius: 0;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+    .IMS-nav .nav-link i {
+        width: 1.1rem;
+        text-align: center;
+        flex-shrink: 0;
+        font-size: .95rem;
+    }
+
+    .IMS-nav .nav-link:hover {
+        background: rgba(255, 255, 255, .05);
+        color: var(--IMS-sidebar-text);
+    }
+
+    .IMS-nav .nav-link.active {
+        background: var(--IMS-accent-soft);
+        color: #ffffff;
+        border-left-color: var(--IMS-accent);
+        font-weight: 500;
+    }
+
+.IMS-soon-badge {
+    margin-left: auto;
+    font-size: .65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: var(--IMS-sidebar-text-faint);
+    background: rgba(255, 255, 255, .06);
+    padding: .15rem .45rem;
+    border-radius: 999px;
+    flex-shrink: 0;
+}
+
+
+/* Collapsed (desktop, icon-only) state */
+.IMS-app.sidebar-collapsed .IMS-sidebar {
+    width: var(--IMS-sidebar-width-collapsed);
+}
+
+.IMS-app.sidebar-collapsed .IMS-main {
+    margin-left: var(--IMS-sidebar-width-collapsed);
+}
+
+.IMS-app.sidebar-collapsed .brand-text,
+.IMS-app.sidebar-collapsed .nav-section-label,
+.IMS-app.sidebar-collapsed .IMS-nav .nav-link span,
+.IMS-app.sidebar-collapsed .IMS-soon-badge {
+    display: none;
+}
+
+.IMS-app.sidebar-collapsed .IMS-nav .nav-link {
+    justify-content: center;
+    padding: .65rem 0;
+}
+
+
+/* ============================================================================
+   MAIN COLUMN (topbar + content + footer)
+============================================================================ */
+
+.IMS-main {
+    flex: 1;
+    margin-left: var(--IMS-sidebar-width);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    transition: margin-left .2s ease;
+}
+
+.IMS-topbar {
+    height: var(--IMS-topbar-height);
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+    background: var(--IMS-surface);
+    border-bottom: 1px solid var(--IMS-border);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0 1.5rem;
+}
+
+.IMS-sidebar-toggle {
+    border: none;
+    background: transparent;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    color: var(--IMS-text-muted);
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+    .IMS-sidebar-toggle:hover {
+        background: var(--IMS-bg);
+        color: var(--IMS-text);
+    }
+
+.IMS-search {
+    flex: 1;
+    max-width: 380px;
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    background: var(--IMS-bg);
+    border-radius: 8px;
+    padding: .5rem .9rem;
+    color: var(--IMS-text-muted);
+}
+
+    .IMS-search input {
+        border: none;
+        background: transparent;
+        outline: none;
+        width: 100%;
+        font-size: .875rem;
+        color: var(--IMS-text);
+    }
+
+.IMS-topbar-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.IMS-icon-btn {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--IMS-text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+    .IMS-icon-btn:hover {
+        background: var(--IMS-bg);
+        color: var(--IMS-text);
+    }
+
+.IMS-badge-dot {
+    position: absolute;
+    top: 7px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--IMS-accent);
+    border: 2px solid var(--IMS-surface);
+}
+
+.IMS-user-btn {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    border: none;
+    background: transparent;
+    padding: .35rem .6rem .35rem .35rem;
+    border-radius: 999px;
+}
+
+    .IMS-user-btn:hover {
+        background: var(--IMS-bg);
+    }
+
+.IMS-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--IMS-accent);
+    color: #111827;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: .85rem;
+    flex-shrink: 0;
+}
+
+.IMS-user-name {
+    font-size: .875rem;
+    font-weight: 500;
+    color: var(--IMS-text);
+}
+
+
+/* ============================================================================
+   CONTENT AREA
+============================================================================ */
+
+.IMS-content {
+    flex: 1;
+    padding: 1.5rem;
+}
+
+.IMS-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: .75rem;
+    margin-bottom: 1.5rem;
+}
+
+    .IMS-page-header h1 {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--IMS-text);
+        margin: 0;
+    }
+
+    .IMS-page-header .text-muted {
+        font-size: .875rem;
+    }
+
+.IMS-card {
+    background: var(--IMS-surface);
+    border: 1px solid var(--IMS-border);
+    border-radius: var(--IMS-radius);
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 1px 2px rgba(17, 24, 39, .04);
+}
+
+
+/* ============================================================================
+   FOOTER
+============================================================================ */
+
+.IMS-footer {
+    background: var(--IMS-surface);
+    border-top: 1px solid var(--IMS-border);
+    padding: .85rem 1.5rem;
+    font-size: .8rem;
+    color: var(--IMS-text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+/* ============================================================================
+   RESPONSIVE — sidebar becomes an off-canvas drawer below 992px
+============================================================================ */
+
+@media (max-width: 991.98px) {
+
+    .IMS-sidebar {
+        width: var(--IMS-sidebar-width);
+        transform: translateX(-100%);
+    }
+
+    .IMS-main {
+        margin-left: 0;
+    }
+
+    .IMS-app.sidebar-open .IMS-sidebar {
+        transform: translateX(0);
+        box-shadow: 0 0 24px rgba(0, 0, 0, .25);
+    }
+
+    .IMS-app.sidebar-open .IMS-backdrop {
+        display: block;
+    }
+
+    /* On mobile, the toggle always opens/closes the drawer — never icon-collapse */
+    .IMS-app.sidebar-collapsed .IMS-sidebar {
+        width: var(--IMS-sidebar-width);
+    }
+
+    .IMS-app.sidebar-collapsed .brand-text,
+    .IMS-app.sidebar-collapsed .nav-section-label,
+    .IMS-app.sidebar-collapsed .IMS-nav .nav-link span,
+    .IMS-app.sidebar-collapsed .IMS-soon-badge {
+        display: block;
+    }
+
+    .IMS-search {
+        max-width: none;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .IMS-content {
+        padding: 1rem;
+    }
+
+    .IMS-search {
+        display: none;
+    }
+}
