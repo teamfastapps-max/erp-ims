@@ -13,10 +13,7 @@ namespace IMS.Web.Extensions
             services.AddScoped<IRoleApiService, RoleApiService>();
             services.AddScoped<IPermissionSyncService, PermissionSyncService>();
 
-            // Domain business services
-            //services.AddScoped<IVendorService, VendorService>();
-            // Future: services.AddScoped<IInventoryService, InventoryService>();
-            // Future: services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
+            services.AddScoped<IStudentService, StudentService>();
 
             return services;
         }

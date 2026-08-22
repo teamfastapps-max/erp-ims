@@ -1,75 +1,127 @@
 ﻿@{
     Layout = "~/Views/Shared/_LayoutHome.cshtml";
 }
+
 <div class="IMS-shell">
 
-    <!-- LEFT: brand / value prop -->
+    <!-- LEFT: School Management System brand / value -->
     <div class="panel-brand">
+
         <div class="brand-row">
-            <div class="brand-mark"><i class="bi bi-boxes"></i></div>
-            <span class="brand-name">IMS</span>
+            <div class="brand-mark">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+            <span class="brand-name">School MS</span>
         </div>
 
         <div class="hero-copy">
-            <h1>Vendors and Stock,<br /><span class="accent">Under One Roof.</span></h1>
-            <p>A unified workspace for vendor onboarding, purchase orders, stock levels, and secure identity access &mdash; all in one place.</p>
+            <h1>
+                Manage Your School,<br />
+                <span class="accent">All in One Place.</span>
+            </h1>
+
+            <p>
+                A unified platform to manage students, teachers, classes,
+                attendance, examinations, fees, and secure access — all in one place.
+            </p>
         </div>
 
         <div class="feature-list">
+
+            <!-- Secure Access -->
             <div class="feature-item">
-                <div class="feature-icon"><i class="bi bi-shield-lock"></i></div>
+                <div class="feature-icon">
+                    <i class="bi bi-shield-lock"></i>
+                </div>
+
                 <div>
-                    <h6>Enterprise Grade OIDC</h6>
-                    <p>Secured natively with Keycloak single sign-on authorization policies.</p>
+                    <h6>Secure Access Control</h6>
+                    <p>
+                        Secure authentication and role-based access for administrators,
+                        teachers, staff, students, and parents.
+                    </p>
                 </div>
             </div>
+
+            <!-- Student Management -->
             <div class="feature-item">
-                <div class="feature-icon"><i class="bi bi-diagram-3"></i></div>
+                <div class="feature-icon">
+                    <i class="bi bi-people"></i>
+                </div>
+
                 <div>
-                    <h6>Vendor Lifecycle Management</h6>
-                    <p>Onboard suppliers, track contracts, and manage purchase orders end to end.</p>
+                    <h6>Student &amp; Academic Management</h6>
+                    <p>
+                        Manage student records, classes, sections, subjects,
+                        teachers, and academic information efficiently.
+                    </p>
                 </div>
             </div>
+
+            <!-- Attendance -->
             <div class="feature-item">
-                <div class="feature-icon"><i class="bi bi-clipboard-data"></i></div>
+                <div class="feature-icon">
+                    <i class="bi bi-calendar-check"></i>
+                </div>
+
                 <div>
-                    <h6>Live Inventory Visibility</h6>
-                    <p>Real-time stock levels, reorder alerts, and warehouse-wide tracking.</p>
+                    <h6>Smart School Operations</h6>
+                    <p>
+                        Track attendance, examinations, fees, and daily school
+                        activities from one centralized system.
+                    </p>
                 </div>
             </div>
+
         </div>
 
-        <div class="brand-footer">&copy; @DateTime.Now.Year IMS. All rights reserved.</div>
+        <div class="brand-footer">
+            &copy; @DateTime.Now.Year School Management System. All rights reserved.
+        </div>
+
     </div>
 
-    <!-- RIGHT: sign-in card -->
+
+    <!-- RIGHT: Sign-in card -->
     <div class="panel-auth">
-        <button type="button" class="theme-toggle" aria-label="Toggle theme">
+
+        <button type="button"
+                class="theme-toggle"
+                aria-label="Toggle theme">
             <i class="bi bi-moon-stars"></i>
         </button>
 
         <div class="auth-card">
-            <div class="auth-logo"><i class="bi bi-boxes"></i></div>
-            <h2>Sign In</h2>
-            <p class="sub">Access the IMS Vendor &amp; Inventory Gateway</p>
 
-            <div class="sso-divider">
-                <hr /><span>SINGLE SIGN-ON</span><hr />
+            <div class="auth-logo">
+                <i class="bi bi-mortarboard-fill"></i>
             </div>
 
-            @* <a class="btn-keycloak" href="@Url.Action("Login", "Home")">
-                <i class="bi bi-fingerprint"></i>
-                Authenticate with Keycloak SSO
-            </a> *@
-            <a class="btn-keycloak"
-                   asp-controller="Home"
-                   asp-action="Login">
-                <i class="bi bi-fingerprint"></i>
-                Authenticate with Keycloak SSO
+            <h2>Welcome Back</h2>
+
+            <p class="sub">
+                Sign in to access your School Management System
+            </p>
+
+            <div class="sso-divider">
+                <hr />
+                <span>SECURE SIGN IN</span>
+                <hr />
+            </div>
+
+            <a class="btn-keycloak" asp-controller="Home" asp-action="Login">
+
+                <i class="bi bi-box-arrow-in-right"></i>
+                Sign In to School Management System
+
             </a>
 
-            <p class="auth-footnote">Authorized personnel only. Secure connection monitored.</p>
+            <p class="auth-footnote">
+                Authorized users only. Your connection is secure and monitored.
+            </p>
+
         </div>
+
     </div>
 
 </div>

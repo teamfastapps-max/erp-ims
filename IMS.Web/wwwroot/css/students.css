@@ -1,0 +1,20 @@
+/* Student module extras - loaded on top of site.css / Bootstrap */
+
+.table-hover tbody tr:hover {
+    background-color: rgba(13, 110, 253, 0.04);
+}
+
+.badge {
+    font-weight: 500;
+    padding: 0.4em 0.7em;
+}
+
+.card {
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 0.75rem;
+}
+
+dl.row dt {
+    color: #6c757d;
+    font-weight: 500;
+}

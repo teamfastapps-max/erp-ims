@@ -7,7 +7,8 @@ using IMS.Web.HostedServices;
 var builder = WebApplication.CreateBuilder(args);
 
 // Redis connection
-var redisConnection = builder.Configuration["Redis:Connection"];
+var redisConnection = builder.Configuration["Redis:Connection"]?? throw new InvalidOperationException("Redis connection string is not configured.");
+
 builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConnection));
 
 builder.Services.AddHttpContextAccessor();

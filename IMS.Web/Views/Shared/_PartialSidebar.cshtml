@@ -10,104 +10,197 @@
 
 <aside class="IMS-sidebar" id="IMSSidebar">
 
+    <!-- Brand -->
     <div class="IMS-sidebar-brand">
-        <i class="fa-solid fa-cubes IMS-brand-icon"></i>
+        <i class="fa-solid fa-graduation-cap IMS-brand-icon"></i>
         <span class="brand-text">IMS</span>
     </div>
 
     <nav class="IMS-nav">
 
+        <!-- Dashboard -->
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link @isActive("", "Home")" asp-area="" asp-controller="Home" asp-action="Index">
+                <a class="nav-link @isActive("", "Home")"
+                   asp-area=""
+                   asp-controller="Home"
+                   asp-action="Index">
+
                     <i class="fa-solid fa-gauge-high"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
         </ul>
 
-        <div class="nav-section-label"></div>
+
+        <!-- Academic Management -->
+        <div class="nav-section-label">Academic Management</div>
+
         <ul class="nav flex-column">
+
             <li class="nav-item">
-                <a class="nav-link @isActive("Vendor", "Vendor")" asp-area="Vendor" asp-controller="Vendor" asp-action="Index">
-                    <i class="fa-solid fa-building"></i>
-                    <span>Vendor </span>
+                <a class="nav-link @isActive("Teacher", "Teacher")"
+                   asp-area="Teacher"
+                   asp-controller="Teacher"
+                   asp-action="Index">
+
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                    <span>Teachers</span>
                 </a>
             </li>
+
+
             <li class="nav-item">
-                <a class="nav-link @isActive("Inventory", "Inventory")" asp-area="Inventory" asp-controller="Inventory" asp-action="Index">
-                    <i class="fa-solid fa-boxes-stacked"></i>
-                    <span>Inventory</span>
+                <a class="nav-link @isActive("Student", "Student")"
+                   asp-area="Student"
+                   asp-controller="Student"
+                   asp-action="Index">
+
+                    <i class="fa-solid fa-user-graduate"></i>
+                    <span>Students</span>
                 </a>
             </li>
+
+
             <li class="nav-item">
-                <a class="nav-link @isActive("", "DbTest")" asp-area="" asp-controller="DbTest" asp-action="Index">
-                    <i class="fa-solid fa-vial"></i>
-                    <span>DB Test</span>
+                <a class="nav-link @isActive("Course", "Course")"
+                   asp-area="Course"
+                   asp-controller="Course"
+                   asp-action="Index">
+
+                    <i class="fa-solid fa-book-open"></i>
+                    <span>Courses</span>
                 </a>
             </li>
+
+
+            <li class="nav-item">
+                <a class="nav-link @isActive("Subject", "Subject")"
+                   asp-area="Subject"
+                   asp-controller="Subject"
+                   asp-action="Index">
+
+                    <i class="fa-solid fa-book"></i>
+                    <span>Subjects</span>
+                </a>
+            </li>
+
+
+            <li class="nav-item">
+                <a class="nav-link @isActive("Batch", "Batch")"
+                   asp-area="Batch"
+                   asp-controller="Batch"
+                   asp-action="Index">
+
+                    <i class="fa-solid fa-users"></i>
+                    <span>Batches</span>
+                </a>
+            </li>
+
         </ul>
 
-        @* <div class="nav-section-label">Procurement</div>
+
+        <!-- Institute Operations -->
+        <div class="nav-section-label">Institute Operations</div>
+
         <ul class="nav flex-column">
+
             <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="fa-solid fa-cart-shopping"></i>
-                    <span>Purchase</span>
-                    <span class="IMS-soon-badge">Soon</span>
+                <a class="nav-link @isActive("Attendance", "Attendance")"
+                   asp-area="Attendance"
+                   asp-controller="Attendance"
+                   asp-action="Index">
+
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <span>Attendance</span>
                 </a>
             </li>
+
+
             <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="fa-solid fa-file-circle-question"></i>
-                    <span>RFQ</span>
-                    <span class="IMS-soon-badge">Soon</span>
+                <a class="nav-link @isActive("Fees", "Fees")"
+                   asp-area="Fees"
+                   asp-controller="Fees"
+                   asp-action="Index">
+
+                    <i class="fa-solid fa-indian-rupee-sign"></i>
+                    <span>Fees & Payments</span>
                 </a>
             </li>
+
+
             <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="fa-solid fa-file-invoice"></i>
-                    <span>Purchase Orders</span>
-                    <span class="IMS-soon-badge">Soon</span>
+                <a class="nav-link @isActive("Exam", "Exam")"
+                   asp-area="Exam"
+                   asp-controller="Exam"
+                   asp-action="Index">
+
+                    <i class="fa-solid fa-file-pen"></i>
+                    <span>Examinations</span>
                 </a>
             </li>
+
+
             <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="fa-solid fa-truck-ramp-box"></i>
-                    <span>Goods Receipt</span>
-                    <span class="IMS-soon-badge">Soon</span>
+                <a class="nav-link @isActive("Result", "Result")"
+                   asp-area="Result"
+                   asp-controller="Result"
+                   asp-action="Index">
+
+                    <i class="fa-solid fa-square-poll-vertical"></i>
+                    <span>Results</span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="fa-solid fa-money-check-dollar"></i>
-                    <span>Payments</span>
-                    <span class="IMS-soon-badge">Soon</span>
-                </a>
-            </li>
+
         </ul>
 
+
+        <!-- Administration -->
+        <div class="nav-section-label">Administration</div>
+
+        <ul class="nav flex-column">
+
+            <li class="nav-item">
+                <a class="nav-link @isActive("", "DbTest")"
+                   asp-area=""
+                   asp-controller="DbTest"
+                   asp-action="Index">
+
+                    <i class="fa-solid fa-database"></i>
+                    <span>Master Data</span>
+                </a>
+            </li>
+
+
+            <li class="nav-item">
+                <a class="nav-link"
+                   href="#">
+
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span>Users & Roles</span>
+                    <span class="IMS-soon-badge">Soon</span>
+                </a>
+            </li>
+
+        </ul>
+
+
+        <!-- Reports -->
         <div class="nav-section-label">Insights</div>
+
         <ul class="nav flex-column">
+
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link"
+                   href="#">
+
                     <i class="fa-solid fa-chart-line"></i>
                     <span>Reports</span>
                     <span class="IMS-soon-badge">Soon</span>
                 </a>
             </li>
-        </ul>
 
-        <div class="nav-section-label">System</div>
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="fa-solid fa-gears"></i>
-                    <span>Administration</span>
-                    <span class="IMS-soon-badge">Soon</span>
-                </a>
-            </li>
-        </ul> *@
+        </ul>
 
     </nav>
 

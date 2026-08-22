@@ -1,0 +1,66 @@
+@model IMS.Models.ViewModels.StudentDetailsViewModel
+@{
+    ViewData["Title"] = "Student Details";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0"><i class="bi bi-person-badge-fill me-2"></i>Student Details</h3>
+    <div class="d-flex gap-2">
+        <a asp-controller="Students" asp-action="Edit" asp-route-id="@Model.S_Id" class="btn btn-primary">
+            <i class="bi bi-pencil me-1"></i> Edit
+        </a>
+        <a asp-controller="Students" asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Back to List
+        </a>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card shadow-sm">
+    <div class="card-body p-4">
+        <div class="d-flex align-items-center mb-4">
+            <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center me-3"
+                 style="width:64px;height:64px;font-size:1.5rem;">
+                @Model.FullName.Substring(0, 1)
+            </div>
+            <div>
+                <h4 class="mb-0">@Model.FullName</h4>
+                <span class="text-muted">@Model.S_StudentCode &middot; Admission No. @Model.S_AdmissionNumber</span>
+            </div>
+            <span class="badge bg-info text-dark ms-auto fs-6">@Model.S_Status</span>
+        </div>
+
+        <dl class="row">
+            <dt class="col-sm-3">Branch</dt>
+            <dd class="col-sm-9">@Model.BranchName</dd>
+
+            <dt class="col-sm-3">Date of Birth</dt>
+            <dd class="col-sm-9">@(Model.S_DateOfBirth?.ToString("dd-MMM-yyyy") ?? "-")</dd>
+
+            <dt class="col-sm-3">Gender</dt>
+            <dd class="col-sm-9">@(Model.S_Gender ?? "-")</dd>
+
+            <dt class="col-sm-3">Email</dt>
+            <dd class="col-sm-9">@(Model.S_Email ?? "-")</dd>
+
+            <dt class="col-sm-3">Phone</dt>
+            <dd class="col-sm-9">@(Model.S_Phone ?? "-")</dd>
+
+            <dt class="col-sm-3">Admission Date</dt>
+            <dd class="col-sm-9">@(Model.S_AdmissionDate?.ToString("dd-MMM-yyyy") ?? "-")</dd>
+
+            <dt class="col-sm-3">Created</dt>
+            <dd class="col-sm-9">@Model.S_CreatedAt.ToString("dd-MMM-yyyy HH:mm")</dd>
+
+            <dt class="col-sm-3">Last Updated</dt>
+            <dd class="col-sm-9">@Model.S_UpdatedAt.ToString("dd-MMM-yyyy HH:mm")</dd>
+        </dl>
+    </div>
+</div>
