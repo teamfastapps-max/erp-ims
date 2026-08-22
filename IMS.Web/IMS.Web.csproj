@@ -17,11 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Inventory\Controllers\" />
-    <Folder Include="Areas\Inventory\Views\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\IMS.Models\IMS.Models.csproj" />
     <ProjectReference Include="..\IMS.Services\IMS.Services.csproj" />
   </ItemGroup>

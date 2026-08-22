@@ -18,5 +18,9 @@
     <ProjectReference Include="..\IMS.Models\IMS.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
+  </ItemGroup>
+
 </Project>
  

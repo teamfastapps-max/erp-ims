@@ -1,6 +1,5 @@
 ﻿using IMS.Services;
 using IMS.Services.Interfaces;
-using IMS.Services.Services;
 
 namespace IMS.Web.Extensions
 {
@@ -15,7 +14,7 @@ namespace IMS.Web.Extensions
             services.AddScoped<IPermissionSyncService, PermissionSyncService>();
 
             // Domain business services
-            services.AddScoped<IVendorService, VendorService>();
+            //services.AddScoped<IVendorService, VendorService>();
             // Future: services.AddScoped<IInventoryService, InventoryService>();
             // Future: services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
 
