@@ -14,6 +14,8 @@ namespace IMS.Web.Extensions
             services.AddScoped<IPermissionSyncService, PermissionSyncService>();
 
             services.AddScoped<IStudentService, StudentService>();
+            services.AddScoped<IGuardianService, GuardianService>();
+
 
             return services;
         }

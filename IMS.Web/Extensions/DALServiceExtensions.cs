@@ -10,7 +10,8 @@ namespace IMS.Web.Extensions
         {
             services.AddScoped<DBHelper>();
 
-            services.AddScoped<IStudentRepository, StudentRepository>();
+            services.AddScoped<IStudentDAL, StudentDAL>();
+            services.AddScoped<IGuardianDAL, GuardianDAL>();
 
             return services;
         }

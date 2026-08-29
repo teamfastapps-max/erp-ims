@@ -12,10 +12,14 @@
 
 <div class="card shadow-sm">
     <div class="card-body p-4">
-        @using (Html.BeginForm("Create", "Students", FormMethod.Post))
+        @using (Html.BeginForm("AddStudent", "Students", FormMethod.Post, new { id = "studentCreateForm" }))
         {
             @Html.AntiForgeryToken()
             @await Html.PartialAsync("_Form", Model)
         }
     </div>
 </div>
+
+@section Scripts {
+    <script src="~/js/students.js"></script>
+}
