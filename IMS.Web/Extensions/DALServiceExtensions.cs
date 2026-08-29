@@ -1,4 +1,4 @@
-﻿using IMS.DAL.Common;
+using IMS.DAL.Common;
 using IMS.DAL.Interfaces;
 using IMS.DAL.Repositories;
 
@@ -10,6 +10,8 @@ namespace IMS.Web.Extensions
         {
             services.AddScoped<DBHelper>();
 
+            services.AddScoped<IMasterDAL, MasterDAL>();
+            services.AddScoped<IDropdownDAL, DropdownDAL>();
             services.AddScoped<IStudentRepository, StudentRepository>();
 
             return services;

@@ -1,0 +1,24 @@
+﻿@* IMS.Web/Views/Master/Menu.cshtml *@
+@model List<IMS.Models.Common.Master.MasterConfig>
+@{
+    ViewData["Title"] = "Master Management";
+}
+
+<div class="master-page">
+    <div class="master-header">
+        <h2>Master Management</h2>
+    </div>
+
+    <div class="row g-3">
+        @foreach (var config in Model)
+        {
+            <div class="col-md-4">
+                <a href="/Master/@config.EntityType" class="text-decoration-none">
+                    <div class="master-card">
+                        <h5 class="mb-0">@config.DisplayName</h5>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+</div>

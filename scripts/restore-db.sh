@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-DB_REPO_DIR="/home/ubuntu/vims/erp_vims_db"
+DB_REPO_DIR="/home/ubuntu/ims/erp_ims_db"
 DB_FILE="VendorManagementDB.bak"
 DB_CONTAINER="hms-db"
 SA_PASSWORD="$1"
@@ -35,9 +35,9 @@ echo "Logical log name: $LOGICAL_LOG"
 
 docker exec "$DB_CONTAINER" /opt/mssql-tools18/bin/sqlcmd \
   -S localhost -U sa -P "$SA_PASSWORD" -C \
-  -Q "RESTORE DATABASE [VIMS] FROM DISK = N'/var/opt/mssql/backup/$DB_FILE' WITH FILE = 1, \
-       MOVE N'$LOGICAL_DATA' TO N'/var/opt/mssql/data/VIMS.mdf', \
-       MOVE N'$LOGICAL_LOG' TO N'/var/opt/mssql/data/VIMS_log.ldf', \
+  -Q "RESTORE DATABASE [ims] FROM DISK = N'/var/opt/mssql/backup/$DB_FILE' WITH FILE = 1, \
+       MOVE N'$LOGICAL_DATA' TO N'/var/opt/mssql/data/ims.mdf', \
+       MOVE N'$LOGICAL_LOG' TO N'/var/opt/mssql/data/ims_log.ldf', \
        NOUNLOAD, REPLACE"
 
-echo "VIMS database restored successfully"
+echo "ims database restored successfully"

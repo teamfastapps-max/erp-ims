@@ -1,11 +1,16 @@
-﻿@{
+@using IMS.Models.Common.Master
+@{
     var currentArea = ViewContext.RouteData.Values["area"]?.ToString() ?? "";
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var currentEntityType = ViewContext.RouteData.Values["entityType"]?.ToString() ?? "";
 
     Func<string, string, string> isActive = (area, controller) =>
         string.Equals(currentArea, area, StringComparison.OrdinalIgnoreCase) &&
         string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase)
             ? "active" : "";
+
+    var masterConfigs = MasterConfigRegistry.GetAll();
+    var isMasterController = string.Equals(currentController, "Master", StringComparison.OrdinalIgnoreCase);
 }
 
 <aside class="IMS-sidebar" id="IMSSidebar">
@@ -155,10 +160,49 @@
         </ul>
 
 
-        <!-- Administration -->
+        <!-- Administration & Master Management -->
         <div class="nav-section-label">Administration</div>
 
         <ul class="nav flex-column">
+
+            <!-- Master Management Accordion / Sub-menu -->
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center justify-content-between @(isMasterController ? "active" : "")"
+                   data-bs-toggle="collapse"
+                   href="#masterMenuCollapse"
+                   role="button"
+                   aria-expanded="@(isMasterController ? "true" : "false")"
+                   aria-controls="masterMenuCollapse">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-database"></i>
+                        <span>Master Management</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-down IMS-menu-arrow"></i>
+                </a>
+
+                <div class="collapse @(isMasterController ? "show" : "")" id="masterMenuCollapse">
+                    <ul class="nav flex-column ps-3 py-1 IMS-sub-nav">
+                        <li class="nav-item">
+                            <a class="nav-link sub-link @(isMasterController && string.IsNullOrEmpty(currentEntityType) ? "active" : "")"
+                               href="/Master">
+                                <i class="fa-solid fa-border-all me-2"></i>
+                                <span>Master Overview</span>
+                            </a>
+                        </li>
+                        @foreach (var master in masterConfigs)
+                        {
+                            var isThisMasterActive = isMasterController && string.Equals(currentEntityType, master.EntityType, StringComparison.OrdinalIgnoreCase);
+                            <li class="nav-item">
+                                <a class="nav-link sub-link @(isThisMasterActive ? "active" : "")"
+                                   href="/Master/@master.EntityType">
+                                    <i class="fa-solid @(string.IsNullOrEmpty(master.Icon) ? "fa-cube" : master.Icon) me-2"></i>
+                                    <span>@master.DisplayName</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </li>
 
             <li class="nav-item">
                 <a class="nav-link @isActive("", "DbTest")"
@@ -166,11 +210,10 @@
                    asp-controller="DbTest"
                    asp-action="Index">
 
-                    <i class="fa-solid fa-database"></i>
-                    <span>Master Data</span>
+                    <i class="fa-solid fa-server"></i>
+                    <span>Database Diagnostics</span>
                 </a>
             </li>
-
 
             <li class="nav-item">
                 <a class="nav-link"

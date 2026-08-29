@@ -1,4 +1,4 @@
-﻿using IMS.Services;
+using IMS.Services;
 using IMS.Services.Interfaces;
 
 namespace IMS.Web.Extensions
@@ -13,6 +13,8 @@ namespace IMS.Web.Extensions
             services.AddScoped<IRoleApiService, RoleApiService>();
             services.AddScoped<IPermissionSyncService, PermissionSyncService>();
 
+            services.AddScoped<IMasterService, MasterService>();
+            services.AddScoped<IDropdownService, DropdownService>();
             services.AddScoped<IStudentService, StudentService>();
 
             return services;

@@ -17,9 +17,11 @@ namespace IMS.Helpers.Constants
 
         public static readonly List<(Guid Id, string Name)> Branches = new()
         {
-            (new Guid("22222222-2222-2222-2222-222222222221"), "Main Campus"),
-            (new Guid("22222222-2222-2222-2222-222222222222"), "North Branch"),
-            (new Guid("22222222-2222-2222-2222-222222222223"), "South Branch"),
+            (new Guid("22222222-2222-2222-2222-222222222201"), "Main Campus"),
+            (new Guid("22222222-2222-2222-2222-222222222202"), "North Branch"),
+            (new Guid("22222222-2222-2222-2222-222222222203"), "South Branch"),
+            (new Guid("22222222-2222-2222-2222-222222222204"), "East Wing"),
+            (new Guid("22222222-2222-2222-2222-222222222205"), "West Campus"),
         };
 
         public static readonly List<string> Genders = new() { "Male", "Female", "Other" };

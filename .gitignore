@@ -102,4 +102,12 @@ TestResults/
 ####################################################
 
 .env
-.dockerignore
+.dockerignore.dotnet_home/
+.dotnet_home/
+
+####################################################
+# Docker / Local .NET Environment
+####################################################
+
+.dotnet/
+.nuget/
