@@ -181,6 +181,41 @@ a {
     flex-shrink: 0;
 }
 
+/* Sidebar Sub Navigation & Collapsible Items */
+.IMS-sub-nav .sub-link {
+    font-size: .82rem;
+    padding: .45rem .75rem;
+    border-left: 2px solid rgba(255, 255, 255, .1);
+    color: var(--IMS-sidebar-text-muted);
+    border-radius: 0 4px 4px 0;
+    transition: all .15s ease;
+}
+
+.IMS-sub-nav .sub-link:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, .04);
+    border-left-color: var(--IMS-accent);
+}
+
+.IMS-sub-nav .sub-link.active {
+    color: var(--IMS-accent);
+    border-left-color: var(--IMS-accent);
+    font-weight: 600;
+    background: rgba(245, 158, 11, .1);
+}
+
+.IMS-menu-arrow {
+    font-size: .7rem;
+    transition: transform .2s ease;
+    color: var(--IMS-sidebar-text-faint);
+}
+
+[aria-expanded="true"] .IMS-menu-arrow {
+    transform: rotate(180deg);
+    color: var(--IMS-accent);
+}
+
+
 
 /* Collapsed (desktop, icon-only) state */
 .IMS-app.sidebar-collapsed .IMS-sidebar {

@@ -1,0 +1,840 @@
+﻿/* =========================================================
+   Master Module — Classic Clean Design
+   ========================================================= */
+
+/* ---- Page ---- */
+/*.master-page {
+    padding: 24px 32px;
+}
+
+.master-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.master-header h2 {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0;
+    color: #1e293b;
+}*/
+
+/* ---- Add Button ---- */
+/*.btn-master-add {
+    background-color: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.btn-master-add:hover {
+    background-color: #1d4ed8;
+    color: #fff;
+}
+
+.btn-master-add i {
+    font-size: 12px;
+}*/
+
+/* ---- Card ---- */
+/*.master-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 20px;
+}*/
+
+/* ---- DataTables Controls ---- */
+/*.master-card .dataTables_filter input {
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 7px 12px;
+    font-size: 14px;
+    margin-left: 8px;
+}
+
+.master-card .dataTables_filter input:focus {
+    border-color: #2563eb;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.master-card .dataTables_length select {
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 14px;
+}
+
+.master-card .dataTables_length select:focus {
+    border-color: #2563eb;
+    outline: none;
+}
+
+.master-card .dataTables_info {
+    font-size: 13px;
+    color: #64748b;
+    padding-top: 12px;
+}*/
+
+/* ---- Table ---- */
+/*table.master-table {
+    border: none !important;
+}
+
+table.master-table thead th {
+    background-color: #f1f5f9;
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+    border-bottom: 2px solid #e2e8f0 !important;
+    padding: 10px 12px;
+    white-space: nowrap;
+}
+
+table.master-table tbody td {
+    font-size: 14px;
+    color: #1e293b;
+    vertical-align: middle;
+    padding: 10px 12px;
+    border-bottom: 1px solid #f1f5f9 !important;
+}
+
+table.master-table tbody tr:hover {
+    background-color: #f8fafc;
+}*/
+
+/* ---- Status Badges ---- */
+/*.badge-active {
+    background-color: #dcfce7;
+    color: #166534;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-inactive {
+    background-color: #f1f5f9;
+    color: #64748b;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}*/
+
+/* ---- Action Buttons ---- */
+/*.action-btn {
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.action-btn:hover {
+    background-color: #f8fafc;
+}
+
+.btn-edit {
+    color: #2563eb;
+    border-color: #bfdbfe;
+}
+
+.btn-edit:hover {
+    background: #eff6ff;
+    border-color: #93c5fd;
+}
+
+.btn-delete {
+    color: #dc2626;
+    border-color: #fecaca;
+}
+
+.btn-delete:hover {
+    background: #fef2f2;
+    border-color: #fca5a5;
+}*/
+
+/* ---- Pagination ---- */
+/*.master-card .dataTables_paginate {
+    padding-top: 12px;
+}
+
+.master-card .dataTables_paginate .paginate_button {
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 6px !important;
+    margin-left: 4px !important;
+    padding: 5px 10px !important;
+    font-size: 13px !important;
+    color: #475569 !important;
+    background: #fff !important;
+}
+
+.master-card .dataTables_paginate .paginate_button:hover {
+    background: #f1f5f9 !important;
+    color: #1e293b !important;
+}
+
+.master-card .dataTables_paginate .paginate_button.current {
+    background: #2563eb !important;
+    color: #fff !important;
+    border-color: #2563eb !important;
+}
+
+.master-card .dataTables_paginate .paginate_button.current:hover {
+    background: #1d4ed8 !important;
+    border-color: #1d4ed8 !important;
+}
+
+.master-card .dataTables_paginate .paginate_button.disabled {
+    opacity: 0.4;
+    cursor: not-allowed !important;
+}*/
+
+/* ---- Modal ---- */
+/*#masterFormModal .modal-content {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+}
+
+#masterFormModal .modal-header {
+    background-color: #2563eb;
+    color: #fff;
+    padding: 16px 20px;
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+}
+
+#masterFormModal .modal-title {
+    font-size: 17px;
+    font-weight: 700;
+}
+
+#masterFormModal .btn-close {
+    filter: brightness(0) invert(1);
+    opacity: 0.8;
+}
+
+#masterFormModal .btn-close:hover {
+    opacity: 1;
+}
+
+#masterFormModal .modal-body {
+    padding: 24px 20px;
+}
+
+#masterFormModal .modal-footer {
+    padding: 14px 20px;
+    border-top: 1px solid #f1f5f9;
+    background-color: #f8fafc;
+    border-radius: 0 0 10px 10px;
+}*/
+
+/* ---- Form Controls ---- */
+/*#masterFormModal .form-label {
+    font-weight: 600;
+    font-size: 13px;
+    color: #475569;
+    margin-bottom: 5px;
+}
+
+#masterFormModal .form-control,
+#masterFormModal .form-select {
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 9px 12px;
+    font-size: 14px;
+    color: #1e293b;
+    transition: border-color 0.15s ease;
+}
+
+#masterFormModal .form-control:focus,
+#masterFormModal .form-select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+#masterFormModal .form-switch .form-check-input:checked {
+    background-color: #2563eb;
+    border-color: #2563eb;
+}*/
+
+/* ---- Modal Footer Buttons ---- */
+/*#masterFormModal .modal-footer .btn-secondary {
+    background: #fff;
+    color: #64748b;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 9px 18px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+#masterFormModal .modal-footer .btn-secondary:hover {
+    background: #f1f5f9;
+    color: #475569;
+    border-color: #94a3b8;
+}
+
+#masterFormModal .modal-footer .btn-master-add {
+    background-color: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 9px 22px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+#masterFormModal .modal-footer .btn-master-add:hover {
+    background-color: #1d4ed8;
+    color: #fff;
+}*/
+
+/* ---- Responsive ---- */
+/*@media (max-width: 767.98px) {
+    .master-page {
+        padding: 16px;
+    }
+
+    .master-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .master-header h2 {
+        font-size: 20px;
+    }
+
+    .btn-master-add {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .master-card {
+        padding: 14px;
+    }
+
+    table.master-table thead th {
+        font-size: 12px;
+        padding: 8px 8px;
+    }
+
+    table.master-table tbody td {
+        font-size: 13px;
+        padding: 8px 8px;
+    }
+
+    .action-btn {
+        width: 28px;
+        height: 28px;
+    }
+}*/
+
+
+
+/* =========================================================
+   Generic Master Module - Classic Light UI
+   ========================================================= */
+
+.master-page {
+    padding: 24px;
+    background: #f6f8fb;
+    min-height: calc(100vh - 70px);
+    color: #293241;
+}
+
+/* ---------------------------------------------------------
+   Header
+   --------------------------------------------------------- */
+
+.master-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+    .master-header h2 {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 600;
+        color: #27364b;
+        letter-spacing: -0.2px;
+    }
+
+/* ---------------------------------------------------------
+   Master Cards
+   --------------------------------------------------------- */
+
+.master-page .master-card {
+    background: #ffffff;
+    border: 1px solid #e6eaf0;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(31, 45, 61, 0.05);
+    transition: all 0.18s ease;
+}
+
+    .master-page .master-card:hover {
+        border-color: #d5ddea;
+        box-shadow: 0 5px 14px rgba(31, 45, 61, 0.08);
+        transform: translateY(-1px);
+    }
+
+.master-page .row > div > a {
+    display: block;
+}
+
+    .master-page .row > div > a .master-card {
+        padding: 18px 20px;
+    }
+
+.master-page .master-card h5 {
+    color: #34445a;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+/* ---------------------------------------------------------
+   Buttons
+   --------------------------------------------------------- */
+
+.btn-master-add {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 8px 15px;
+    min-height: 38px;
+    border: 1px solid #4f6fce;
+    border-radius: 6px;
+    background: #4f6fce;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 2px 5px rgba(79, 111, 206, 0.18);
+    transition: all 0.15s ease;
+}
+
+    .btn-master-add:hover,
+    .btn-master-add:focus {
+        background: #435fb2;
+        border-color: #435fb2;
+        color: #ffffff;
+        box-shadow: 0 3px 8px rgba(79, 111, 206, 0.24);
+    }
+
+    .btn-master-add:active {
+        transform: translateY(1px);
+    }
+
+/* ---------------------------------------------------------
+   Table Card
+   --------------------------------------------------------- */
+
+.master-page .master-card:has(#masterGrid) {
+    padding: 0;
+    overflow: hidden;
+}
+
+/* ---------------------------------------------------------
+   Master Table
+   --------------------------------------------------------- */
+
+.master-table {
+    margin: 0 !important;
+    border: 0 !important;
+    color: #374151;
+    font-size: 13.5px;
+}
+
+    .master-table thead th {
+        background: #f5f7fa;
+        color: #536174;
+        border-top: 0 !important;
+        border-bottom: 1px solid #dfe4eb !important;
+        padding: 12px 14px;
+        height: 44px;
+        font-size: 12.5px;
+        font-weight: 600;
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+
+    .master-table tbody td {
+        padding: 11px 14px;
+        height: 44px;
+        border-color: #edf0f4 !important;
+        vertical-align: middle;
+        color: #3f4b5b;
+        background: #ffffff;
+    }
+
+    .master-table tbody tr {
+        transition: background-color 0.12s ease;
+    }
+
+        .master-table tbody tr:hover td {
+            background: #f8faff;
+        }
+
+    /* Remove heavy bootstrap borders */
+    .master-table.table-bordered > :not(caption) > * > * {
+        border-width: 0 1px 1px 0;
+    }
+
+        .master-table.table-bordered > :not(caption) > * > *:last-child {
+            border-right: 0;
+        }
+
+/* ---------------------------------------------------------
+   Status Badges
+   --------------------------------------------------------- */
+
+.badge-active,
+.badge-inactive {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 68px;
+    padding: 4px 9px;
+    border-radius: 12px;
+    font-size: 11.5px;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.badge-active {
+    background: #eaf7ef;
+    color: #27804b;
+    border: 1px solid #d2eedc;
+}
+
+.badge-inactive {
+    background: #f3f4f6;
+    color: #737b87;
+    border: 1px solid #e5e7eb;
+}
+
+/* ---------------------------------------------------------
+   Action Buttons
+   --------------------------------------------------------- */
+
+.action-btn {
+    width: 31px;
+    height: 31px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin-right: 4px;
+    border-radius: 5px;
+    border: 1px solid #e1e5eb;
+    background: #ffffff;
+    color: #64748b;
+    font-size: 12px;
+    transition: all 0.15s ease;
+}
+
+    .action-btn:last-child {
+        margin-right: 0;
+    }
+
+    .action-btn:hover {
+        background: #f5f7fb;
+        border-color: #cfd6e2;
+        color: #3f5fae;
+    }
+
+    .action-btn.btn-delete:hover {
+        background: #fff5f5;
+        border-color: #f0caca;
+        color: #d14b4b;
+    }
+
+/* ---------------------------------------------------------
+   DataTables
+   --------------------------------------------------------- */
+
+.master-page .dataTables_wrapper {
+    padding: 14px 16px 12px;
+}
+
+    .master-page .dataTables_wrapper .dataTables_filter {
+        margin-bottom: 12px;
+    }
+
+        .master-page .dataTables_wrapper .dataTables_filter input {
+            width: 220px;
+            margin-left: 0 !important;
+            padding: 7px 11px;
+            border: 1px solid #dce1e8;
+            border-radius: 6px;
+            background: #ffffff;
+            color: #374151;
+            font-size: 13px;
+            outline: none;
+            box-shadow: none;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+            .master-page .dataTables_wrapper .dataTables_filter input:focus {
+                border-color: #9aaedb;
+                box-shadow: 0 0 0 3px rgba(79, 111, 206, 0.08);
+            }
+
+    .master-page .dataTables_wrapper .dataTables_length select {
+        border: 1px solid #dce1e8;
+        border-radius: 6px;
+        padding: 5px 28px 5px 8px;
+        color: #4b5563;
+        background-color: #ffffff;
+        outline: none;
+    }
+
+    .master-page .dataTables_wrapper .dataTables_info {
+        color: #7a8493;
+        font-size: 12.5px;
+        padding-top: 14px;
+    }
+
+    .master-page .dataTables_wrapper .dataTables_paginate {
+        padding-top: 10px;
+    }
+
+        .master-page .dataTables_wrapper .dataTables_paginate .paginate_button {
+            min-width: 30px;
+            height: 30px;
+            padding: 5px 9px !important;
+            margin-left: 3px !important;
+            border: 1px solid transparent !important;
+            border-radius: 5px !important;
+            color: #667085 !important;
+            background: transparent !important;
+        }
+
+            .master-page .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+                border-color: #dce2eb !important;
+                background: #f5f7fa !important;
+                color: #435fb2 !important;
+            }
+
+            .master-page .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+                border-color: #4f6fce !important;
+                background: #4f6fce !important;
+                color: #ffffff !important;
+            }
+
+            .master-page .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+                color: #c2c7cf !important;
+            }
+
+/* ---------------------------------------------------------
+   Modal
+   --------------------------------------------------------- */
+
+#masterFormModal .modal-dialog {
+    max-width: 560px;
+}
+
+#masterFormModal .modal-content {
+    border: 1px solid #e3e7ed;
+    border-radius: 9px;
+    box-shadow: 0 12px 35px rgba(30, 41, 59, 0.16);
+    overflow: hidden;
+}
+
+#masterFormModal .modal-header {
+    padding: 15px 20px;
+    background: #ffffff;
+    border-bottom: 1px solid #e9edf2;
+}
+
+#masterFormModal .modal-title {
+    color: #29384d;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+#masterFormModal .modal-body {
+    padding: 20px;
+    background: #ffffff;
+}
+
+#masterFormModal .modal-footer {
+    padding: 12px 20px;
+    background: #fafbfc;
+    border-top: 1px solid #e9edf2;
+}
+
+/* ---------------------------------------------------------
+   Form Controls
+   --------------------------------------------------------- */
+
+#masterFormModal .form-label {
+    margin-bottom: 6px;
+    color: #4b5563;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+#masterFormModal .form-control,
+#masterFormModal .form-select {
+    min-height: 38px;
+    border: 1px solid #d9dee7;
+    border-radius: 6px;
+    color: #374151;
+    background: #ffffff;
+    font-size: 13.5px;
+    box-shadow: none;
+}
+
+    #masterFormModal .form-control:focus,
+    #masterFormModal .form-select:focus {
+        border-color: #91a5d5;
+        box-shadow: 0 0 0 3px rgba(79, 111, 206, 0.08);
+    }
+
+    #masterFormModal .form-control::placeholder {
+        color: #a5adb9;
+    }
+
+/* ---------------------------------------------------------
+   Checkbox / Switch
+   --------------------------------------------------------- */
+
+#masterFormModal .form-check-input {
+    cursor: pointer;
+}
+
+    #masterFormModal .form-check-input:checked {
+        background-color: #4f6fce;
+        border-color: #4f6fce;
+    }
+
+/* ---------------------------------------------------------
+   Error
+   --------------------------------------------------------- */
+
+#masterFormModal .field-error {
+    font-size: 12px;
+}
+
+/* ---------------------------------------------------------
+   Responsive
+   --------------------------------------------------------- */
+
+@media (max-width: 767.98px) {
+
+    .master-page {
+        padding: 15px;
+    }
+
+    .master-header {
+        align-items: flex-start;
+    }
+
+        .master-header h2 {
+            font-size: 19px;
+        }
+
+    .btn-master-add {
+        padding: 7px 11px;
+        font-size: 13px;
+    }
+
+    .master-page .dataTables_wrapper {
+        padding: 10px;
+        overflow-x: auto;
+    }
+
+        .master-page .dataTables_wrapper .dataTables_filter input {
+            width: 160px;
+        }
+
+    .master-table {
+        min-width: 700px;
+    }
+}
+
+
+/* =========================================================
+   Dynamic Master Form Layout
+   ========================================================= */
+
+/* Small modal - 3 or fewer fields */
+#masterFormModal .modal-sm {
+    max-width: 420px;
+}
+
+/* Medium/large modal - more than 3 fields */
+#masterFormModal .modal-lg {
+    max-width: 760px;
+}
+
+/* Form spacing */
+#masterFormModal .modal-body {
+    padding: 20px 22px;
+}
+
+    #masterFormModal .modal-body .row {
+        margin-top: 2px;
+    }
+
+/* Two-column form */
+#masterFormModal .row.g-3 > [class*="col-"] {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+/* Keep labels consistent */
+#masterFormModal .form-label {
+    display: block;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Inputs */
+#masterFormModal .form-control,
+#masterFormModal .form-select {
+    width: 100%;
+}
+
+/* Better mobile behavior */
+@media (max-width: 767.98px) {
+
+    #masterFormModal .modal-lg {
+        max-width: calc(100% - 20px);
+        margin: 10px auto;
+    }
+
+    #masterFormModal .modal-sm {
+        max-width: calc(100% - 20px);
+        margin: 10px auto;
+    }
+
+    #masterFormModal .row.g-3 > [class*="col-"] {
+        width: 100%;
+    }
+}

@@ -1,0 +1,363 @@
+/* =========================================================
+   IMS Date Picker — Reusable Component Styles
+   Used by: IMSDatePicker (js/common/datepicker.js)
+   ========================================================= */
+
+/* Wrapper */
+.ims-datepicker-wrapper {
+    position: relative;
+    display: block;
+}
+
+.ims-datepicker-wrapper input[type="hidden"] {
+    display: none;
+}
+
+/* Display field (looks like form-control) */
+.ims-dp-display {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 38px;
+    padding: 6px 40px 6px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #1f2937;
+    background: #fff;
+    border: 1px solid #d8dbe0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color .15s ease, box-shadow .15s ease;
+    user-select: none;
+    line-height: 1.5;
+}
+
+.ims-dp-display:hover {
+    border-color: #9ca3af;
+}
+
+.ims-dp-display:focus,
+.ims-datepicker-wrapper:focus-within .ims-dp-display {
+    border-color: #1c8a5e;
+    box-shadow: 0 0 0 3px rgba(28, 138, 94, .12);
+    outline: none;
+}
+
+.ims-dp-display.ims-dp-placeholder {
+    color: #9ca3af;
+    font-style: normal;
+}
+
+/* Error state */
+.ims-dp-has-error .ims-dp-display {
+    border-color: #dc2626;
+}
+
+.ims-dp-has-error .ims-dp-display:focus,
+.ims-dp-has-error .ims-datepicker-wrapper:focus-within .ims-dp-display {
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, .12);
+}
+
+.ims-dp-error {
+    display: none;
+    color: #dc2626;
+    font-size: 12px;
+    margin-top: 4px;
+    line-height: 1.4;
+}
+
+.ims-dp-has-error .ims-dp-error {
+    display: block;
+}
+
+/* Calendar icon */
+.ims-dp-icon {
+    position: absolute;
+    right: 1px;
+    top: 1px;
+    bottom: 1px;
+    width: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 0 7px 7px 0;
+    color: #6b7280;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background .15s ease, color .15s ease;
+}
+
+.ims-dp-icon:hover {
+    background: #f3f4f6;
+    color: #1c8a5e;
+}
+
+.ims-dp-icon:focus {
+    outline: 2px solid #1c8a5e;
+    outline-offset: -2px;
+}
+
+/* Calendar dropdown */
+.ims-dp-calendar {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1050;
+    min-width: 280px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(17, 24, 39, .12), 0 2px 8px rgba(17, 24, 39, .06);
+    padding: 12px;
+    margin-top: 4px;
+    user-select: none;
+}
+
+.ims-dp-calendar.ims-dp-open {
+    display: block;
+}
+
+/* Header */
+.ims-dp-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    gap: 4px;
+}
+
+.ims-dp-month-year {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #111827;
+}
+
+.ims-dp-month-select,
+.ims-dp-year-select {
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 4px 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #111827;
+    background: #fff;
+    cursor: pointer;
+    outline: none;
+}
+
+.ims-dp-month-select:focus,
+.ims-dp-year-select:focus {
+    border-color: #1c8a5e;
+    box-shadow: 0 0 0 2px rgba(28, 138, 94, .12);
+}
+
+.ims-dp-month-select {
+    min-width: 110px;
+}
+
+.ims-dp-year-select {
+    min-width: 68px;
+}
+
+/* Navigation arrows */
+.ims-dp-nav {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #fff;
+    color: #374151;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s ease, color .15s ease;
+    flex-shrink: 0;
+}
+
+.ims-dp-nav:hover {
+    background: #f3f4f6;
+    color: #1c8a5e;
+    border-color: #1c8a5e;
+}
+
+.ims-dp-nav:focus {
+    outline: 2px solid #1c8a5e;
+    outline-offset: 1px;
+}
+
+/* Weekday headers */
+.ims-dp-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    margin-bottom: 4px;
+}
+
+.ims-dp-weekday {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    padding: 4px 0;
+}
+
+/* Day grid */
+.ims-dp-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+
+.ims-dp-day {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #1f2937;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background .12s ease, color .12s ease;
+    margin: 0 auto;
+}
+
+.ims-dp-day:hover:not(.ims-dp-disabled):not(.ims-dp-empty) {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+.ims-dp-day:focus:not(.ims-dp-disabled):not(.ims-dp-empty) {
+    outline: 2px solid #1c8a5e;
+    outline-offset: -1px;
+}
+
+.ims-dp-day.ims-dp-today {
+    font-weight: 700;
+    color: #1c8a5e;
+    position: relative;
+}
+
+.ims-dp-day.ims-dp-today::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #1c8a5e;
+}
+
+.ims-dp-day.ims-dp-selected {
+    background: #1c8a5e;
+    color: #fff;
+    font-weight: 600;
+}
+
+.ims-dp-day.ims-dp-selected:hover {
+    background: #166b49;
+    color: #fff;
+}
+
+.ims-dp-day.ims-dp-selected.ims-dp-today::after {
+    background: #fff;
+}
+
+.ims-dp-day.ims-dp-disabled {
+    color: #d1d5db;
+    cursor: not-allowed;
+}
+
+.ims-dp-day.ims-dp-empty {
+    cursor: default;
+}
+
+/* Footer */
+.ims-dp-footer {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #f3f4f6;
+}
+
+.ims-dp-btn {
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    color: #374151;
+    cursor: pointer;
+    transition: background .15s ease, color .15s ease;
+}
+
+.ims-dp-btn:hover {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+.ims-dp-btn:focus {
+    outline: 2px solid #1c8a5e;
+    outline-offset: 1px;
+}
+
+.ims-dp-today-btn {
+    color: #1c8a5e;
+    border-color: #1c8a5e;
+}
+
+.ims-dp-today-btn:hover {
+    background: #e6f6ee;
+}
+
+.ims-dp-clear-btn {
+    color: #6b7280;
+}
+
+.ims-dp-clear-btn:hover {
+    background: #f3f4f6;
+    color: #dc2626;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 575.98px) {
+    .ims-dp-calendar {
+        min-width: 260px;
+        padding: 8px;
+    }
+
+    .ims-dp-day {
+        width: 32px;
+        height: 32px;
+        font-size: 12px;
+    }
+
+    .ims-dp-month-select {
+        min-width: 90px;
+        font-size: 12px;
+    }
+
+    .ims-dp-year-select {
+        min-width: 58px;
+        font-size: 12px;
+    }
+}

@@ -1,0 +1,543 @@
+@* IMS.Web/Views/Master/Index.cshtml *@
+@model IMS.Models.Common.Master.MasterConfig
+@{
+    ViewData["Title"] = Model.DisplayName;
+    var formFields = Model.Fields.Where(f => f.ShowInForm).ToList();
+    var gridFields = Model.Fields.Where(f => f.ShowInGrid).ToList();
+    var hasActiveColumn = !string.IsNullOrEmpty(Model.IsActiveColumn);
+}
+<link href="~/css/master.css" rel="stylesheet" />
+<div class="master-page">
+    <div class="master-header">
+        <div>
+            <h2>@Model.DisplayName</h2>
+        </div>
+
+        <button type="button" class="btn btn-master-add" id="btnAddNew">
+            <i class="fa fa-plus"></i>
+            <span>Add @Model.EntityType</span>
+        </button>
+    </div>
+
+    <div class="master-card p-3">
+        <table id="masterGrid" class="table master-table table-bordered w-100">
+            <thead>
+                <tr>
+                    <th>Sr No.</th>
+
+                    @foreach (var field in gridFields)
+                    {
+                        <th data-column="@field.ColumnName">
+                            @field.DisplayName
+                        </th>
+                    }
+
+                    @if (hasActiveColumn)
+                    {
+                        <th>Status</th>
+                    }
+
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+
+<!-- Create / Edit Modal -->
+@* <div class="modal fade" id="masterFormModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="masterFormTitle">Add @Model.DisplayName</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="masterForm">
+                    <input type="hidden" id="recordId" value="" />
+                    @foreach (var field in formFields)
+                    {
+                        <div class="mb-3">
+                            <label class="form-label" for="field_@field.ColumnName">
+                                @field.DisplayName
+                                @if (field.IsRequired)
+                                {
+                                    <span class="text-danger">*</span>
+                                }
+                            </label>
+
+                            @if (field.FieldType == IMS.Models.Common.Master.MasterFieldType.Boolean)
+                            {
+                                <div class="form-check form-switch">
+                                    <input type="checkbox" class="form-check-input master-field"
+                                           id="field_@field.ColumnName" data-column="@field.ColumnName" checked />
+                                </div>
+                            }
+                            else if (field.FieldType == IMS.Models.Common.Master.MasterFieldType.Dropdown)
+                            {
+                                <select class="form-select master-field"
+                                        id="field_@field.ColumnName" data-column="@field.ColumnName"
+                                        data-lookup-entity="@field.LookupEntityType">
+                                    <option value="">-- Select @field.DisplayName --</option>
+                                </select>
+                            }
+                            else if (field.FieldType == IMS.Models.Common.Master.MasterFieldType.Date)
+                            {
+                                <input type="text" class="ims-datepicker-input master-field"
+                                       id="field_@field.ColumnName" data-column="@field.ColumnName"
+                                       data-format="dd/MM/yyyy"
+                                       data-value-format="yyyy-MM-dd"
+                                       data-placeholder="DD/MM/YYYY"
+                                       data-allow-future="@(field.AllowFutureDates ? "true" : "false")"
+                                       data-allow-past="@(field.AllowPastDates ? "true" : "false")"
+                                       @(field.MinDate.HasValue ? $"data-min-date={field.MinDate.Value:yyyy-MM-dd}" : "")
+                                       @(field.MaxDate.HasValue ? $"data-max-date={field.MaxDate.Value:yyyy-MM-dd}" : "")
+                                       data-required="@(field.IsRequired ? "true" : "false")"
+                                       autocomplete="off" />
+                            }
+                            else
+                            {
+                                <input type="text" class="form-control master-field"
+                                       id="field_@field.ColumnName" data-column="@field.ColumnName"
+                                       maxlength="@field.MaxLength" />
+                            }
+
+                            @if (field.FieldType == IMS.Models.Common.Master.MasterFieldType.Number)
+                            {
+                                <div class="field-error text-danger small mt-1" id="error_@field.ColumnName"></div>
+                            }
+                        </div>
+                    }
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-master-add" id="btnSaveMaster">Save</button>
+            </div>
+        </div>
+    </div>
+</div> *@
+
+<!-- Create / Edit Modal -->
+<div class="modal fade" id="masterFormModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog @(formFields.Count > 3 ? "modal-lg" : "modal-sm")">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="masterFormTitle">
+                    Add @Model.DisplayName
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form id="masterForm">
+
+                    <input type="hidden" id="recordId" value="" />
+
+                    <div class="row @(formFields.Count > 3 ? "g-3" : "")">
+
+                        @foreach (var field in formFields)
+                        {
+                            <div class="@(formFields.Count > 3 ? "col-md-6" : "col-12")">
+
+                                <div class="mb-2">
+
+                                    <label class="form-label"
+                                           for="field_@field.ColumnName">
+
+                                        @field.DisplayName
+
+                                        @if (field.IsRequired)
+                                        {
+                                            <span class="text-danger">*</span>
+                                        }
+
+                                    </label>
+
+                                    @if (field.FieldType == IMS.Models.Common.Master.MasterFieldType.Boolean)
+                                    {
+                                        <div class="form-check form-switch mt-2">
+
+                                            <input type="checkbox"
+                                                   class="form-check-input master-field"
+                                                   id="field_@field.ColumnName"
+                                                   data-column="@field.ColumnName"
+                                                   checked />
+
+                                        </div>
+                                    }
+                                    else if (field.FieldType == IMS.Models.Common.Master.MasterFieldType.Dropdown)
+                                    {
+                                        <select class="form-select master-field"
+                                                id="field_@field.ColumnName"
+                                                data-column="@field.ColumnName"
+                                                data-lookup-entity="@field.LookupEntityType">
+
+                                            <option value="">
+                                                -- Select @field.DisplayName --
+                                            </option>
+
+                                        </select>
+                                    }
+                                    else if (field.FieldType == IMS.Models.Common.Master.MasterFieldType.Date)
+                                    {
+                                        <input type="text"
+                                               class="ims-datepicker-input master-field"
+                                               id="field_@field.ColumnName"
+                                               data-column="@field.ColumnName"
+                                               data-format="dd/MM/yyyy"
+                                               data-value-format="yyyy-MM-dd"
+                                               data-placeholder="DD/MM/YYYY"
+                                               data-allow-future="@(field.AllowFutureDates ? "true" : "false")"
+                                               data-allow-past="@(field.AllowPastDates ? "true" : "false")"
+                                               @(field.MinDate.HasValue ? $"data-min-date={field.MinDate.Value:yyyy-MM-dd}" : "")
+                                               @(field.MaxDate.HasValue ? $"data-max-date={field.MaxDate.Value:yyyy-MM-dd}" : "")
+                                               data-required="@(field.IsRequired ? "true" : "false")"
+                                               autocomplete="off" />
+                                    }
+                                    else
+                                    {
+                                        <input type="text"
+                                               class="form-control master-field"
+                                               id="field_@field.ColumnName"
+                                               data-column="@field.ColumnName"
+                                               maxlength="@field.MaxLength" />
+                                    }
+
+                                    @if (field.FieldType == IMS.Models.Common.Master.MasterFieldType.Number)
+                                    {
+                                        <div class="field-error text-danger small mt-1"
+                                             id="error_@field.ColumnName">
+                                        </div>
+                                    }
+
+                                </div>
+
+                            </div>
+                        }
+
+                    </div>
+
+                </form>
+            </div>
+
+            <div class="modal-footer">
+
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    Cancel
+                </button>
+
+                <button type="button"
+                        class="btn btn-master-add"
+                        id="btnSaveMaster">
+                    Save
+                </button>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        const entityType = "@Model.EntityType";
+        const baseUrl = "/Master/" + entityType;
+        const keyColumn = "@Model.KeyColumn";
+        const activeColumn = "@Model.IsActiveColumn";
+        // const gridColumns = @Html.Raw(Json.Serialize(gridFields.Select(f => f.ColumnName)));
+        const gridColumns = @Html.Raw(Json.Serialize(
+            gridFields.Select(f => new
+            {
+                column = f.ColumnName,
+                gridColumn = string.IsNullOrWhiteSpace(f.GridColumnName)
+                                ? f.ColumnName
+                                : f.GridColumnName
+            })
+        ));
+        const formColumns = @Html.Raw(Json.Serialize(formFields.Select(f => new {
+            column = f.ColumnName,
+            type = f.FieldType.ToString(),
+            lookupEntity = f.LookupEntityType,
+            lookupValueField = f.LookupValueField,
+            lookupTextField = f.LookupTextField,
+            isRequired = f.IsRequired,
+            allowFutureDates = f.AllowFutureDates,
+            allowPastDates = f.AllowPastDates,
+            minDate = f.MinDate?.ToString("yyyy-MM-dd"),
+            maxDate = f.MaxDate?.ToString("yyyy-MM-dd"),
+            dateRangeStartField = f.DateRangeStartField,
+            dateRangeEndField = f.DateRangeEndField
+        })));
+
+        let masterTable;
+
+        $(document).ready(function () {
+            initGrid();
+            loadDropdowns();
+            initDatePickers();
+
+            $("#btnAddNew").on("click", function () {
+                resetForm();
+                $("#masterFormTitle").text("Add @Model.DisplayName");
+                $("#masterFormModal").modal("show");
+            });
+
+            $("#btnSaveMaster").on("click", saveRecord);
+        });
+
+        function initGrid() {
+            const columns = [
+                {
+                    data: null,
+                    orderable: false,
+                    render: function (data, type, row, meta) {
+                        return meta.row + 1;
+                    }
+                }
+            ];
+
+            // gridColumns.forEach(c => columns.push({ data: c, defaultContent: "" }));
+            gridColumns.forEach(c => {
+                columns.push({
+                    data: c.gridColumn,
+                    defaultContent: ""
+                });
+            });
+
+            if (activeColumn && activeColumn !== "") {
+                columns.push({
+                    data: activeColumn,
+                    orderable: false,
+                    render: function (isActive) {
+                        return isActive
+                            ? '<span class="badge-active">Active</span>'
+                            : '<span class="badge-inactive">Inactive</span>';
+                    }
+                });
+            }
+
+            columns.push({
+                data: null,
+                orderable: false,
+                render: function (data) {
+                    const id = data[keyColumn];
+                    return `<button class="action-btn btn-edit" data-id="${id}"><i class="fa fa-pen"></i></button>
+                            <button class="action-btn btn-delete" data-id="${id}"><i class="fa fa-trash"></i></button>`;
+                }
+            });
+
+            masterTable = $("#masterGrid").DataTable({
+                ajax: {
+                    url: baseUrl + "/List",
+                    dataSrc: "data"
+                },
+                columns: columns,
+                pageLength: 10,
+                lengthMenu: [10, 25, 50],
+                language: {
+                    search: "",
+                    searchPlaceholder: "Search...",
+                    paginate: { previous: "‹", next: "›" }
+                }
+            });
+
+            $("#masterGrid tbody").on("click", ".btn-edit", function () {
+                editRecord($(this).data("id"));
+            });
+
+            $("#masterGrid tbody").on("click", ".btn-delete", function () {
+                deleteRecord($(this).data("id"));
+            });
+        }
+
+        function loadDropdowns() {
+            formColumns.filter(f => f.type === "Dropdown").forEach(f => {
+                $.get("/Master/" + f.lookupEntity + "/List", function (res) {
+                    if (!res.success) return;
+                    const $select = $("#field_" + f.column);
+                    res.data.forEach(item => {
+                        const value = item[f.lookupValueField];
+                        const text = item[f.lookupTextField];
+                        $select.append(`<option value="${value}">${text}</option>`);
+                    });
+                });
+            });
+        }
+
+        function initDatePickers() {
+            formColumns.filter(f => f.type === "Date").forEach(function (f) {
+                IMSDatePicker.init({
+                    input: '#field_' + f.column,
+                    format: 'dd/MM/yyyy',
+                    valueFormat: 'yyyy-MM-dd',
+                    placeholder: 'DD/MM/YYYY',
+                    allowFutureDates: f.allowFutureDates !== false,
+                    allowPastDates: f.allowPastDates !== false,
+                    minDate: f.minDate || null,
+                    maxDate: f.maxDate || null,
+                    required: f.isRequired || false
+                });
+            });
+        }
+
+        function resetForm() {
+            $("#recordId").val("");
+            $(".master-field").each(function () {
+                var $el = $(this);
+                var col = $el.data("column");
+                var fieldConfig = formColumns.find(f => f.column === col);
+
+                if ($el.attr("type") === "checkbox") {
+                    $el.prop("checked", true);
+                } else if (fieldConfig && fieldConfig.type === "Date") {
+                    IMSDatePicker.clear('#field_' + col);
+                } else {
+                    $el.val("");
+                }
+            });
+        }
+
+        function editRecord(id) {
+            $.get(baseUrl + "/" + id, function (res) {
+                if (!res.success) { alert(res.message); return; }
+                $("#recordId").val(id);
+                $(".master-field").each(function () {
+                    var $el = $(this);
+                    var col = $el.data("column");
+                    var fieldConfig = formColumns.find(f => f.column === col);
+
+                    if ($el.attr("type") === "checkbox") {
+                        $el.prop("checked", !!res.data[col]);
+                    } else if (fieldConfig && fieldConfig.type === "Date") {
+                        var dateVal = res.data[col];
+                        if (dateVal) {
+                            // Handle both ISO date strings and formatted dates
+                            var parsed = IMSDatePicker.parseDate(dateVal);
+                            if (parsed) {
+                                IMSDatePicker.setValue('#field_' + col, IMSDatePicker.formatDate(parsed, 'yyyy-MM-dd'));
+                            } else {
+                                IMSDatePicker.setValue('#field_' + col, dateVal);
+                            }
+                        } else {
+                            IMSDatePicker.clear('#field_' + col);
+                        }
+                    } else {
+                        $el.val(res.data[col]);
+                    }
+                });
+                $("#masterFormTitle").text("Edit @Model.DisplayName");
+                $("#masterFormModal").modal("show");
+            });
+        }
+
+        function saveRecord() {
+            var id = $("#recordId").val().trim();
+            var isEdit = id !== "";
+            var values = {};
+
+            // Client-side date validation
+            var dateValid = true;
+            formColumns.filter(f => f.type === "Date").forEach(function (f) {
+                var val = IMSDatePicker.getValue('#field_' + f.column);
+                IMSDatePicker.clearError('#field_' + f.column);
+
+                if (f.isRequired && !val) {
+                    IMSDatePicker.showError('#field_' + f.column, f.column.replace(/_/g, ' ').replace(/\b\w/g, function(l) { return l.toUpperCase(); }) + ' is required.');
+                    dateValid = false;
+                } else if (val) {
+                    var parsed = IMSDatePicker.parseDate(val);
+                    if (!parsed) {
+                        IMSDatePicker.showError('#field_' + f.column, 'Please enter a valid date.');
+                        dateValid = false;
+                    } else {
+                        var now = new Date();
+                        var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                        if (f.allowFutureDates === false && parsed > today) {
+                            IMSDatePicker.showError('#field_' + f.column, 'Future dates are not allowed.');
+                            dateValid = false;
+                        }
+                        if (f.allowPastDates === false && parsed < today) {
+                            IMSDatePicker.showError('#field_' + f.column, 'Past dates are not allowed.');
+                            dateValid = false;
+                        }
+                    }
+                }
+            });
+
+            // Date range validation
+            formColumns.filter(f => f.type === "Date" && f.dateRangeStartField && f.dateRangeEndField).forEach(function (f) {
+                var startVal = IMSDatePicker.getValue('#field_' + f.dateRangeStartField);
+                var endVal = IMSDatePicker.getValue('#field_' + f.dateRangeEndField);
+                if (startVal && endVal) {
+                    var start = IMSDatePicker.parseDate(startVal);
+                    var end = IMSDatePicker.parseDate(endVal);
+                    if (start && end && end < start) {
+                        IMSDatePicker.showError('#field_' + f.dateRangeEndField, 'End Date cannot be before Start Date.');
+                        dateValid = false;
+                    }
+                }
+            });
+
+            if (!dateValid) return;
+
+            // Collect values
+            $(".master-field").each(function () {
+                var $el = $(this);
+                var col = $el.data("column");
+                var fieldConfig = formColumns.find(f => f.column === col);
+
+                if ($el.attr("type") === "checkbox") {
+                    values[col] = $el.is(":checked");
+                } else if (fieldConfig && fieldConfig.type === "Date") {
+                    values[col] = IMSDatePicker.getValue('#field_' + col) || null;
+                } else if (fieldConfig && fieldConfig.type === "Number") {
+                    var numVal = $el.val();
+                    values[col] = numVal !== "" ? numVal : null;
+                } else {
+                    values[col] = $el.val() || null;
+                }
+            });
+
+            $.ajax({
+                url: isEdit ? baseUrl + "/" + id : baseUrl,
+                method: isEdit ? "PUT" : "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ Values: values }),
+                success: function () {
+                    $("#masterFormModal").modal("hide");
+                    masterTable.ajax.reload();
+                },
+                error: function (xhr) {
+                    alert(xhr.responseJSON?.message || "Something went wrong.");
+                }
+            });
+        }
+
+        function deleteRecord(id) {
+            if (!confirm("Are you sure you want to delete this record?")) return;
+            $.ajax({
+                url: baseUrl + "/" + id,
+                method: "DELETE",
+                success: function () {
+                    masterTable.ajax.reload();
+                },
+                error: function (xhr) {
+                    alert(xhr.responseJSON?.message || "Delete failed.");
+                }
+            });
+        }
+    </script>
+}
