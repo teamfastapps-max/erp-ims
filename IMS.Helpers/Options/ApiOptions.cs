@@ -22,6 +22,9 @@ namespace IMS.Helpers.Options
     public class UserApiEndpoints
     {
         public string MyProfile { get; set; }
+        public string TenantRoles { get; set; }     
+        public string TenantUsers { get; set; }     
+        public string TenantUserById { get; set; }    
     }
 
     public class SystemApiSettings

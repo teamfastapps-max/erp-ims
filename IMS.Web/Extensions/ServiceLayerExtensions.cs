@@ -17,7 +17,7 @@ namespace IMS.Web.Extensions
             services.AddScoped<IDropdownService, DropdownService>();
             services.AddScoped<IStudentService, StudentService>();
             services.AddScoped<IGuardianService, GuardianService>();
-
+            services.AddScoped<ITeacherService, TeacherService>();
 
             return services;
         }
