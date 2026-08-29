@@ -56,11 +56,13 @@
 
 
             <li class="nav-item">
-                <a class="nav-link @isActive("Student", "Student")"
+                @* <a class="nav-link @isActive("Student", "Student")"
                    asp-area="Student"
                    asp-controller="Student"
-                   asp-action="Index">
-
+                   asp-action="Index"> *@
+                    <a class="nav-link @isActive("Student", "Student")"
+                       asp-controller="Students"
+                       asp-action="Index">
                     <i class="fa-solid fa-user-graduate"></i>
                     <span>Students</span>
                 </a>

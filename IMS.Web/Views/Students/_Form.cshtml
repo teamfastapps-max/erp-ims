@@ -1,83 +1,215 @@
 @model IMS.Models.ViewModels.StudentFormViewModel
 
-@Html.ValidationSummary(false, "", new { @class = "alert alert-danger" })
+@* Relation options exposed to JS so dynamically-added guardian rows can build their <select> *@
+<script>
+    window.__relationOptions = `@Html.Raw(string.Join("", Model.RelationOptions.Select(o => $"<option value=\"{o.Value}\">{o.Text}</option>")))`;
+</script>
 
 @if (Model.S_Id.HasValue)
 {
     @Html.HiddenFor(m => m.S_Id)
 }
 
+<h6 class="text-muted mb-3">Admission Details</h6>
 <div class="row g-3">
     <div class="col-md-4">
-        @Html.LabelFor(m => m.S_BranchId, new { @class = "form-label" })
+        <label for="S_BranchId" class="form-label">Branch</label>
         @Html.DropDownListFor(m => m.S_BranchId, Model.BranchOptions, "Select Branch", new { @class = "form-select" })
-        @Html.ValidationMessageFor(m => m.S_BranchId, "", new { @class = "text-danger small" })
+        <div class="text-danger small field-error" data-for="S_BranchId"></div>
     </div>
     <div class="col-md-4">
-        @Html.LabelFor(m => m.S_StudentCode, new { @class = "form-label" })
-        @Html.TextBoxFor(m => m.S_StudentCode, new { @class = "form-control", placeholder = "Auto-generated if left blank" })
-        @Html.ValidationMessageFor(m => m.S_StudentCode, "", new { @class = "text-danger small" })
+        <label for="S_StudentCode" class="form-label">Student Code</label>
+        @Html.TextBoxFor(m => m.S_StudentCode, new { @class = "form-control bg-light text-muted", @readonly = "readonly", tabindex = "-1", placeholder = "Auto-generated" })
     </div>
     <div class="col-md-4">
-        @Html.LabelFor(m => m.S_AdmissionNumber, new { @class = "form-label" })
-        @Html.TextBoxFor(m => m.S_AdmissionNumber, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.S_AdmissionNumber, "", new { @class = "text-danger small" })
-    </div>
-</div>
-
-<hr class="my-4" />
-<h6 class="text-muted mb-3">Personal Details</h6>
-
-<div class="row g-3">
-    <div class="col-md-4">
-        @Html.LabelFor(m => m.S_FirstName, new { @class = "form-label" })
-        @Html.TextBoxFor(m => m.S_FirstName, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.S_FirstName, "", new { @class = "text-danger small" })
-    </div>
-    <div class="col-md-4">
-        @Html.LabelFor(m => m.S_MiddleName, new { @class = "form-label" })
-        @Html.TextBoxFor(m => m.S_MiddleName, new { @class = "form-control" })
-    </div>
-    <div class="col-md-4">
-        @Html.LabelFor(m => m.S_LastName, new { @class = "form-label" })
-        @Html.TextBoxFor(m => m.S_LastName, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.S_LastName, "", new { @class = "text-danger small" })
+        <label for="S_AdmissionNumber" class="form-label">Admission Number</label>
+        @Html.TextBoxFor(m => m.S_AdmissionNumber, new { @class = "form-control bg-light text-muted", @readonly = "readonly", tabindex = "-1", placeholder = "Auto-generated" })
     </div>
 
     <div class="col-md-4">
-        @Html.LabelFor(m => m.S_DateOfBirth, new { @class = "form-label" })
-        @Html.TextBoxFor(m => m.S_DateOfBirth, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+        <label for="S_ClassId" class="form-label">Class</label>
+        @Html.DropDownListFor(m => m.S_ClassId, Model.ClassOptions, "Select Class", new { @class = "form-select" })
     </div>
     <div class="col-md-4">
-        @Html.LabelFor(m => m.S_Gender, new { @class = "form-label" })
-        @Html.DropDownListFor(m => m.S_Gender, Model.GenderOptions, "Select Gender", new { @class = "form-select" })
+        <label for="S_SectionId" class="form-label">Section</label>
+        @Html.DropDownListFor(m => m.S_SectionId, Model.SectionOptions, "Select Section", new { @class = "form-select" })
     </div>
     <div class="col-md-4">
-        @Html.LabelFor(m => m.S_AdmissionDate, new { @class = "form-label" })
+        <label for="S_AdmissionDate" class="form-label">Admission Date</label>
         @Html.TextBoxFor(m => m.S_AdmissionDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
     </div>
 </div>
 
 <hr class="my-4" />
-<h6 class="text-muted mb-3">Contact & Status</h6>
-
+<h6 class="text-muted mb-3">Personal Details</h6>
 <div class="row g-3">
     <div class="col-md-4">
-        @Html.LabelFor(m => m.S_Email, new { @class = "form-label" })
-        @Html.TextBoxFor(m => m.S_Email, new { @class = "form-control", type = "email" })
-        @Html.ValidationMessageFor(m => m.S_Email, "", new { @class = "text-danger small" })
+        <label for="S_FirstName" class="form-label">First Name</label>
+        @Html.TextBoxFor(m => m.S_FirstName, new { @class = "form-control" })
+        <div class="text-danger small field-error" data-for="S_FirstName"></div>
     </div>
     <div class="col-md-4">
-        @Html.LabelFor(m => m.S_Phone, new { @class = "form-label" })
-        @Html.TextBoxFor(m => m.S_Phone, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.S_Phone, "", new { @class = "text-danger small" })
+        <label for="S_MiddleName" class="form-label">Middle Name</label>
+        @Html.TextBoxFor(m => m.S_MiddleName, new { @class = "form-control" })
     </div>
     <div class="col-md-4">
-        @Html.LabelFor(m => m.S_Status, new { @class = "form-label" })
+        <label for="S_LastName" class="form-label">Last Name</label>
+        @Html.TextBoxFor(m => m.S_LastName, new { @class = "form-control" })
+        <div class="text-danger small field-error" data-for="S_LastName"></div>
+    </div>
+
+    <div class="col-md-3">
+        <label for="S_DateOfBirth" class="form-label">Date of Birth</label>
+        @Html.TextBoxFor(m => m.S_DateOfBirth, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+        <div class="text-danger small field-error" data-for="S_DateOfBirth"></div>
+    </div>
+    <div class="col-md-3">
+        <label for="S_Gender" class="form-label">Gender</label>
+        @Html.DropDownListFor(m => m.S_Gender, Model.GenderOptions, "Select Gender", new { @class = "form-select" })
+    </div>
+    <div class="col-md-3">
+        <label for="S_BloodGroup" class="form-label">Blood Group</label>
+        @Html.DropDownListFor(m => m.S_BloodGroup, Model.BloodGroupOptions, "Select Blood Group", new { @class = "form-select" })
+    </div>
+    <div class="col-md-3">
+        <label for="S_Status" class="form-label">Status</label>
         @Html.DropDownListFor(m => m.S_Status, Model.StatusOptions, new { @class = "form-select" })
-        @Html.ValidationMessageFor(m => m.S_Status, "", new { @class = "text-danger small" })
+        <div class="text-danger small field-error" data-for="S_Status"></div>
     </div>
 </div>
+
+<hr class="my-4" />
+<h6 class="text-muted mb-3">Contact</h6>
+<div class="row g-3">
+    <div class="col-md-6">
+        <label for="S_Email" class="form-label">Email</label>
+        @Html.TextBoxFor(m => m.S_Email, new { @class = "form-control", type = "email" })
+        <div class="text-danger small field-error" data-for="S_Email"></div>
+    </div>
+    <div class="col-md-6">
+        <label for="S_Phone" class="form-label">Phone</label>
+        @Html.TextBoxFor(m => m.S_Phone, new { @class = "form-control" })
+        <div class="text-danger small field-error" data-for="S_Phone"></div>
+    </div>
+</div>
+
+<hr class="my-4" />
+<h6 class="text-muted mb-3">Address</h6>
+<div class="row g-3">
+    <div class="col-md-6">
+        <label for="S_AddressLine1" class="form-label">Address Line 1</label>
+        @Html.TextBoxFor(m => m.S_AddressLine1, new { @class = "form-control" })
+    </div>
+    <div class="col-md-6">
+        <label for="S_AddressLine2" class="form-label">Address Line 2</label>
+        @Html.TextBoxFor(m => m.S_AddressLine2, new { @class = "form-control" })
+    </div>
+    <div class="col-md-3">
+        <label for="S_City" class="form-label">City</label>
+        @Html.TextBoxFor(m => m.S_City, new { @class = "form-control" })
+    </div>
+    <div class="col-md-3">
+        <label for="S_State" class="form-label">State</label>
+        @Html.TextBoxFor(m => m.S_State, new { @class = "form-control" })
+    </div>
+    <div class="col-md-3">
+        <label for="S_PostalCode" class="form-label">Postal Code</label>
+        @Html.TextBoxFor(m => m.S_PostalCode, new { @class = "form-control" })
+    </div>
+    <div class="col-md-3">
+        <label for="S_Country" class="form-label">Country</label>
+        @Html.TextBoxFor(m => m.S_Country, new { @class = "form-control" })
+    </div>
+</div>
+
+<hr class="my-4" />
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h6 class="text-muted mb-0"><i class="bi bi-people me-1"></i>Guardians</h6>
+    <button type="button" id="addGuardianBtn" class="btn btn-sm btn-outline-primary">
+        <i class="bi bi-plus-lg me-1"></i> Add Guardian
+    </button>
+</div>
+
+<div id="guardiansContainer">
+    @{
+        var gIndex = 0;
+    }
+    @foreach (var g in Model.Guardians)
+    {
+        <div class="card mb-3 guardian-row" data-index="@gIndex" data-existing="true">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h6 class="mb-0"><i class="bi bi-person-heart me-1"></i>Guardian @(gIndex + 1)</h6>
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-guardian-btn">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+                <input type="hidden" name="Guardians[@gIndex].ExistingGuardianId" class="existing-guardian-id" value="@g.ExistingGuardianId" />
+
+                <div class="row g-2 mb-2">
+                    <div class="col-md-8 position-relative">
+                        <label class="form-label small">Search Existing Guardian (optional)</label>
+                        <input type="text" class="form-control form-control-sm guardian-search-input" autocomplete="off"
+                               placeholder="Type name, phone or email to find an existing guardian..." />
+                        <div class="list-group guardian-search-results position-absolute w-100 shadow-sm" style="z-index:1050; display:none;"></div>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="button" class="btn btn-sm btn-outline-secondary clear-guardian-link-btn w-100">
+                            <i class="bi bi-x-circle me-1"></i>Clear Link
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row g-2">
+                    <div class="col-md-3">
+                        <label class="form-label small">First Name</label>
+                        <input type="text" name="Guardians[@gIndex].FirstName" class="form-control form-control-sm" value="@g.FirstName" readonly="@(g.ExistingGuardianId.HasValue)" />
+                        <div class="text-danger small field-error" data-for="Guardians[@gIndex].FirstName"></div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small">Last Name</label>
+                        <input type="text" name="Guardians[@gIndex].LastName" class="form-control form-control-sm" value="@g.LastName" readonly="@(g.ExistingGuardianId.HasValue)" />
+                        <div class="text-danger small field-error" data-for="Guardians[@gIndex].LastName"></div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small">Phone</label>
+                        <input type="text" name="Guardians[@gIndex].Phone" class="form-control form-control-sm" value="@g.Phone" readonly="@(g.ExistingGuardianId.HasValue)" />
+                        <div class="text-danger small field-error" data-for="Guardians[@gIndex].Phone"></div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small">Email</label>
+                        <input type="email" name="Guardians[@gIndex].Email" class="form-control form-control-sm" value="@g.Email" readonly="@(g.ExistingGuardianId.HasValue)" />
+                        <div class="text-danger small field-error" data-for="Guardians[@gIndex].Email"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small">Occupation</label>
+                        <input type="text" name="Guardians[@gIndex].Occupation" class="form-control form-control-sm" value="@g.Occupation" readonly="@(g.ExistingGuardianId.HasValue)" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small">Relation</label>
+                        <select name="Guardians[@gIndex].Relation" class="form-select form-select-sm">
+                            <option value="">Select Relation</option>
+                            @foreach (var opt in Model.RelationOptions)
+                            {
+                                <option value="@opt.Value" selected="@(opt.Value == g.Relation)">@opt.Text</option>
+                            }
+                        </select>
+                        <div class="text-danger small field-error" data-for="Guardians[@gIndex].Relation"></div>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-center">
+                        <div class="form-check mt-4">
+                            <input type="checkbox" class="form-check-input" name="Guardians[@gIndex].IsPrimary" value="true" checked="@g.IsPrimary" />
+                            <label class="form-check-label small">Primary Contact</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        gIndex++;
+    }
+</div>
+<p class="text-muted small">Add at least one guardian (e.g. Father / Mother). Search first to link an existing guardian record instead of creating a duplicate.</p>
 
 <div class="d-flex justify-content-end gap-2 mt-4">
     <a asp-controller="Students" asp-action="Index" class="btn btn-outline-secondary">Cancel</a>

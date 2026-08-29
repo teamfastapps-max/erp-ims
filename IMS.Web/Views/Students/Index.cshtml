@@ -10,26 +10,11 @@
     </a>
 </div>
 
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        @TempData["SuccessMessage"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-}
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        @TempData["ErrorMessage"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-}
-
 <div class="card shadow-sm mb-3">
     <div class="card-body">
         @using (Html.BeginForm("Index", "Students", FormMethod.Get, new { @class = "row g-3 align-items-end" }))
         {
-            <div class="col-md-4">
+            <div class="col-md-3">
                 @Html.Label("searchTerm", "Search", new { @class = "form-label" })
                 @Html.TextBox("searchTerm", Model.SearchTerm, new { @class = "form-control", placeholder = "Name, admission no. or code" })
             </div>
@@ -37,9 +22,13 @@
                 @Html.Label("status", "Status", new { @class = "form-label" })
                 @Html.DropDownList("status", Model.StatusOptions, "All Statuses", new { @class = "form-select" })
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 @Html.Label("branchId", "Branch", new { @class = "form-label" })
                 @Html.DropDownList("branchId", Model.BranchOptions, "All Branches", new { @class = "form-select" })
+            </div>
+            <div class="col-md-2">
+                @Html.Label("classId", "Class", new { @class = "form-label" })
+                @Html.DropDownList("classId", Model.ClassOptions, "All Classes", new { @class = "form-select" })
             </div>
             <div class="col-md-2 d-grid">
                 <button type="submit" class="btn btn-outline-primary">
@@ -58,14 +47,14 @@
                     <th>Student Code</th>
                     <th>Admission No.</th>
                     <th>Name</th>
-                    <th>Gender</th>
+                    <th>Class / Section</th>
                     <th>Branch</th>
                     <th>Admission Date</th>
                     <th>Status</th>
                     <th class="text-end">Actions</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="studentsTableBody">
                 @if (!Model.Students.Any())
                 {
                     <tr>
@@ -76,31 +65,24 @@
                 {
                     foreach (var s in Model.Students)
                     {
-                        <tr>
+                        <tr id="student-row-@s.S_Id">
                             <td>@s.S_StudentCode</td>
                             <td>@s.S_AdmissionNumber</td>
                             <td>@s.FullName</td>
-                            <td>@s.S_Gender</td>
+                            <td>@s.ClassName @(s.SectionName != "-" ? $"- {s.SectionName}" : "")</td>
                             <td>@s.BranchName</td>
                             <td>@(s.S_AdmissionDate?.ToString("dd-MMM-yyyy") ?? "-")</td>
-                            <td>
-                                <span class="badge @StatusBadgeClass(s.S_Status)">@s.S_Status</span>
-                            </td>
+                            <td><span class="badge @StatusBadgeClass(s.S_Status)">@s.S_Status</span></td>
                             <td class="text-end">
                                 <a asp-controller="Students" asp-action="Details" asp-route-id="@s.S_Id"
-                                   class="btn btn-sm btn-outline-secondary" title="View">
-                                    <i class="bi bi-eye"></i>
-                                </a>
+                                   class="btn btn-sm btn-outline-secondary" title="View"><i class="bi bi-eye"></i></a>
                                 <a asp-controller="Students" asp-action="Edit" asp-route-id="@s.S_Id"
-                                   class="btn btn-sm btn-outline-primary" title="Edit">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                                <button type="button" class="btn btn-sm btn-outline-danger"
-                                        data-bs-toggle="modal" data-bs-target="#deleteModal-@s.S_Id" title="Remove">
+                                   class="btn btn-sm btn-outline-primary" title="Edit"><i class="bi bi-pencil"></i></a>
+                                <button type="button" class="btn btn-sm btn-outline-danger confirm-delete-btn"
+                                        data-id="@s.S_Id" data-bs-toggle="modal" data-bs-target="#deleteModal-@s.S_Id" title="Remove">
                                     <i class="bi bi-trash"></i>
                                 </button>
 
-                                <!-- Delete confirmation modal -->
                                 <div class="modal fade" id="deleteModal-@s.S_Id" tabindex="-1">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
@@ -109,15 +91,11 @@
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                             </div>
                                             <div class="modal-body">
-                                                Are you sure you want to remove <strong>@s.FullName</strong>? This can be reversed by an administrator later.
+                                                Are you sure you want to remove <strong>@s.FullName</strong>?
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                @using (Html.BeginForm("Delete", "Students", new { id = s.S_Id }, FormMethod.Post, false, new { @class = "d-inline" }))
-                                                {
-                                                    @Html.AntiForgeryToken()
-                                                    <button type="submit" class="btn btn-danger">Remove</button>
-                                                }
+                                                <button type="button" class="btn btn-danger do-delete-btn">Remove</button>
                                             </div>
                                         </div>
                                     </div>
@@ -131,6 +109,8 @@
     </div>
 </div>
 
+@Html.AntiForgeryToken()
+
 @if (Model.TotalPages > 1)
 {
     <nav class="mt-3">
@@ -139,7 +119,7 @@
             {
                 <li class="page-item @(p == Model.PageNumber ? "active" : "")">
                     <a class="page-link"
-                       href="@Url.Action("Index", "Students", new { searchTerm = Model.SearchTerm, status = Model.StatusFilter, branchId = Model.BranchFilter, page = p })">
+                       href="@Url.Action("Index", "Students", new { searchTerm = Model.SearchTerm, status = Model.StatusFilter, branchId = Model.BranchFilter, classId = Model.ClassFilter, page = p })">
                         @p
                     </a>
                 </li>
@@ -159,4 +139,8 @@
         "Dropped" => "bg-danger",
         _ => "bg-light text-dark"
     };
+}
+
+@section Scripts {
+    <script src="~/js/students.js"></script>
 }

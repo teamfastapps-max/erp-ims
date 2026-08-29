@@ -13,6 +13,8 @@ namespace IMS.Web.Extensions
             services.AddScoped<IMasterDAL, MasterDAL>();
             services.AddScoped<IDropdownDAL, DropdownDAL>();
             services.AddScoped<IStudentRepository, StudentRepository>();
+            services.AddScoped<IStudentDAL, StudentDAL>();
+            services.AddScoped<IGuardianDAL, GuardianDAL>();
 
             return services;
         }

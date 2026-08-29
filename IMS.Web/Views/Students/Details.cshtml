@@ -1,7 +1,30 @@
 @model IMS.Models.ViewModels.StudentDetailsViewModel
 @{
     ViewData["Title"] = "Student Details";
+
+    string InitialsOf(string name) =>
+        string.IsNullOrWhiteSpace(name) ? "?" : name.Trim().Substring(0, 1).ToUpper();
+
+    int? age = null;
+    if (Model.S_DateOfBirth.HasValue)
+    {
+        var dob = Model.S_DateOfBirth.Value;
+        var today = DateTime.Today;
+        var a = today.Year - dob.Year;
+        if (dob.Date > today.AddYears(-a)) a--;
+        age = a;
+    }
+
+    string StatusBadgeClass(string status) => (status ?? "").ToLower() switch
+    {
+        "active" or "admitted" => "bg-success",
+        "inactive" or "suspended" => "bg-secondary",
+        "graduated" => "bg-primary",
+        "withdrawn" or "expelled" => "bg-danger",
+        _ => "bg-info text-dark"
+    };
 }
+
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h3 class="mb-0"><i class="bi bi-person-badge-fill me-2"></i>Student Details</h3>
@@ -15,52 +38,213 @@
     </div>
 </div>
 
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        @TempData["SuccessMessage"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-}
-
-<div class="card shadow-sm">
+<!-- Hero -->
+<div class="card shadow-sm mb-3">
     <div class="card-body p-4">
-        <div class="d-flex align-items-center mb-4">
-            <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center me-3"
-                 style="width:64px;height:64px;font-size:1.5rem;">
-                @Model.FullName.Substring(0, 1)
+        <div class="d-flex flex-wrap align-items-center gap-3">
+            <div class="sd-avatar">@InitialsOf(Model.FullName)</div>
+            <div class="flex-grow-1">
+                <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                    <h4 class="mb-0">@Model.FullName</h4>
+                    <span class="badge @StatusBadgeClass(Model.S_Status)">@Model.S_Status</span>
+                </div>
+                <div class="text-muted small mb-2">
+                    @Model.S_StudentCode &middot; Admission No. @Model.S_AdmissionNumber
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="sd-chip"><i class="bi bi-diagram-3"></i>@Model.BranchName</span>
+                    <span class="sd-chip">
+                        <i class="bi bi-mortarboard"></i>
+                        @Model.ClassName@(Model.SectionName != "-" ? $" - {Model.SectionName}" : "")
+                    </span>
+                    @if (Model.S_AdmissionDate.HasValue)
+                    {
+                        <span class="sd-chip"><i class="bi bi-calendar-check"></i>Admitted @Model.S_AdmissionDate.Value.ToString("dd MMM yyyy")</span>
+                    }
+                    @if (age.HasValue)
+                    {
+                        <span class="sd-chip"><i class="bi bi-cake2"></i>@age yrs old</span>
+                    }
+                </div>
             </div>
-            <div>
-                <h4 class="mb-0">@Model.FullName</h4>
-                <span class="text-muted">@Model.S_StudentCode &middot; Admission No. @Model.S_AdmissionNumber</span>
-            </div>
-            <span class="badge bg-info text-dark ms-auto fs-6">@Model.S_Status</span>
         </div>
+    </div>
+</div>
 
-        <dl class="row">
-            <dt class="col-sm-3">Branch</dt>
-            <dd class="col-sm-9">@Model.BranchName</dd>
+<!-- Info grid -->
+<div class="row g-3 mb-3">
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <div class="sd-section-title">Personal</div>
+                <div class="sd-field">
+                    <div class="sd-field-icon"><i class="bi bi-calendar3"></i></div>
+                    <div>
+                        <div class="sd-field-label">Date of Birth</div>
+                        <div class="sd-field-value">@(Model.S_DateOfBirth?.ToString("dd MMM yyyy") ?? "-")@(age.HasValue ? $" ({age} yrs)" : "")</div>
+                    </div>
+                </div>
+                <div class="sd-field">
+                    <div class="sd-field-icon"><i class="bi bi-gender-ambiguous"></i></div>
+                    <div>
+                        <div class="sd-field-label">Gender</div>
+                        <div class="sd-field-value">@(Model.S_Gender ?? "-")</div>
+                    </div>
+                </div>
+                <div class="sd-field">
+                    <div class="sd-field-icon"><i class="bi bi-droplet-half"></i></div>
+                    <div>
+                        <div class="sd-field-label">Blood Group</div>
+                        <div class="sd-field-value">@(Model.S_BloodGroup ?? "-")</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            <dt class="col-sm-3">Date of Birth</dt>
-            <dd class="col-sm-9">@(Model.S_DateOfBirth?.ToString("dd-MMM-yyyy") ?? "-")</dd>
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <div class="sd-section-title">Contact</div>
+                <div class="sd-field">
+                    <div class="sd-field-icon"><i class="bi bi-envelope"></i></div>
+                    <div>
+                        <div class="sd-field-label">Email</div>
+                        <div class="sd-field-value">
+                            @if (!string.IsNullOrWhiteSpace(Model.S_Email))
+                            {
+                                <a href="mailto:@Model.S_Email" class="text-decoration-none">@Model.S_Email</a>
+                            }
+                            else
+                            {
 
-            <dt class="col-sm-3">Gender</dt>
-            <dd class="col-sm-9">@(Model.S_Gender ?? "-")</dd>
+                                <text>-</text>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="sd-field">
+                    <div class="sd-field-icon"><i class="bi bi-telephone"></i></div>
+                    <div>
+                        <div class="sd-field-label">Phone</div>
+                        <div class="sd-field-value">
+                            @if (!string.IsNullOrWhiteSpace(Model.S_Phone))
+                            {
+                                <a href="tel:@Model.S_Phone" class="text-decoration-none">@Model.S_Phone</a>
+                            }
+                            else
+                            {
 
-            <dt class="col-sm-3">Email</dt>
-            <dd class="col-sm-9">@(Model.S_Email ?? "-")</dd>
+                                <text>-</text>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="sd-field">
+                    <div class="sd-field-icon"><i class="bi bi-geo-alt"></i></div>
+                    <div>
+                        <div class="sd-field-label">Address</div>
+                        <div class="sd-field-value">@Model.FullAddress</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            <dt class="col-sm-3">Phone</dt>
-            <dd class="col-sm-9">@(Model.S_Phone ?? "-")</dd>
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="sd-section-title">Record</div>
+                <div class="row">
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="sd-field">
+                            <div class="sd-field-icon"><i class="bi bi-diagram-3"></i></div>
+                            <div>
+                                <div class="sd-field-label">Branch</div>
+                                <div class="sd-field-value">@Model.BranchName</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="sd-field">
+                            <div class="sd-field-icon"><i class="bi bi-mortarboard"></i></div>
+                            <div>
+                                <div class="sd-field-label">Class / Section</div>
+                                <div class="sd-field-value">@Model.ClassName@(Model.SectionName != "-" ? $" - {Model.SectionName}" : "")</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="sd-field">
+                            <div class="sd-field-icon"><i class="bi bi-clock-history"></i></div>
+                            <div>
+                                <div class="sd-field-label">Created</div>
+                                <div class="sd-field-value">@Model.S_CreatedAt.ToString("dd MMM yyyy, HH:mm")</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="sd-field">
+                            <div class="sd-field-icon"><i class="bi bi-arrow-repeat"></i></div>
+                            <div>
+                                <div class="sd-field-label">Last Updated</div>
+                                <div class="sd-field-value">@Model.S_UpdatedAt.ToString("dd MMM yyyy, HH:mm")</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-            <dt class="col-sm-3">Admission Date</dt>
-            <dd class="col-sm-9">@(Model.S_AdmissionDate?.ToString("dd-MMM-yyyy") ?? "-")</dd>
-
-            <dt class="col-sm-3">Created</dt>
-            <dd class="col-sm-9">@Model.S_CreatedAt.ToString("dd-MMM-yyyy HH:mm")</dd>
-
-            <dt class="col-sm-3">Last Updated</dt>
-            <dd class="col-sm-9">@Model.S_UpdatedAt.ToString("dd-MMM-yyyy HH:mm")</dd>
-        </dl>
+<!-- Guardians -->
+<div class="card shadow-sm">
+    <div class="card-header bg-white d-flex align-items-center">
+        <h6 class="mb-0"><i class="bi bi-people me-1"></i>Guardians</h6>
+        <span class="badge bg-light text-secondary ms-2">@Model.Guardians.Count()</span>
+    </div>
+    <div class="card-body">
+        @if (!Model.Guardians.Any())
+        {
+            <p class="text-muted mb-0">No guardians linked to this student.</p>
+        }
+        else
+        {
+            <div class="row g-3">
+                @foreach (var g in Model.Guardians)
+                {
+                    <div class="col-md-6 col-lg-4">
+                        <div class="guardian-card @(g.IsPrimary ? "is-primary" : "")">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <div class="guardian-avatar">@InitialsOf(g.FirstName)</div>
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold">@g.FirstName @g.LastName</div>
+                                    <div class="text-muted small">@g.Relation</div>
+                                </div>
+                                @if (g.IsPrimary)
+                                {
+                                    <span class="badge bg-success"><i class="bi bi-star-fill me-1"></i>Primary</span>
+                                }
+                            </div>
+                            <div class="small">
+                                @if (!string.IsNullOrWhiteSpace(g.Phone))
+                                {
+                                    <div class="mb-1"><i class="bi bi-telephone text-muted me-1"></i><a href="tel:@g.Phone" class="text-decoration-none">@g.Phone</a></div>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(g.Email))
+                                {
+                                    <div class="mb-1"><i class="bi bi-envelope text-muted me-1"></i><a href="mailto:@g.Email" class="text-decoration-none">@g.Email</a></div>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(g.Occupation))
+                                {
+                                    <div><i class="bi bi-briefcase text-muted me-1"></i>@g.Occupation</div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
     </div>
 </div>

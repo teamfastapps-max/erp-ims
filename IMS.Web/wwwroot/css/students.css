@@ -1,20 +1,277 @@
-/* Student module extras - loaded on top of site.css / Bootstrap */
+/* ==========================================================================
+   Student module styling
+   Tuned to sit alongside the existing IMS admin dashboard (indigo accent,
+   soft shadows, quiet borders) rather than default Bootstrap.
+   ========================================================================== */
+:root {
+    --ims-accent: #4f46e5;
+    --ims-accent-hover: #4338ca;
+    --ims-accent-soft: #eef2ff;
+    --ims-border: #e5e7eb;
+    --ims-muted: #6b7280;
+    --ims-surface: #ffffff;
+    --ims-success: #16a34a;
+    --ims-success-soft: #f0fdf4;
+}
+
+/* ---- Cards ---- */
+.card {
+    border: 1px solid var(--ims-border);
+    border-radius: 10px;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+.card-header {
+    border-bottom: 1px solid var(--ims-border);
+    font-weight: 600;
+}
+
+/* ---- Primary buttons match dashboard accent, not Bootstrap default blue ---- */
+.btn-primary {
+    background-color: var(--ims-accent);
+    border-color: var(--ims-accent);
+}
+
+    .btn-primary:hover,
+    .btn-primary:focus {
+        background-color: var(--ims-accent-hover);
+        border-color: var(--ims-accent-hover);
+    }
+
+.btn-outline-primary {
+    color: var(--ims-accent);
+    border-color: var(--ims-accent);
+}
+
+    .btn-outline-primary:hover {
+        background-color: var(--ims-accent);
+        border-color: var(--ims-accent);
+    }
+
+/* ---- Table ---- */
+.table thead th {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--ims-muted);
+    font-weight: 600;
+    border-bottom-width: 1px;
+}
 
 .table-hover tbody tr:hover {
-    background-color: rgba(13, 110, 253, 0.04);
+    background-color: #f8f8fd;
 }
 
+.table td,
+.table th {
+    vertical-align: middle;
+}
+
+/* ---- Status badges: quiet pills, not saturated Bootstrap colors ---- */
 .badge {
     font-weight: 500;
-    padding: 0.4em 0.7em;
+    font-size: 0.72rem;
+    padding: 0.35em 0.65em;
+    border-radius: 6px;
 }
 
-.card {
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    border-radius: 0.75rem;
+/* ---- Read-only / system-generated fields (Student Code, Admission No.) ---- */
+input[readonly] {
+    cursor: default;
+    background-color: #f9fafb !important;
+    color: var(--ims-muted) !important;
+    border-style: dashed;
 }
 
-dl.row dt {
-    color: #6c757d;
+/* ---- Guardian rows (edit/create form) ---- */
+.guardian-row .card-body {
+    padding: 1rem 1.25rem;
+}
+
+.guardian-search-results {
+    max-height: 220px;
+    overflow-y: auto;
+    border: 1px solid var(--ims-border);
+    border-radius: 6px;
+    background: var(--ims-surface);
+}
+
+    .guardian-search-results .list-group-item {
+        cursor: pointer;
+        border: none;
+        border-bottom: 1px solid var(--ims-border);
+    }
+
+        .guardian-search-results .list-group-item:hover {
+            background-color: #f5f5ff;
+        }
+
+        .guardian-search-results .list-group-item:last-child {
+            border-bottom: none;
+        }
+
+/* ---- Form field errors (JS-driven validation) ---- */
+.field-error {
+    min-height: 1.1em;
+}
+
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+/* ---- Pagination ---- */
+.pagination .page-link {
+    color: var(--ims-accent);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--ims-accent);
+    border-color: var(--ims-accent);
+}
+
+/* ---- Fallback toast (used only if toastr.js isn't loaded) ---- */
+.ims-toast-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1080;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 320px;
+}
+
+.ims-toast {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    transform: translateX(20px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+    .ims-toast.show {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+.ims-toast-success {
+    background-color: #16a34a;
+}
+
+.ims-toast-error {
+    background-color: #dc2626;
+}
+
+/* ---- Details page: profile hero, info fields, guardian cards ---- */
+.sd-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    font-weight: 600;
+    background-color: var(--ims-accent);
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.sd-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8125rem;
+    padding: 0.3rem 0.65rem;
+    border-radius: 6px;
+    background-color: var(--ims-accent-soft);
+    color: var(--ims-accent);
+    border: 1px solid var(--ims-border);
+}
+
+.sd-field {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.55rem 0;
+    border-bottom: 1px solid var(--ims-border);
+}
+
+    .sd-field:last-child {
+        border-bottom: none;
+    }
+
+.sd-field-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--ims-accent-soft);
+    color: var(--ims-accent);
+    flex-shrink: 0;
+    font-size: 0.95rem;
+}
+
+.sd-field-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--ims-muted);
+    margin-bottom: 0.1rem;
+}
+
+.sd-field-value {
+    font-size: 0.9375rem;
+    color: #212529;
     font-weight: 500;
+    word-break: break-word;
+}
+
+.sd-section-title {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ims-accent);
+    margin-bottom: 0.75rem;
+}
+
+.guardian-card {
+    border: 1px solid var(--ims-border);
+    border-radius: 10px;
+    padding: 1rem;
+    height: 100%;
+    transition: box-shadow 0.15s ease;
+}
+
+    .guardian-card:hover {
+        box-shadow: 0 2px 10px rgba(16, 24, 40, 0.08);
+    }
+
+    .guardian-card.is-primary {
+        border-color: var(--ims-success);
+        background-color: var(--ims-success-soft);
+    }
+
+.guardian-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    background-color: var(--ims-border);
+    color: var(--ims-muted);
+    flex-shrink: 0;
+}
+
+.guardian-card.is-primary .guardian-avatar {
+    background-color: var(--ims-success);
+    color: #fff;
 }
