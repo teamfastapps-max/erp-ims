@@ -1,0 +1,77 @@
+@model IMS.Models.ViewModels.StaffDetailsViewModel
+@{ ViewData["Title"] = "Staff Details"; }
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0"><i class="fa-solid fa-chalkboard-user me-2"></i>Staff Details</h3>
+    <div>
+        <a asp-controller="Staff" asp-action="Edit" asp-route-id="@Model.ST_Id" class="btn btn-outline-primary btn-sm">
+            <i class="fa-solid fa-pen me-1"></i> Edit
+        </a>
+        <a asp-controller="Staff" asp-action="Index" class="btn btn-outline-secondary btn-sm">Back to List</a>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label text-muted">Employee Code</label>
+                <div class="fw-semibold">@Model.ST_EmployeeCode</div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label text-muted">Status</label>
+                <div class="fw-semibold"><span class="badge @StatusBadgeClass(Model.ST_Status)">@Model.ST_Status</span></div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label text-muted">Full Name</label>
+                <div class="fw-semibold">@Model.ST_FirstName @Model.ST_LastName</div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label text-muted">Branch</label>
+                <div class="fw-semibold">@Model.BranchName</div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label text-muted">Department</label>
+                <div class="fw-semibold">@(Model.DepartmentName ?? "-")</div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label text-muted">Designation</label>
+                <div class="fw-semibold">@(Model.DesignationName ?? "-")</div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label text-muted">Email</label>
+                <div class="fw-semibold">@(Model.ST_Email ?? "-")</div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label text-muted">Phone</label>
+                <div class="fw-semibold">@(Model.ST_Phone ?? "-")</div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label text-muted">Joining Date</label>
+                <div class="fw-semibold">@(Model.ST_JoiningDate?.ToString("dd-MMM-yyyy") ?? "-")</div>
+            </div>
+        </div>
+        <hr />
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label text-muted">Created At</label>
+                <div>@Model.ST_CreatedAt.ToString("dd-MMM-yyyy HH:mm")</div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label text-muted">Last Updated</label>
+                <div>@Model.ST_UpdatedAt.ToString("dd-MMM-yyyy HH:mm")</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string StatusBadgeClass(string status) => status switch
+    {
+        "Active" => "bg-success",
+        "Inactive" => "bg-secondary",
+        "On Leave" => "bg-warning text-dark",
+        "Terminated" => "bg-danger",
+        _ => "bg-light text-dark"
+    };
+}

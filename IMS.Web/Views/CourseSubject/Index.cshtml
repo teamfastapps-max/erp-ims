@@ -1,0 +1,103 @@
+@model IMS.Models.ViewModels.CourseSubjectIndexViewModel
+@{
+    ViewData["Title"] = "Course Subjects";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0"><i class="fa-solid fa-book me-2"></i>Course Subjects</h3>
+    <a asp-controller="CourseSubject" asp-action="Create" asp-route-courseId="@Model.CourseFilter" class="btn btn-primary">
+        <i class="fa-solid fa-plus me-1"></i> Add Subject
+    </a>
+</div>
+
+<div class="card shadow-sm mb-3">
+    <div class="card-body">
+        @using (Html.BeginForm("Index", "CourseSubject", FormMethod.Get, new { @class = "row g-3 align-items-end" }))
+        {
+            <div class="col-md-4">
+                @Html.Label("courseId", "Course", new { @class = "form-label" })
+                @Html.DropDownList("courseId", Model.CourseOptions, "All Courses", new { @class = "form-select" })
+            </div>
+            <div class="col-md-2 d-grid">
+                <button type="submit" class="btn btn-outline-primary"><i class="fa-solid fa-search me-1"></i> Filter</button>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="table-responsive p-3">
+        <table id="dataTable" class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Course</th>
+                    <th>Subject</th>
+                    <th>Sequence</th>
+                    <th>Mandatory</th>
+                    <th>Max Marks</th>
+                    <th>Pass Marks</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Items.Any())
+                {
+                    <tr><td colspan="8" class="text-center text-muted py-4">No subjects found.</td></tr>
+                }
+                else
+                {
+                    var idx = 0;
+                    foreach (var item in Model.Items)
+                    {
+                        idx++;
+                        <tr id="cs-row-@item.CS_CourseId-@item.CS_SubjectId">
+                            <td>@idx</td>
+                            <td>@item.CourseName</td>
+                            <td>@item.SubjectName</td>
+                            <td>@item.CS_SequenceNo</td>
+                            <td><span class="badge @(item.CS_IsMandatory ? "bg-primary" : "bg-secondary")">@(item.CS_IsMandatory ? "Yes" : "No")</span></td>
+                            <td>@(item.CS_MaxMarks?.ToString() ?? "-")</td>
+                            <td>@(item.CS_PassMarks?.ToString() ?? "-")</td>
+                            <td class="text-end">
+                                <a asp-controller="CourseSubject" asp-action="Edit" asp-route-courseId="@item.CS_CourseId" asp-route-subjectId="@item.CS_SubjectId"
+                                   class="btn btn-sm btn-outline-primary" title="Edit"><i class="fa-solid fa-pen"></i></a>
+                                <button type="button" class="btn btn-sm btn-outline-danger cs-delete-btn"
+                                        data-course-id="@item.CS_CourseId" data-subject-id="@item.CS_SubjectId"
+                                        data-name="@item.SubjectName" title="Remove"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@Html.AntiForgeryToken()
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('#dataTable').DataTable({ pageLength: 10, lengthMenu: [10, 25, 50, 100], order: [[0, 'asc']] });
+            $(document).on("click", ".cs-delete-btn", function () {
+                var courseId = $(this).data("course-id");
+                var subjectId = $(this).data("subject-id");
+                var name = $(this).data("name");
+                if (!confirm("Remove '" + name + "' from this course?")) return;
+                $.ajax({
+                    url: "/CourseSubject/DeleteCourseSubject",
+                    type: "POST",
+                    data: { courseId: courseId, subjectId: subjectId, __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val() },
+                    success: function (r) {
+                        if (r.success) {
+                            if (window.toastr) toastr.success(r.message);
+                            $("#cs-row-" + courseId + "-" + subjectId).fadeOut(300, function () { $(this).remove(); });
+                        } else { if (window.toastr) toastr.error(r.message); }
+                    },
+                    error: function () { if (window.toastr) toastr.error("Request failed."); }
+                });
+            });
+        });
+    </script>
+}

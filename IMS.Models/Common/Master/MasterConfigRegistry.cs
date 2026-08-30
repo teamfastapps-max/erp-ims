@@ -654,7 +654,69 @@ namespace IMS.Models.Common.Master
                 }
             },
 
-            // 17. Notification Template Master
+            // 17. Student (lookup only — full CRUD via StudentsController)
+            new MasterConfig
+            {
+                EntityType = "Student",
+                SpName = "USP_Students_S",
+                TableName = "dbo.Students_S",
+                KeyColumn = "S_Id",
+                DisplayName = "Student",
+                SoftDelete = false,
+                HasAuditColumns = true,
+                MenuOrder = 20,
+                Icon = "fa-user-graduate",
+
+                Fields = new List<MasterFieldConfig>
+                {
+                    new MasterFieldConfig { ColumnName = "S_FirstName", PropertyName = "FirstName", DisplayName = "First Name", IsRequired = true, MaxLength = 100 },
+                    new MasterFieldConfig { ColumnName = "S_LastName", PropertyName = "LastName", DisplayName = "Last Name", IsRequired = true, MaxLength = 100 },
+                    new MasterFieldConfig { ColumnName = "S_StudentCode", PropertyName = "StudentCode", DisplayName = "Student Code", IsRequired = true, MaxLength = 50 }
+                }
+            },
+
+            // 18. Batch (lookup only — full CRUD via BatchController)
+            new MasterConfig
+            {
+                EntityType = "Batch",
+                SpName = "USP_Batches_BT",
+                TableName = "dbo.Batches_BT",
+                KeyColumn = "BT_Id",
+                DisplayName = "Batch",
+                SoftDelete = false,
+                HasAuditColumns = true,
+                MenuOrder = 21,
+                Icon = "fa-users",
+
+                Fields = new List<MasterFieldConfig>
+                {
+                    new MasterFieldConfig { ColumnName = "BT_Name", PropertyName = "Name", DisplayName = "Batch Name", IsRequired = true, MaxLength = 150 },
+                    new MasterFieldConfig { ColumnName = "BT_Code", PropertyName = "Code", DisplayName = "Batch Code", IsRequired = true, MaxLength = 50 }
+                }
+            },
+
+            // 19. Staff (lookup only — full CRUD via dedicated controller)
+            new MasterConfig
+            {
+                EntityType = "Staff",
+                SpName = "USP_Staff_ST",
+                TableName = "dbo.Staff_ST",
+                KeyColumn = "ST_Id",
+                DisplayName = "Staff",
+                SoftDelete = false,
+                HasAuditColumns = true,
+                MenuOrder = 22,
+                Icon = "fa-chalkboard-user",
+
+                Fields = new List<MasterFieldConfig>
+                {
+                    new MasterFieldConfig { ColumnName = "ST_FirstName", PropertyName = "FirstName", DisplayName = "First Name", IsRequired = true, MaxLength = 100 },
+                    new MasterFieldConfig { ColumnName = "ST_LastName", PropertyName = "LastName", DisplayName = "Last Name", IsRequired = true, MaxLength = 100 },
+                    new MasterFieldConfig { ColumnName = "ST_EmployeeCode", PropertyName = "EmployeeCode", DisplayName = "Employee Code", IsRequired = true, MaxLength = 50 }
+                }
+            },
+
+            // 20. Notification Template Master
             new MasterConfig
             {
                 EntityType = "NotificationTemplate",

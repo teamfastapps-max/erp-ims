@@ -1,0 +1,59 @@
+@model IMS.Models.ViewModels.AdmissionApplicationFormViewModel
+
+@if (Model.AA_Id.HasValue) { @Html.HiddenFor(m => m.AA_Id) }
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <label class="form-label">Branch <span class="text-danger">*</span></label>
+        @Html.DropDownListFor(m => m.AA_BranchId, Model.BranchOptions, "Select Branch", new { @class = "form-select" })
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Application Number</label>
+        @Html.TextBoxFor(m => m.AA_ApplicationNumber, new { @class = "form-control", placeholder = "Auto-generated if blank" })
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">First Name <span class="text-danger">*</span></label>
+        @Html.TextBoxFor(m => m.AA_FirstName, new { @class = "form-control" })
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Last Name <span class="text-danger">*</span></label>
+        @Html.TextBoxFor(m => m.AA_LastName, new { @class = "form-control" })
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Phone <span class="text-danger">*</span></label>
+        @Html.TextBoxFor(m => m.AA_Phone, new { @class = "form-control" })
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Email</label>
+        @Html.TextBoxFor(m => m.AA_Email, new { @class = "form-control", type = "email" })
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Date of Birth</label>
+        @Html.TextBoxFor(m => m.AA_DateOfBirth, "{0:yyyy-MM-dd}", new { @class = "form-control ims-datepicker-input", placeholder = "DD/MM/YYYY", @id = "AA_DateOfBirth" })
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Gender</label>
+        @Html.DropDownListFor(m => m.AA_Gender, Model.GenderOptions, "Select Gender", new { @class = "form-select" })
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Course</label>
+        @Html.DropDownListFor(m => m.AA_CourseId, Model.CourseOptions, "Select Course", new { @class = "form-select" })
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Academic Year <span class="text-danger">*</span></label>
+        @Html.DropDownListFor(m => m.AA_AcademicYearId, Model.AcademicYearOptions, "Select Year", new { @class = "form-select" })
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Status</label>
+        @Html.DropDownListFor(m => m.AA_Status, Model.StatusOptions, new { @class = "form-select" })
+    </div>
+    <div class="col-md-12">
+        <label class="form-label">Notes</label>
+        @Html.TextAreaFor(m => m.AA_Notes, new { @class = "form-control", rows = "3" })
+    </div>
+</div>
+
+<div class="d-flex justify-content-end gap-2 mt-4">
+    <a asp-controller="AdmissionApplication" asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check me-1"></i> Save Application</button>
+</div>

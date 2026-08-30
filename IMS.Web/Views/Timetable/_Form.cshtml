@@ -1,0 +1,51 @@
+@model IMS.Models.ViewModels.TimetableFormViewModel
+
+@if (Model.TT_Id.HasValue) { @Html.HiddenFor(m => m.TT_Id) }
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <label class="form-label">Branch <span class="text-danger">*</span></label>
+        @Html.DropDownListFor(m => m.TT_BranchId, Model.BranchOptions, "Select Branch", new { @class = "form-select" })
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Batch <span class="text-danger">*</span></label>
+        @Html.DropDownListFor(m => m.TT_BatchId, Model.BatchOptions, "Select Batch", new { @class = "form-select" })
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Subject <span class="text-danger">*</span></label>
+        @Html.DropDownListFor(m => m.TT_SubjectId, Model.SubjectOptions, "Select Subject", new { @class = "form-select" })
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Staff <span class="text-danger">*</span></label>
+        @Html.DropDownListFor(m => m.TT_StaffId, Model.StaffOptions, "Select Staff", new { @class = "form-select select2-staff" })
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Classroom</label>
+        @Html.DropDownListFor(m => m.TT_ClassroomId, Model.ClassroomOptions, "Select Classroom", new { @class = "form-select" })
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Day <span class="text-danger">*</span></label>
+        @Html.DropDownListFor(m => m.TT_DayOfWeek, Model.DayOfWeekOptions, "Select Day", new { @class = "form-select" })
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Start Time <span class="text-danger">*</span></label>
+        @Html.TextBoxFor(m => m.TT_StartTime, new { @class = "form-control", type = "time" })
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">End Time <span class="text-danger">*</span></label>
+        @Html.TextBoxFor(m => m.TT_EndTime, new { @class = "form-control", type = "time" })
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Effective From</label>
+        @Html.TextBoxFor(m => m.TT_EffectiveFrom, "{0:yyyy-MM-dd}", new { @class = "form-control ims-datepicker-input", placeholder = "DD/MM/YYYY", @id = "TT_EffectiveFrom" })
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Effective To</label>
+        @Html.TextBoxFor(m => m.TT_EffectiveTo, "{0:yyyy-MM-dd}", new { @class = "form-control ims-datepicker-input", placeholder = "DD/MM/YYYY", @id = "TT_EffectiveTo" })
+    </div>
+</div>
+
+<div class="d-flex justify-content-end gap-2 mt-4">
+    <a asp-controller="Timetable" asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check me-1"></i> Save Entry</button>
+</div>

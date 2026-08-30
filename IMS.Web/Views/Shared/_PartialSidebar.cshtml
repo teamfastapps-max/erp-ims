@@ -44,63 +44,72 @@
         <ul class="nav flex-column">
 
             <li class="nav-item">
-                <a class="nav-link @isActive("Teacher", "Teacher")"
-                   asp-area="Teacher"
-                   asp-controller="Teacher"
+                <a class="nav-link @isActive("", "AdmissionApplication")"
+                   asp-controller="AdmissionApplication"
                    asp-action="Index">
 
-                    <i class="fa-solid fa-chalkboard-user"></i>
-                    <span>Teachers</span>
+                    <i class="fa-solid fa-file-lines"></i>
+                    <span>Admissions</span>
                 </a>
             </li>
 
-
             <li class="nav-item">
-                @* <a class="nav-link @isActive("Student", "Student")"
-                   asp-area="Student"
-                   asp-controller="Student"
-                   asp-action="Index"> *@
-                    <a class="nav-link @isActive("Student", "Student")"
-                       asp-controller="Students"
-                       asp-action="Index">
+                <a class="nav-link @isActive("", "Students")"
+                   asp-controller="Students"
+                   asp-action="Index">
+
                     <i class="fa-solid fa-user-graduate"></i>
                     <span>Students</span>
                 </a>
             </li>
 
-
             <li class="nav-item">
-                <a class="nav-link @isActive("Course", "Course")"
-                   asp-area="Course"
-                   asp-controller="Course"
+                <a class="nav-link @isActive("", "Staff")"
+                   asp-controller="Staff"
                    asp-action="Index">
 
-                    <i class="fa-solid fa-book-open"></i>
-                    <span>Courses</span>
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                    <span>Staff</span>
                 </a>
             </li>
 
-
             <li class="nav-item">
-                <a class="nav-link @isActive("Subject", "Subject")"
-                   asp-area="Subject"
-                   asp-controller="Subject"
+                <a class="nav-link @isActive("", "CourseSubject")"
+                   asp-controller="CourseSubject"
                    asp-action="Index">
 
-                    <i class="fa-solid fa-book"></i>
-                    <span>Subjects</span>
+                    <i class="fa-solid fa-link"></i>
+                    <span>Course Subjects</span>
                 </a>
             </li>
 
-
             <li class="nav-item">
-                <a class="nav-link @isActive("Batch", "Batch")"
-                   asp-area="Batch"
+                <a class="nav-link @isActive("", "Batch")"
                    asp-controller="Batch"
                    asp-action="Index">
 
                     <i class="fa-solid fa-users"></i>
                     <span>Batches</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link @isActive("", "Enrollment")"
+                   asp-controller="Enrollment"
+                   asp-action="Index">
+
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>Enrollments</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link @isActive("", "Timetable")"
+                   asp-controller="Timetable"
+                   asp-action="Index">
+
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <span>Timetable</span>
                 </a>
             </li>
 
@@ -113,8 +122,7 @@
         <ul class="nav flex-column">
 
             <li class="nav-item">
-                <a class="nav-link @isActive("Attendance", "Attendance")"
-                   asp-area="Attendance"
+                <a class="nav-link @isActive("", "Attendance")"
                    asp-controller="Attendance"
                    asp-action="Index">
 
@@ -125,8 +133,7 @@
 
 
             <li class="nav-item">
-                <a class="nav-link @isActive("Fees", "Fees")"
-                   asp-area="Fees"
+                <a class="nav-link @isActive("", "Fees")"
                    asp-controller="Fees"
                    asp-action="Index">
 
@@ -137,8 +144,7 @@
 
 
             <li class="nav-item">
-                <a class="nav-link @isActive("Exam", "Exam")"
-                   asp-area="Exam"
+                <a class="nav-link @isActive("", "Exam")"
                    asp-controller="Exam"
                    asp-action="Index">
 
@@ -149,13 +155,12 @@
 
 
             <li class="nav-item">
-                <a class="nav-link @isActive("Result", "Result")"
-                   asp-area="Result"
-                   asp-controller="Result"
+                <a class="nav-link @isActive("", "Expense")"
+                   asp-controller="Expense"
                    asp-action="Index">
 
-                    <i class="fa-solid fa-square-poll-vertical"></i>
-                    <span>Results</span>
+                    <i class="fa-solid fa-receipt"></i>
+                    <span>Expenses</span>
                 </a>
             </li>
 

@@ -1,0 +1,48 @@
+@model IMS.Models.ViewModels.ExpenseFormViewModel
+
+@if (Model.EXP_Id.HasValue)
+{
+    @Html.HiddenFor(m => m.EXP_Id)
+}
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <label for="EXP_BranchId" class="form-label">Branch <span class="text-danger">*</span></label>
+        @Html.DropDownListFor(m => m.EXP_BranchId, Model.BranchOptions, "Select Branch", new { @class = "form-select" })
+        <div class="text-danger small field-error" data-for="EXP_BranchId"></div>
+    </div>
+    <div class="col-md-6">
+        <label for="EXP_ExpenseCategoryId" class="form-label">Category <span class="text-danger">*</span></label>
+        @Html.DropDownListFor(m => m.EXP_ExpenseCategoryId, Model.ExpenseCategoryOptions, "Select Category", new { @class = "form-select" })
+        <div class="text-danger small field-error" data-for="EXP_ExpenseCategoryId"></div>
+    </div>
+    <div class="col-md-4">
+        <label for="EXP_VendorId" class="form-label">Vendor</label>
+        @Html.DropDownListFor(m => m.EXP_VendorId, Model.VendorOptions, "Select Vendor", new { @class = "form-select" })
+    </div>
+    <div class="col-md-4">
+        <label for="EXP_ExpenseDate" class="form-label">Expense Date <span class="text-danger">*</span></label>
+        @Html.TextBoxFor(m => m.EXP_ExpenseDate, "{0:yyyy-MM-dd}", new { @class = "form-control ims-datepicker-input", placeholder = "DD/MM/YYYY", @id = "EXP_ExpenseDate" })
+        <div class="text-danger small field-error" data-for="EXP_ExpenseDate"></div>
+    </div>
+    <div class="col-md-4">
+        <label for="EXP_Amount" class="form-label">Amount <span class="text-danger">*</span></label>
+        @Html.TextBoxFor(m => m.EXP_Amount, new { @class = "form-control", type = "number", min = "0", step = "0.01" })
+        <div class="text-danger small field-error" data-for="EXP_Amount"></div>
+    </div>
+    <div class="col-md-6">
+        <label for="EXP_PaymentMethodId" class="form-label">Payment Method</label>
+        @Html.DropDownListFor(m => m.EXP_PaymentMethodId, Model.PaymentMethodOptions, "Select Method", new { @class = "form-select" })
+    </div>
+    <div class="col-md-6">
+        <label for="EXP_Description" class="form-label">Description</label>
+        @Html.TextAreaFor(m => m.EXP_Description, new { @class = "form-control", rows = "2", placeholder = "Expense details" })
+    </div>
+</div>
+
+<div class="d-flex justify-content-end gap-2 mt-4">
+    <a asp-controller="Expense" asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+    <button type="submit" class="btn btn-primary">
+        <i class="fa-solid fa-check me-1"></i> Save Expense
+    </button>
+</div>
