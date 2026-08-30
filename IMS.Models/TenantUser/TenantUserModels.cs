@@ -114,4 +114,12 @@ namespace IMS.Models.TenantUser
         public string Name { get; set; }
         public List<string> Permissions { get; set; } = new List<string>();
     }
+    public class UpdateMyProfileRequest
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Phone { get; set; }
+        public LocationModel Location { get; set; }
+        public string ProfilePic { get; set; }
+    }
 }

@@ -33,7 +33,7 @@ namespace IMS.Web.Controllers
             return RedirectToAction("Dashboard");
         }
 
-        //[Authorize(Roles = AppRoles.TenantUser)]
+        //[Authorize(Roles = AppRoles.TenantAdmin)]
         [Authorize]
         public async Task<IActionResult> Dashboard()
         {
@@ -43,7 +43,7 @@ namespace IMS.Web.Controllers
             return View();
         }
 
-        [Permission(Permissions.ReadVendor)]
+        //[Permission(Permissions.ReadVendor)]
         public IActionResult AdminPage()
         {
             return Content("Only TENANT_ADMIN can see this");

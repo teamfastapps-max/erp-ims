@@ -1,10 +1,12 @@
-﻿using IMS.Models.Teacher;
+﻿using IMS.Helpers.Constants;
+using IMS.Models.Teacher;
 using IMS.Services.Interfaces;
+using IMS.Web.Authorization;
+using IMS.Web.Extensions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using IMS.Web.Extensions;
 
 namespace IMS.Web.Controllers
 {
@@ -17,8 +19,9 @@ namespace IMS.Web.Controllers
         {
             _teacherService = teacherService;
         }
-       
+
         // GET: /Teachers
+        [Permission(Permissions.ViewTeacher)]
         public async Task<IActionResult> Index(string searchTerm, string status, Guid? branchId, int page = 1, int pageSize = 10)
         {
             var tenantId = GetTenantId();
@@ -32,6 +35,7 @@ namespace IMS.Web.Controllers
         }
 
         // GET: /Teachers/Create
+        [Permission(Permissions.AddTeacher)]
         public async Task<IActionResult> Create()
         {
             var tenantId = GetTenantId();
@@ -45,6 +49,7 @@ namespace IMS.Web.Controllers
         }
 
         // GET: /Teachers/Edit/{id}
+        [Permission(Permissions.UpdateTeacher)]
         public async Task<IActionResult> Edit(Guid id)
         {
             var tenantId = GetTenantId();
@@ -60,6 +65,7 @@ namespace IMS.Web.Controllers
         }
 
         // GET: /Teachers/Details/{id}
+        [Permission(Permissions.ViewTeacher)]
         public async Task<IActionResult> Details(Guid id)
         {
             var tenantId = GetTenantId();
@@ -77,6 +83,7 @@ namespace IMS.Web.Controllers
         // POST: /Teachers/AddTeacher (AJAX)
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Permission(Permissions.AddTeacher)]
         public async Task<IActionResult> AddTeacher(TeacherFormViewModel model)
         {
             var tenantId = GetTenantId();
@@ -92,6 +99,7 @@ namespace IMS.Web.Controllers
         // POST: /Teachers/EditTeacher (AJAX)
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Permission(Permissions.UpdateTeacher)]
         public async Task<IActionResult> EditTeacher(TeacherFormViewModel model)
         {
             var tenantId = GetTenantId();
@@ -107,6 +115,7 @@ namespace IMS.Web.Controllers
         // POST: /Teachers/DeleteTeacher/{id} (AJAX)
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Permission(Permissions.DeleteTeacher)]
         public async Task<IActionResult> DeleteTeacher(Guid id)
         {
             var tenantId = GetTenantId();
@@ -119,8 +128,6 @@ namespace IMS.Web.Controllers
             return Json(new { success = result.Success, message = result.Message });
         }
 
-        // Set by UserSessionService.StoreUserSessionAsync via
-        // identity?.AddClaim(new Claim("tenant_id", profile.TenantId))
         private Guid GetTenantId()
         {
             var claim = User.FindFirst("tenant_id")?.Value;

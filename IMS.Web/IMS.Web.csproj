@@ -21,4 +21,8 @@
     <ProjectReference Include="..\IMS.Services\IMS.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\uploads\TenantUserProfile\" />
+  </ItemGroup>
+
 </Project>

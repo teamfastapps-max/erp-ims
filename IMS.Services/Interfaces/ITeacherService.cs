@@ -9,9 +9,7 @@ namespace IMS.Services.Interfaces
 {
     public interface ITeacherService
     {
-        Task<TeacherIndexViewModel> GetTeacherListAsync(
-            Guid tenantId, string accessToken, string searchTerm, string status, Guid? branchId, int pageNumber, int pageSize);
-
+        Task<TeacherIndexViewModel> GetTeacherListAsync(Guid tenantId, string accessToken, string searchTerm, string status, Guid? branchId, int pageNumber, int pageSize);
         Task<TeacherDetailsViewModel> GetTeacherDetailsAsync(Guid id, Guid tenantId, string accessToken);
 
         Task<TeacherFormViewModel> GetNewTeacherFormAsync(Guid tenantId, string accessToken);
