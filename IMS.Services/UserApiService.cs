@@ -210,10 +210,10 @@ namespace IMS.Services
             }
         }
 
-        public async Task<TenantUserModel> CreateTenantUserAsync(CreateTenantUserRequest request, string accessToken)
+        public async Task<ApiResult<TenantUserModel>> CreateTenantUserAsync(CreateTenantUserRequest request, string accessToken)
         {
             if (request == null || string.IsNullOrEmpty(accessToken))
-                return null;
+                return ApiResult<TenantUserModel>.Fail("Invalid request.");
 
             var url = $"{_userApiSettings.BaseUrl}{_userApiSettings.Endpoints.TenantUsers}";
             try
@@ -228,23 +228,23 @@ namespace IMS.Services
                 if (!response.IsSuccessStatusCode)
                 {
                     _logger.LogWarning("users/tenant POST returned {StatusCode}: {Body}", response.StatusCode, body);
-                    return null;
+                    return ApiResult<TenantUserModel>.Fail(ExtractFriendlyErrorMessage(body, response.StatusCode));
                 }
 
                 var parsed = JsonSerializer.Deserialize<ApiResponseModel<TenantUserModel>>(body, DeserializeOptions);
-                return parsed?.Data;
+                return ApiResult<TenantUserModel>.Ok(parsed?.Data);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error calling users/tenant POST");
-                return null;
+                return ApiResult<TenantUserModel>.Fail("Could not reach the account service. Please try again.");
             }
         }
 
-        public async Task<TenantUserModel> UpdateTenantUserAsync(string id, UpdateTenantUserRequest request, string accessToken)
+        public async Task<ApiResult<TenantUserModel>> UpdateTenantUserAsync(string id, UpdateTenantUserRequest request, string accessToken)
         {
             if (string.IsNullOrEmpty(id) || request == null || string.IsNullOrEmpty(accessToken))
-                return null;
+                return ApiResult<TenantUserModel>.Fail("Invalid request.");
 
             var path = _userApiSettings.Endpoints.TenantUserById.Replace("{id}", id);
             var url = $"{_userApiSettings.BaseUrl}{path}";
@@ -261,19 +261,18 @@ namespace IMS.Services
                 if (!response.IsSuccessStatusCode)
                 {
                     _logger.LogWarning("users/tenant/{Id} PATCH returned {StatusCode}: {Body}", id, response.StatusCode, body);
-                    return null;
+                    return ApiResult<TenantUserModel>.Fail(ExtractFriendlyErrorMessage(body, response.StatusCode));
                 }
 
                 var parsed = JsonSerializer.Deserialize<ApiResponseModel<TenantUserModel>>(body, DeserializeOptions);
-                return parsed?.Data;
+                return ApiResult<TenantUserModel>.Ok(parsed?.Data);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error calling users/tenant/{Id} PATCH", id);
-                return null;
+                return ApiResult<TenantUserModel>.Fail("Could not reach the account service. Please try again.");
             }
         }
-
         public async Task<bool> DeleteTenantUserAsync(string id, string accessToken)
         {
             if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(accessToken))
@@ -301,14 +300,36 @@ namespace IMS.Services
                 return false;
             }
         }
-
-        // ------------------------------------------------------------------
-
         private HttpClient CreateAuthorizedClient(string accessToken)
         {
             var httpClient = _httpClientFactory.CreateClient();
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             return httpClient;
         }
+        private static string ExtractFriendlyErrorMessage(string body, System.Net.HttpStatusCode statusCode)
+        {
+            string rawMessage = null;
+            try
+            {
+                var parsed = JsonSerializer.Deserialize<ApiResponseModel<object>>(body, DeserializeOptions);
+                rawMessage = parsed?.Message;
+            }
+            catch (JsonException)
+            {
+                // body wasn't valid JSON — fall through to a generic message below
+            }
+
+            var looksLikeConflict = statusCode == System.Net.HttpStatusCode.Conflict
+                || (rawMessage?.IndexOf("409", StringComparison.OrdinalIgnoreCase) >= 0)
+                || (rawMessage?.IndexOf("conflict", StringComparison.OrdinalIgnoreCase) >= 0);
+
+            if (looksLikeConflict)
+                return "This email address is already registered. Please use a different email.";
+
+            return string.IsNullOrWhiteSpace(rawMessage)
+                ? "The account service rejected this request. Please check the details and try again."
+                : rawMessage;
+        }
+
     }
 }

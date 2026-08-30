@@ -13,8 +13,7 @@ namespace IMS.DAL.Interfaces
         Task<List<Teacher>> GetProfilesByIdsAsync(List<Guid> ids, Guid tenantId);
 
         Task<bool> IsEmployeeCodeTakenAsync(Guid tenantId, string employeeCode, Guid? excludeId);
-        Task CreateTeacherProfileAsync(Teacher teacher);
-        Task<bool> UpdateTeacherProfileAsync(Teacher teacher);
+        Task<bool> AddEditTeacherProfileAsync(Teacher teacher);
         Task<bool> SoftDeleteAsync(Guid id, Guid tenantId);
     }
 }

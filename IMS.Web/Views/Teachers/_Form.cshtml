@@ -24,8 +24,9 @@
         <div class="col-md-4">
             <label for="Password" class="form-label">Password</label>
             @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
-            <div class="form-text small">Min 8 characters, with uppercase, lowercase, a number and a symbol.</div>
-            <div class="text-danger small field-error" data-for="Password"></div>
+            <div id="passwordHint" class="form-text small text-muted">
+                Min 8 characters, with uppercase, lowercase, a number and a symbol.
+            </div>
         </div>
     }
     <div class="col-md-4">

@@ -13,6 +13,13 @@
 <div class="card shadow-sm">
     <div class="card-body p-4">
         <form id="teacherEditForm">
+            @if (Model.IsPendingSetup)
+            {
+                <div class="alert alert-warning d-flex align-items-center mb-4">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    This teacher was added from the tenant management portal and hasn't been fully set up here yet. Fill in the details below and save to complete their profile.
+                </div>
+            }
             @Html.AntiForgeryToken()
             @await Html.PartialAsync("_Form", Model)
         </form>

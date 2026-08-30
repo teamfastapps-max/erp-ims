@@ -55,34 +55,21 @@ namespace IMS.DAL
             using var conn = _dbHelper.GetConnection();
             using var cmd = _dbHelper.CreateCommand("SP_Teachers_CheckEmployeeCodeExists", conn);
             cmd.Parameters.Add("@T_TenantId", SqlDbType.UniqueIdentifier).Value = tenantId;
-            cmd.Parameters.Add("@EmployeeCode", SqlDbType.NVarChar, 50).Value = employeeCode;
+            cmd.Parameters.Add("@EmployeeCode", SqlDbType.NVarChar, 50).Value = (object)employeeCode ?? DBNull.Value;
             cmd.Parameters.Add("@ExcludeId", SqlDbType.UniqueIdentifier).Value = (object)excludeId ?? DBNull.Value;
-
             await conn.OpenAsync();
             return (int)await cmd.ExecuteScalarAsync() == 1;
         }
-
-        public async Task CreateTeacherProfileAsync(Teacher t)
+        public async Task<bool> AddEditTeacherProfileAsync(Teacher t)
         {
             using var conn = _dbHelper.GetConnection();
-            using var cmd = _dbHelper.CreateCommand("SP_Teachers_Create", conn);
-            AddTeacherParameters(cmd, t);
-
-            await conn.OpenAsync();
-            await cmd.ExecuteNonQueryAsync();
-        }
-
-        public async Task<bool> UpdateTeacherProfileAsync(Teacher t)
-        {
-            using var conn = _dbHelper.GetConnection();
-            using var cmd = _dbHelper.CreateCommand("SP_Teachers_Update", conn);
-            AddTeacherParameters(cmd, t);
+            using var cmd = _dbHelper.CreateCommand("SP_Teachers_AddEdit", conn);
+            AddTeacherParameters(cmd, t); 
 
             await conn.OpenAsync();
             var rowsAffected = (int)await cmd.ExecuteScalarAsync();
             return rowsAffected > 0;
         }
-
         public async Task<bool> SoftDeleteAsync(Guid id, Guid tenantId)
         {
             using var conn = _dbHelper.GetConnection();
@@ -100,7 +87,7 @@ namespace IMS.DAL
             cmd.Parameters.Add("@T_Id", SqlDbType.UniqueIdentifier).Value = t.T_Id;
             cmd.Parameters.Add("@T_TenantId", SqlDbType.UniqueIdentifier).Value = t.T_TenantId;
             cmd.Parameters.Add("@T_BranchId", SqlDbType.UniqueIdentifier).Value = t.T_BranchId;
-            cmd.Parameters.Add("@T_EmployeeCode", SqlDbType.NVarChar, 50).Value = t.T_EmployeeCode;
+            cmd.Parameters.Add("@T_EmployeeCode", SqlDbType.NVarChar, 50).Value = (object)t.T_EmployeeCode ?? DBNull.Value;
             cmd.Parameters.Add("@T_Designation", SqlDbType.NVarChar, 100).Value = (object)t.T_Designation ?? DBNull.Value;
             cmd.Parameters.Add("@T_Department", SqlDbType.NVarChar, 100).Value = (object)t.T_Department ?? DBNull.Value;
             cmd.Parameters.Add("@T_JoiningDate", SqlDbType.Date).Value = (object)t.T_JoiningDate ?? DBNull.Value;
@@ -125,7 +112,7 @@ namespace IMS.DAL
             T_Status = r["T_Status"] as string,
             T_CreatedAt = r.GetDateTime(r.GetOrdinal("T_CreatedAt")),
             T_UpdatedAt = r.GetDateTime(r.GetOrdinal("T_UpdatedAt")),
-            T_DeletedAt = r["T_DeletedAt"] as DateTime?
+            T_IsActive = r.GetBoolean(r.GetOrdinal("T_IsActive"))
         };
     }
 }

@@ -7,6 +7,8 @@
 
 (function () {
     "use strict";
+    if (window.__imsTeacherJsLoaded) return;   
+    window.__imsTeacherJsLoaded = true;    
 
     if (window.toastr) {
         toastr.options = {
@@ -102,15 +104,17 @@
 
         if (isCreate) {
             const $password = $form.find("[name='Password']");
+            const $passwordHint = $form.find("#passwordHint");
             const passwordVal = $password.val() || "";
-            if (!passwordVal) {
-                setFieldError($password, "Password is required.");
-                errors.push("Password is required.");
+
+            if (!passwordVal || !STRONG_PASSWORD_REGEX.test(passwordVal)) {
+                $password.addClass("is-invalid");
+                $passwordHint.removeClass("text-muted").addClass("text-danger");
+                errors.push(passwordVal ? "Password does not meet the strength requirements." : "Password is required.");
                 isValid = false;
-            } else if (!STRONG_PASSWORD_REGEX.test(passwordVal)) {
-                setFieldError($password, "Min 8 characters, with uppercase, lowercase, a number and a symbol.");
-                errors.push("Password does not meet the strength requirements.");
-                isValid = false;
+            } else {
+                $password.removeClass("is-invalid");
+                $passwordHint.removeClass("text-danger").addClass("text-muted");
             }
         }
 
@@ -128,6 +132,14 @@
 
         return isValid;
     }
+
+    $(document).on("input", "#teacherCreateForm [name='Password']", function () {
+        const $password = $(this);
+        const $passwordHint = $password.closest("form").find("#passwordHint");
+        const isValidPwd = STRONG_PASSWORD_REGEX.test($password.val() || "");
+        $password.toggleClass("is-invalid", !isValidPwd);
+        $passwordHint.toggleClass("text-danger", !isValidPwd).toggleClass("text-muted", isValidPwd);
+    });
 
     // ------------------------------------------------------------------
     // AJAX form submit (Create / Edit)
@@ -156,6 +168,13 @@
                         }, 700);
                     } else {
                         showError(response.message || "Something went wrong.");
+
+                        if (response.message && response.message.toLowerCase().indexOf("email") >= 0) {
+                            const $email = $form.find("[name='Email']");
+                            $email.addClass("is-invalid");
+                            $form.find(".field-error[data-for='Email']").text(response.message);
+                        }
+
                         $submitBtn.prop("disabled", false).html(originalText);
                     }
                 },

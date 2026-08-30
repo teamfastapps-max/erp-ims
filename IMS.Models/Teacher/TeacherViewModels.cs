@@ -18,6 +18,7 @@ namespace IMS.Models.Teacher
         public string Designation { get; set; }
         public string Department { get; set; }
         public string T_Status { get; set; }
+        public bool IsPendingSetup { get; set; }   
     }
 
     public class TeacherIndexViewModel
@@ -55,11 +56,11 @@ namespace IMS.Models.Teacher
 
     public class TeacherFormViewModel
     {
-        public Guid? T_Id { get; set; } // null on Create, populated on Edit
+        public Guid? T_Id { get; set; }
 
-        // ---- Identity fields (posted to the Users API) ----
+        public bool IsPendingSetup { get; set; }
         public string Email { get; set; }
-        public string Password { get; set; } // Create only; blank => auto-generated temp password
+        public string Password { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Phone { get; set; }

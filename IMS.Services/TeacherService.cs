@@ -17,7 +17,8 @@ namespace IMS.Services
         private readonly ITeacherDAL _repo;
         private readonly IUserApiService _userApi;
         private readonly IRoleApiService _roleApi;
-
+        private const string PendingSetupLabel = "Pending Setup";
+        private const string TeacherRoleName = "Teacher";
         public TeacherService(ITeacherDAL repo, IUserApiService userApi, IRoleApiService roleApi)
         {
             _repo = repo;
@@ -31,14 +32,14 @@ namespace IMS.Services
             pageSize = pageSize is < 1 or > 100 ? 10 : pageSize;
 
             var apiPage = await _userApi.GetTenantUsersAsync(pageNumber, pageSize, accessToken);
-            var userIds = apiPage.Docs
+            var teacherDocs = apiPage.Docs.Where(u => string.Equals(u.CustomRoleName, TeacherRoleName, StringComparison.OrdinalIgnoreCase)).ToList();
+            var userIds = teacherDocs
                 .Where(u => Guid.TryParse(u.Id, out _))
                 .Select(u => Guid.Parse(u.Id))
                 .ToList();
 
             var profiles = await _repo.GetProfilesByIdsAsync(userIds, tenantId);
             var profileById = profiles.ToDictionary(p => p.T_Id);
-
             var vm = new TeacherIndexViewModel
             {
                 SearchTerm = searchTerm,
@@ -46,42 +47,40 @@ namespace IMS.Services
                 BranchFilter = branchId,
                 PageNumber = pageNumber,
                 PageSize = pageSize,
-                TotalCount = apiPage.Meta?.TotalDocs ?? apiPage.Docs.Count,
+                //TotalCount = apiPage.Meta?.TotalDocs ?? apiPage.Docs.Count,
+                TotalCount = teacherDocs.Count,
                 BranchOptions = HardcodedMasterData.GetBranchSelectList(branchId),
                 StatusOptions = BuildTeacherStatusOptions(status)
             };
 
-            foreach (var u in apiPage.Docs)
+            foreach (var u in teacherDocs)
             {
                 if (!Guid.TryParse(u.Id, out var id)) continue;
                 profileById.TryGetValue(id, out var profile);
+                var isPending = profile == null;
 
-                // Only a teacher with a local profile row is a "teacher" as far as
-                // this module is concerned — skip tenant users that aren't teachers.
-                if (profile == null) continue;
-
-                if (branchId.HasValue && profile.T_BranchId != branchId.Value) continue;
-                if (!string.IsNullOrWhiteSpace(status) && !string.Equals(profile.T_Status, status, StringComparison.OrdinalIgnoreCase)) continue;
+                if (branchId.HasValue && (isPending || profile.T_BranchId != branchId.Value)) continue;
+                if (!string.IsNullOrWhiteSpace(status) && (isPending || !string.Equals(profile.T_Status, status, StringComparison.OrdinalIgnoreCase))) continue;
                 if (!string.IsNullOrWhiteSpace(searchTerm))
                 {
-                    var haystack = $"{u.FullName} {profile.T_EmployeeCode} {u.Email} {u.Phone}";
+                    var haystack = $"{u.FullName} {profile?.T_EmployeeCode} {u.Email} {u.Phone}";
                     if (haystack.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) < 0) continue;
                 }
 
                 vm.Teachers.Add(new TeacherListItemViewModel
                 {
                     T_Id = id,
-                    T_EmployeeCode = profile.T_EmployeeCode,
+                    T_EmployeeCode = profile?.T_EmployeeCode,
                     FullName = u.FullName,
                     Email = u.Email,
                     Phone = u.Phone,
-                    BranchName = HardcodedMasterData.GetBranchName(profile.T_BranchId),
-                    Designation = profile.T_Designation,
-                    Department = profile.T_Department,
-                    T_Status = profile.T_Status
+                    BranchName = isPending ? "-" : HardcodedMasterData.GetBranchName(profile.T_BranchId),
+                    Designation = profile?.T_Designation,
+                    Department = profile?.T_Department,
+                    T_Status = isPending ? PendingSetupLabel : profile.T_Status,
+                    IsPendingSetup = isPending
                 });
             }
-
             return vm;
         }
 
@@ -130,9 +129,10 @@ namespace IMS.Services
             await Task.WhenAll(identityTask, profileTask);
 
             var identity = identityTask.Result;
-            var profile = profileTask.Result;
-            if (identity == null || profile == null) return null;
+            if (identity == null) return null;
 
+            var profile = profileTask.Result;
+            var hasProfile = profile != null && profile.T_IsActive;
             var vm = new TeacherFormViewModel
             {
                 T_Id = id,
@@ -147,15 +147,15 @@ namespace IMS.Services
                 State = identity.Location?.State,
                 PostalCode = identity.Location?.PostalCode,
                 Country = identity.Location?.Country,
-                T_BranchId = profile.T_BranchId,
-                T_EmployeeCode = profile.T_EmployeeCode,
-                T_Designation = profile.T_Designation,
-                T_Department = profile.T_Department,
-                T_JoiningDate = profile.T_JoiningDate,
-                T_Qualification = profile.T_Qualification,
-                T_ExperienceYears = profile.T_ExperienceYears,
-                T_BloodGroup = profile.T_BloodGroup,
-                T_Status = profile.T_Status
+                T_BranchId = hasProfile ? profile.T_BranchId : Guid.Empty,
+                T_EmployeeCode = hasProfile ? profile.T_EmployeeCode : null,
+                T_Designation = hasProfile ? profile.T_Designation : null,
+                T_Department = hasProfile ? profile.T_Department : null,
+                T_JoiningDate = hasProfile ? profile.T_JoiningDate : null,
+                T_Qualification = hasProfile ? profile.T_Qualification : null,
+                T_ExperienceYears = hasProfile ? profile.T_ExperienceYears : null,
+                T_BloodGroup = hasProfile ? profile.T_BloodGroup : null,
+                T_Status = hasProfile ? profile.T_Status : "Active",
             };
 
             await PopulateDropdownsAsync(vm, accessToken);
@@ -184,8 +184,8 @@ namespace IMS.Services
             };
 
             var created = await _userApi.CreateTenantUserAsync(createRequest, accessToken);
-            if (created == null || !Guid.TryParse(created.Id, out var newId))
-                return ServiceResult.Fail("Could not create the teacher's login account. Please try again.");
+            if (!created.Success || created.Data == null || !Guid.TryParse(created.Data.Id, out var newId))
+                return ServiceResult.Fail(created.ErrorMessage ?? "Could not create the teacher's login account. Please try again.");
 
             var entity = new Teacher
             {
@@ -204,14 +204,11 @@ namespace IMS.Services
 
             try
             {
-                await _repo.CreateTeacherProfileAsync(entity);
+                await _repo.AddEditTeacherProfileAsync(entity);
             }
             catch
             {
-                // Local profile write failed after the login account was already
-                // created — best-effort rollback so we don't leave an orphaned
-                // login with no teacher profile behind it.
-                await _userApi.DeleteTenantUserAsync(created.Id, accessToken);
+                await _userApi.DeleteTenantUserAsync(created.Data.Id, accessToken);
                 throw;
             }
 
@@ -223,7 +220,9 @@ namespace IMS.Services
             if (!model.T_Id.HasValue)
                 return ServiceResult.Fail("Teacher Id is required for update.");
 
-            if (await _repo.IsEmployeeCodeTakenAsync(tenantId, model.T_EmployeeCode, model.T_Id))
+            var employeeCode = string.IsNullOrWhiteSpace(model.T_EmployeeCode)? GenerateEmployeeCode() : model.T_EmployeeCode;
+
+            if (await _repo.IsEmployeeCodeTakenAsync(tenantId, employeeCode, model.T_Id))
                 return ServiceResult.Fail("This employee code is already in use.");
 
             var updateRequest = new UpdateTenantUserRequest
@@ -237,15 +236,15 @@ namespace IMS.Services
             };
 
             var updated = await _userApi.UpdateTenantUserAsync(model.T_Id.Value.ToString(), updateRequest, accessToken);
-            if (updated == null)
-                return ServiceResult.Fail("Could not update the teacher's account. Please try again.");
+            if (!updated.Success || updated.Data == null)
+                return ServiceResult.Fail(updated.ErrorMessage ?? "Could not update the teacher's account. Please try again.");
 
             var entity = new Teacher
             {
                 T_Id = model.T_Id.Value,
                 T_TenantId = tenantId,
                 T_BranchId = model.T_BranchId,
-                T_EmployeeCode = model.T_EmployeeCode,
+                T_EmployeeCode = employeeCode,
                 T_Designation = model.T_Designation,
                 T_Department = model.T_Department,
                 T_JoiningDate = model.T_JoiningDate,
@@ -255,8 +254,10 @@ namespace IMS.Services
                 T_Status = model.T_Status
             };
 
-            var success = await _repo.UpdateTeacherProfileAsync(entity);
-            return success ? ServiceResult.Ok("Teacher updated successfully.", model.T_Id) : ServiceResult.Fail("Teacher profile not found or already removed.");
+            var success = await _repo.AddEditTeacherProfileAsync(entity);
+            return success
+                ? ServiceResult.Ok("Teacher updated successfully.", model.T_Id)
+                : ServiceResult.Fail("Could not save the teacher's profile. Please try again.");
         }
 
         public async Task<ServiceResult> DeleteTeacherAsync(Guid id, Guid tenantId, string accessToken)

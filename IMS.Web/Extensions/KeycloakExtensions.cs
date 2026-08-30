@@ -109,7 +109,7 @@ namespace IMS.Web.Extensions
         private static async Task TryRefreshTokenAsync(CookieValidatePrincipalContext context, IConfigurationSection keycloak)
         {
             var expiresAtValue = context.Properties.GetTokenValue("expires_at");
-            if (string.IsNullOrEmpty(expiresAtValue)) return; // no token info on this cookie - nothing to refresh
+            if (string.IsNullOrEmpty(expiresAtValue)) return; 
 
             var expiresAt = DateTimeOffset.Parse(expiresAtValue, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
 

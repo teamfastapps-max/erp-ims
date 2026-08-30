@@ -19,8 +19,8 @@ namespace IMS.Models.Teacher
         public int? T_ExperienceYears { get; set; }
         public string T_BloodGroup { get; set; }
         public string T_Status { get; set; }
+        public bool T_IsActive { get; set; }        
         public DateTime T_CreatedAt { get; set; }
         public DateTime T_UpdatedAt { get; set; }
-        public DateTime? T_DeletedAt { get; set; }
     }
 }
