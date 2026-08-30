@@ -17,5 +17,6 @@ namespace IMS.Services.Interfaces
         Task<ApiResult<TenantUserModel>> CreateTenantUserAsync(CreateTenantUserRequest request, string accessToken);
         Task<ApiResult<TenantUserModel>> UpdateTenantUserAsync(string id, UpdateTenantUserRequest request, string accessToken);
         Task<bool> DeleteTenantUserAsync(string id, string accessToken);
+        Task<ApiResult<UserProfileModel>> UpdateMyProfileAsync(string userId, UpdateMyProfileRequest request, string accessToken);
     }
 }

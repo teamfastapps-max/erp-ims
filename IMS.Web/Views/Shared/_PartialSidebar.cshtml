@@ -1,4 +1,5 @@
 @using IMS.Models.Common.Master
+@using IMS.Helpers.Constants
 @{
     var currentArea = ViewContext.RouteData.Values["area"]?.ToString() ?? "";
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
@@ -43,26 +44,29 @@
 
         <ul class="nav flex-column">
 
-            <li class="nav-item">
-                <a class="nav-link @isActive("Teacher", "Teacher")"
-                   asp-controller="Teachers"
-                   asp-action="Index">
+            <permission-check code="@Permissions.ViewTeacher">
+                <li class="nav-item">
+                    <a class="nav-link @isActive("Teacher", "Teacher")"
+                       asp-controller="Teachers"
+                       asp-action="Index">
 
-                    <i class="fa-solid fa-chalkboard-user"></i>
-                    <span>Teachers</span>
-                </a>
-            </li>
+                        <i class="fa-solid fa-chalkboard-user"></i>
+                        <span>Teachers</span>
+                    </a>
+                </li>
+            </permission-check>
 
 
-            <li class="nav-item">
+            <permission-check code="@Permissions.ViewStudent">
+                <li class="nav-item">
                     <a class="nav-link @isActive("Student", "Student")"
                        asp-controller="Students"
                        asp-action="Index">
-                    <i class="fa-solid fa-user-graduate"></i>
-                    <span>Students</span>
-                </a>
-            </li>
-
+                        <i class="fa-solid fa-user-graduate"></i>
+                        <span>Students</span>
+                    </a>
+                </li>
+            </permission-check>
 
             <li class="nav-item">
                 <a class="nav-link @isActive("Course", "Course")"

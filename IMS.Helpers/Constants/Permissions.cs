@@ -17,23 +17,49 @@ namespace IMS.Helpers.Constants
 
     public static class Permissions
     {
-        public const string AddVendor = "ADD_VENDOR";
-        public const string DeleteVendor = "DELETE_VENDOR";
-        public const string UpdateVendor = "Update_VENDOR";
-        public const string ReadVendor = "Read_VENDOR";
+        public const string ViewStudent = "ViewStudent";      
+        public const string AddStudent = "AddStudent";
+        public const string UpdateStudent = "UpdateStudent";
+        public const string DeleteStudent = "DeleteStudent";
 
+        public const string ViewTeacher = "ViewTeacher";     
+        public const string AddTeacher = "AddTeacher";
+        public const string UpdateTeacher = "UpdateTeacher";
+        public const string DeleteTeacher = "DeleteTeacher";
 
-        private const string ServiceName = "erp-IMS-service";
-        private const string VendorFeature = "VENDOR_MANAGEMENT";
-        private const string VendorFeatureDisplay = "Vendor Management";
+        public const string ViewStaff = "ViewStaff";
+        public const string AddStaff = "AddStaff";
+        public const string UpdateStaff = "UpdateStaff";
+        public const string DeleteStaff = "DeleteStaff";
+
+        private const string StudentFeature = "STUDENT_MANAGEMENT";
+        private const string StudentFeatureDisplay = "Student Management";
+
+        private const string TeacherFeature = "TEACHER_MANAGEMENT";
+        private const string TeacherFeatureDisplay = "Teacher Management";
+
+        private const string StaffFeature = "STAFF_MANAGEMENT";
+        private const string StaffFeatureDisplay = "Staff Management";
+
+        private const string ServiceName = "erp-ims-service";
 
         public static readonly List<AppPermissionDefinition> All = new()
         {
-            new() { Id = AddVendor, FeatureKey = VendorFeature, FeatureDisplayName = VendorFeatureDisplay, Description = "Add new vendor", ServiceName = ServiceName },
-            new() { Id = DeleteVendor, FeatureKey = VendorFeature, FeatureDisplayName = VendorFeatureDisplay, Description = "Delete vendor", ServiceName = ServiceName },
-            new() { Id = UpdateVendor, FeatureKey = VendorFeature, FeatureDisplayName = VendorFeatureDisplay, Description = "Update VENDOR", ServiceName = ServiceName },
-            new() { Id = ReadVendor, FeatureKey = VendorFeature, FeatureDisplayName = VendorFeatureDisplay, Description = "Read VENDOR", ServiceName = ServiceName },
-
+            new() { Id = ViewStudent,   FeatureKey = StudentFeature, FeatureDisplayName = StudentFeatureDisplay, Description = "View students",  ServiceName = ServiceName },
+            new() { Id = AddStudent,    FeatureKey = StudentFeature, FeatureDisplayName = StudentFeatureDisplay, Description = "Add a student",  ServiceName = ServiceName },
+            new() { Id = UpdateStudent, FeatureKey = StudentFeature, FeatureDisplayName = StudentFeatureDisplay, Description = "Update a student", ServiceName = ServiceName },
+            new() { Id = DeleteStudent, FeatureKey = StudentFeature, FeatureDisplayName = StudentFeatureDisplay, Description = "Delete a student", ServiceName = ServiceName },
+            
+            new() { Id = ViewTeacher,   FeatureKey = TeacherFeature, FeatureDisplayName = TeacherFeatureDisplay, Description = "View teachers",  ServiceName = ServiceName },
+            new() { Id = AddTeacher,    FeatureKey = TeacherFeature, FeatureDisplayName = TeacherFeatureDisplay, Description = "Add a teacher",  ServiceName = ServiceName },
+            new() { Id = UpdateTeacher, FeatureKey = TeacherFeature, FeatureDisplayName = TeacherFeatureDisplay, Description = "Update a teacher", ServiceName = ServiceName },
+            new() { Id = DeleteTeacher, FeatureKey = TeacherFeature, FeatureDisplayName = TeacherFeatureDisplay, Description = "Delete a teacher", ServiceName = ServiceName },
+            
+            new() { Id = ViewStaff,     FeatureKey = StaffFeature, FeatureDisplayName = StaffFeatureDisplay, Description = "View staff",  ServiceName = ServiceName },
+            new() { Id = AddStaff,      FeatureKey = StaffFeature, FeatureDisplayName = StaffFeatureDisplay, Description = "Add a staff member",  ServiceName = ServiceName },
+            new() { Id = UpdateStaff,   FeatureKey = StaffFeature, FeatureDisplayName = StaffFeatureDisplay, Description = "Update a staff member", ServiceName = ServiceName },
+            new() { Id = DeleteStaff,   FeatureKey = StaffFeature, FeatureDisplayName = StaffFeatureDisplay, Description = "Delete a staff member", ServiceName = ServiceName },
         };
+
     }
 }

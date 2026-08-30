@@ -300,6 +300,37 @@ namespace IMS.Services
                 return false;
             }
         }
+        public async Task<ApiResult<UserProfileModel>> UpdateMyProfileAsync(string userId, UpdateMyProfileRequest request, string accessToken)
+        {
+            if (string.IsNullOrEmpty(userId) || request == null || string.IsNullOrEmpty(accessToken))
+                return ApiResult<UserProfileModel>.Fail("Invalid request.");
+
+            var path = _userApiSettings.Endpoints.UpdateMyProfile.Replace("{id}", userId);
+            var url = $"{_userApiSettings.BaseUrl}{path}";
+            try
+            {
+                var httpClient = CreateAuthorizedClient(accessToken);
+                var json = JsonSerializer.Serialize(request, SerializeOptions);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await httpClient.PutAsync(url, content);
+                var body = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning("users/{Id}/profile PUT returned {StatusCode}: {Body}", userId, response.StatusCode, body);
+                    return ApiResult<UserProfileModel>.Fail(ExtractFriendlyErrorMessage(body, response.StatusCode));
+                }
+
+                var parsed = JsonSerializer.Deserialize<ApiResponseModel<UserProfileModel>>(body, DeserializeOptions);
+                return ApiResult<UserProfileModel>.Ok(parsed?.Data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error calling users/{Id}/profile PUT", userId);
+                return ApiResult<UserProfileModel>.Fail("Could not reach the account service. Please try again.");
+            }
+        }
         private HttpClient CreateAuthorizedClient(string accessToken)
         {
             var httpClient = _httpClientFactory.CreateClient();
