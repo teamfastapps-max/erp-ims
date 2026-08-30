@@ -1,0 +1,51 @@
+@model IMS.Models.ViewModels.AttendanceSessionFormViewModel
+
+@if (Model.AS_Id.HasValue)
+{
+    @Html.HiddenFor(m => m.AS_Id)
+}
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <label for="AS_BranchId" class="form-label">Branch <span class="text-danger">*</span></label>
+        @Html.DropDownListFor(m => m.AS_BranchId, Model.BranchOptions, "Select Branch", new { @class = "form-select" })
+        <div class="text-danger small field-error" data-for="AS_BranchId"></div>
+    </div>
+    <div class="col-md-6">
+        <label for="AS_BatchId" class="form-label">Batch <span class="text-danger">*</span></label>
+        @Html.DropDownListFor(m => m.AS_BatchId, Model.BatchOptions, "Select Batch", new { @class = "form-select" })
+        <div class="text-danger small field-error" data-for="AS_BatchId"></div>
+    </div>
+    <div class="col-md-4">
+        <label for="AS_SubjectId" class="form-label">Subject</label>
+        @Html.DropDownListFor(m => m.AS_SubjectId, Model.SubjectOptions, "Select Subject", new { @class = "form-select" })
+    </div>
+    <div class="col-md-4">
+        <label for="AS_StaffId" class="form-label">Staff</label>
+        @Html.DropDownListFor(m => m.AS_StaffId, Model.StaffOptions, "Select Staff", new { @class = "form-select" })
+    </div>
+    <div class="col-md-4">
+        <label for="AS_AttendanceDate" class="form-label">Date <span class="text-danger">*</span></label>
+        @Html.TextBoxFor(m => m.AS_AttendanceDate, "{0:yyyy-MM-dd}", new { @class = "form-control ims-datepicker-input", placeholder = "DD/MM/YYYY", @id = "AS_AttendanceDate" })
+        <div class="text-danger small field-error" data-for="AS_AttendanceDate"></div>
+    </div>
+    <div class="col-md-3">
+        <label for="AS_StartTime" class="form-label">Start Time</label>
+        @Html.TextBoxFor(m => m.AS_StartTime, new { @class = "form-control", type = "time" })
+    </div>
+    <div class="col-md-3">
+        <label for="AS_EndTime" class="form-label">End Time</label>
+        @Html.TextBoxFor(m => m.AS_EndTime, new { @class = "form-control", type = "time" })
+    </div>
+    <div class="col-md-6">
+        <label for="AS_Remarks" class="form-label">Remarks</label>
+        @Html.TextAreaFor(m => m.AS_Remarks, new { @class = "form-control", rows = "2", placeholder = "Session remarks" })
+    </div>
+</div>
+
+<div class="d-flex justify-content-end gap-2 mt-4">
+    <a asp-controller="Attendance" asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+    <button type="submit" class="btn btn-primary">
+        <i class="fa-solid fa-check me-1"></i> Save Session
+    </button>
+</div>

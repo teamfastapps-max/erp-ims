@@ -1,0 +1,84 @@
+@model IMS.Models.ViewModels.AttendanceMarkViewModel
+@{ ViewData["Title"] = "Mark Attendance"; }
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0"><i class="fa-solid fa-check-double me-2"></i>Mark Attendance</h3>
+    <a asp-controller="Attendance" asp-action="Index" class="btn btn-outline-secondary btn-sm">Back to List</a>
+</div>
+
+<div class="card shadow-sm mb-3">
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label text-muted">Batch</label>
+                <div class="fw-semibold">@Model.BatchName</div>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label text-muted">Subject</label>
+                <div class="fw-semibold">@Model.SubjectName</div>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label text-muted">Date</label>
+                <div class="fw-semibold">@Model.AttendanceDate.ToString("dd-MMM-yyyy")</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form id="markAttendanceForm">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="SessionId" value="@Model.SessionId" />
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Code</th>
+                            <th>Student Name</th>
+                            <th style="width:200px">Status</th>
+                            <th style="width:200px">Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.Students.Count; i++)
+                        {
+                            var s = Model.Students[i];
+                            <tr>
+                                <td>@s.StudentCode</td>
+                                <td>@s.StudentName</td>
+                                <td>
+                                    <select name="Records[@i].Status" class="form-select form-select-sm">
+                                        <option value="present" selected="@(s.Status == "present")">Present</option>
+                                        <option value="absent" selected="@(s.Status == "absent")">Absent</option>
+                                        <option value="late" selected="@(s.Status == "late")">Late</option>
+                                        <option value="half_day" selected="@(s.Status == "half_day")">Half Day</option>
+                                        <option value="excused" selected="@(s.Status == "excused")">Excused</option>
+                                    </select>
+                                    <input type="hidden" name="Records[@i].StudentId" value="@s.StudentId" />
+                                </td>
+                                <td>
+                                    <input type="text" name="Records[@i].Remarks" class="form-control form-control-sm" value="@s.Remarks" placeholder="Optional" />
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <button type="button" id="saveAttendanceBtn" class="btn btn-primary">
+                    <i class="fa-solid fa-check me-1"></i> Save Attendance
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/attendance.js"></script>
+    <script>
+        $(function () {
+            IMSAttendanceMark.init('@Model.SessionId');
+        });
+    </script>
+}

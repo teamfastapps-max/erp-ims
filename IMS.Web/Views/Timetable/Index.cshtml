@@ -1,0 +1,77 @@
+@model IMS.Models.ViewModels.TimetableIndexViewModel
+@{ ViewData["Title"] = "Timetable"; }
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0"><i class="fa-solid fa-calendar-days me-2"></i>Timetable</h3>
+    <a asp-controller="Timetable" asp-action="Create" asp-route-batchId="@Model.BatchFilter" class="btn btn-primary">
+        <i class="fa-solid fa-plus me-1"></i> Add Entry
+    </a>
+</div>
+
+<div class="card shadow-sm mb-3">
+    <div class="card-body">
+        @using (Html.BeginForm("Index", "Timetable", FormMethod.Get, new { @class = "row g-3 align-items-end" }))
+        {
+            <div class="col-md-4">
+                @Html.Label("batchId", "Batch", new { @class = "form-label" })
+                @Html.DropDownList("batchId", Model.BatchOptions, "All Batches", new { @class = "form-select" })
+            </div>
+            <div class="col-md-2 d-grid">
+                <button type="submit" class="btn btn-outline-primary"><i class="fa-solid fa-search me-1"></i> Filter</button>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="table-responsive p-3">
+        <table id="dataTable" class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr><th>Day</th><th>Time</th><th>Subject</th><th>Staff</th><th>Room</th><th class="text-end">Actions</th></tr>
+            </thead>
+            <tbody>
+                @if (!Model.Entries.Any())
+                {
+                    <tr><td colspan="6" class="text-center text-muted py-4">No timetable entries found.</td></tr>
+                }
+                else
+                {
+                    var ordered = Model.Entries.OrderBy(e => e.TT_DayOfWeek).ThenBy(e => e.TT_StartTime).ToList();
+                    foreach (var t in ordered)
+                    {
+                        <tr id="tt-row-@t.TT_Id">
+                            <td><span class="badge bg-secondary">@t.DayName</span></td>
+                            <td>@t.TT_StartTime.ToString(@"hh\:mm") - @t.TT_EndTime.ToString(@"hh\:mm")</td>
+                            <td>@t.SubjectName</td>
+                            <td>@t.StaffName</td>
+                            <td>@t.ClassroomName</td>
+                            <td class="text-end">
+                                <a asp-action="Edit" asp-route-id="@t.TT_Id" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fa-solid fa-pen"></i></a>
+                                <button class="btn btn-sm btn-outline-danger tt-delete-btn" data-id="@t.TT_Id" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@Html.AntiForgeryToken()
+
+@section Scripts {
+<script>
+$(function () {
+    $('#dataTable').DataTable({ pageLength: 10, lengthMenu: [10, 25, 50, 100], order: [[0, 'asc'], [1, 'asc']] });
+    $(document).on("click", ".tt-delete-btn", function () {
+        var id = $(this).data("id");
+        if (!confirm("Delete this timetable entry?")) return;
+        $.ajax({ url: "/Timetable/DeleteTimetable/" + id, type: "POST",
+            data: { __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val() },
+            success: function (r) { if (r.success) { if (window.toastr) toastr.success(r.message); $("#tt-row-" + id).fadeOut(300, function(){$(this).remove();}); } else { if (window.toastr) toastr.error(r.message); } },
+            error: function () { if (window.toastr) toastr.error("Request failed."); }
+        });
+    });
+});
+</script>
+}

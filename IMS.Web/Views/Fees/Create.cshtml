@@ -1,0 +1,95 @@
+@model IMS.Models.ViewModels.FeeStructureFormViewModel
+@{ ViewData["Title"] = Model.FS_Id.HasValue ? "Edit Fee Structure" : "Create Fee Structure"; }
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0"><i class="fa-solid fa-indian-rupee-sign me-2"></i>@(Model.FS_Id.HasValue ? "Edit" : "Create") Fee Structure</h3>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form id="feeStructureForm" asp-controller="Fees" asp-action="@(Model.FS_Id.HasValue ? "EditFeeStructure" : "AddFeeStructure")" method="post">
+            @Html.AntiForgeryToken()
+            @if (Model.FS_Id.HasValue) { @Html.HiddenFor(m => m.FS_Id) }
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Name <span class="text-danger">*</span></label>
+                    @Html.TextBoxFor(m => m.FS_Name, new { @class = "form-control", placeholder = "Fee structure name" })
+                    <div class="text-danger small field-error" data-for="FS_Name"></div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Code <span class="text-danger">*</span></label>
+                    @Html.TextBoxFor(m => m.FS_Code, new { @class = "form-control", placeholder = "e.g. FS-001" })
+                    <div class="text-danger small field-error" data-for="FS_Code"></div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Academic Year <span class="text-danger">*</span></label>
+                    @Html.DropDownListFor(m => m.FS_AcademicYearId, Model.AcademicYearOptions, "Select Year", new { @class = "form-select" })
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Course</label>
+                    @Html.DropDownListFor(m => m.FS_CourseId, Model.CourseOptions, "Select Course", new { @class = "form-select" })
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Batch</label>
+                    @Html.DropDownListFor(m => m.FS_BatchId, Model.BatchOptions, "Select Batch", new { @class = "form-select" })
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Active</label>
+                    @Html.DropDownListFor(m => m.FS_IsActive, new List<SelectListItem> { new("Yes", "true"), new("No", "false") }, new { @class = "form-select" })
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">Description</label>
+                    @Html.TextAreaFor(m => m.FS_Description, new { @class = "form-control", rows = "2" })
+                </div>
+            </div>
+
+            <h5 class="mt-4 mb-3">Fee Items</h5>
+            <div id="feeItemsContainer">
+                @for (int i = 0; i < Model.Items.Count; i++)
+                {
+                    <div class="row g-2 mb-2 fee-item-row">
+                        <div class="col-md-4">
+                            <select name="Items[@i].FSI_FeeCategoryId" class="form-select form-select-sm">
+                                <option value="">Select Category</option>
+                                @foreach (var cat in Model.FeeCategoryOptions) { <option value="@cat.Value" selected="@cat.Selected">@cat.Text</option> }
+                            </select>
+                        </div>
+                        <div class="col-md-2"><input type="number" name="Items[@i].FSI_Amount" class="form-control form-control-sm" min="0" step="0.01" value="@Model.Items[i].FSI_Amount" placeholder="Amount" /></div>
+                        <div class="col-md-2"><input type="number" name="Items[@i].FSI_DueDays" class="form-control form-control-sm" min="0" value="@Model.Items[i].FSI_DueDays" placeholder="Due Days" /></div>
+                        <div class="col-md-2">
+                            <select name="Items[@i].FSI_IsMandatory" class="form-select form-select-sm">
+                                <option value="true" selected="@Model.Items[i].FSI_IsMandatory">Mandatory</option>
+                                <option value="false" selected="@(!Model.Items[i].FSI_IsMandatory)">Optional</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2"><button type="button" class="btn btn-sm btn-outline-danger remove-fee-item"><i class="fa-solid fa-times"></i></button></div>
+                    </div>
+                }
+            </div>
+            <button type="button" id="addFeeItemBtn" class="btn btn-sm btn-outline-primary mt-2"><i class="fa-solid fa-plus me-1"></i> Add Item</button>
+
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <a asp-controller="Fees" asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check me-1"></i> Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+$(function(){
+    var idx = @Model.Items.Count;
+    $("#addFeeItemBtn").on("click", function(){
+        var html = '<div class="row g-2 mb-2 fee-item-row">'
+            + '<div class="col-md-4"><select name="Items['+idx+'].FSI_FeeCategoryId" class="form-select form-select-sm"><option value="">Select Category</option></select></div>'
+            + '<div class="col-md-2"><input type="number" name="Items['+idx+'].FSI_Amount" class="form-control form-control-sm" min="0" step="0.01" placeholder="Amount" /></div>'
+            + '<div class="col-md-2"><input type="number" name="Items['+idx+'].FSI_DueDays" class="form-control form-control-sm" min="0" placeholder="Due Days" /></div>'
+            + '<div class="col-md-2"><select name="Items['+idx+'].FSI_IsMandatory" class="form-select form-select-sm"><option value="true">Mandatory</option><option value="false">Optional</option></select></div>'
+            + '<div class="col-md-2"><button type="button" class="btn btn-sm btn-outline-danger remove-fee-item"><i class="fa-solid fa-times"></i></button></div></div>';
+        $("#feeItemsContainer").append(html); idx++;
+    });
+    $(document).on("click", ".remove-fee-item", function(){ $(this).closest(".fee-item-row").remove(); });
+});
+</script>
+}

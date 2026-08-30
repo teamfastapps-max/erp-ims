@@ -1,0 +1,58 @@
+@model IMS.Models.ViewModels.BatchFormViewModel
+
+@if (Model.BT_Id.HasValue)
+{
+    @Html.HiddenFor(m => m.BT_Id)
+}
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <label for="BT_BranchId" class="form-label">Branch <span class="text-danger">*</span></label>
+        @Html.DropDownListFor(m => m.BT_BranchId, Model.BranchOptions, "Select Branch", new { @class = "form-select" })
+        <div class="text-danger small field-error" data-for="BT_BranchId"></div>
+    </div>
+    <div class="col-md-6">
+        <label for="BT_Name" class="form-label">Batch Name <span class="text-danger">*</span></label>
+        @Html.TextBoxFor(m => m.BT_Name, new { @class = "form-control", placeholder = "e.g. Section A - 2026" })
+        <div class="text-danger small field-error" data-for="BT_Name"></div>
+    </div>
+    <div class="col-md-4">
+        <label for="BT_Code" class="form-label">Batch Code <span class="text-danger">*</span></label>
+        @Html.TextBoxFor(m => m.BT_Code, new { @class = "form-control", placeholder = "e.g. BATCH-001" })
+        <div class="text-danger small field-error" data-for="BT_Code"></div>
+    </div>
+    <div class="col-md-4">
+        <label for="BT_CourseId" class="form-label">Course <span class="text-danger">*</span></label>
+        @Html.DropDownListFor(m => m.BT_CourseId, Model.CourseOptions, "Select Course", new { @class = "form-select" })
+        <div class="text-danger small field-error" data-for="BT_CourseId"></div>
+    </div>
+    <div class="col-md-4">
+        <label for="BT_AcademicYearId" class="form-label">Academic Year <span class="text-danger">*</span></label>
+        @Html.DropDownListFor(m => m.BT_AcademicYearId, Model.AcademicYearOptions, "Select Year", new { @class = "form-select" })
+        <div class="text-danger small field-error" data-for="BT_AcademicYearId"></div>
+    </div>
+    <div class="col-md-4">
+        <label for="BT_StartDate" class="form-label">Start Date <span class="text-danger">*</span></label>
+        @Html.TextBoxFor(m => m.BT_StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control ims-datepicker-input", placeholder = "DD/MM/YYYY", @id = "BT_StartDate" })
+        <div class="text-danger small field-error" data-for="BT_StartDate"></div>
+    </div>
+    <div class="col-md-4">
+        <label for="BT_EndDate" class="form-label">End Date</label>
+        @Html.TextBoxFor(m => m.BT_EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control ims-datepicker-input", placeholder = "DD/MM/YYYY", @id = "BT_EndDate" })
+    </div>
+    <div class="col-md-4">
+        <label for="BT_Capacity" class="form-label">Capacity</label>
+        @Html.TextBoxFor(m => m.BT_Capacity, new { @class = "form-control", type = "number", min = "0" })
+    </div>
+    <div class="col-md-4">
+        <label for="BT_Status" class="form-label">Status <span class="text-danger">*</span></label>
+        @Html.DropDownListFor(m => m.BT_Status, Model.StatusOptions, new { @class = "form-select" })
+    </div>
+</div>
+
+<div class="d-flex justify-content-end gap-2 mt-4">
+    <a asp-controller="Batch" asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+    <button type="submit" class="btn btn-primary">
+        <i class="fa-solid fa-check me-1"></i> Save Batch
+    </button>
+</div>

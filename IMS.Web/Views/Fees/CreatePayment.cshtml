@@ -1,0 +1,65 @@
+@model IMS.Models.ViewModels.PaymentFormViewModel
+@{ ViewData["Title"] = "Record Payment"; }
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0"><i class="fa-solid fa-money-bill me-2"></i>Record Payment</h3>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form id="paymentForm" asp-controller="Fees" asp-action="AddPayment" method="post">
+            @Html.AntiForgeryToken()
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Student <span class="text-danger">*</span></label>
+                    @Html.DropDownListFor(m => m.PAY_StudentId, Model.StudentOptions, "Select Student", new { @class = "form-select" })
+                    <div class="text-danger small field-error" data-for="PAY_StudentId"></div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Payment Method <span class="text-danger">*</span></label>
+                    @Html.DropDownListFor(m => m.PAY_PaymentMethodId, Model.PaymentMethodOptions, "Select Method", new { @class = "form-select" })
+                    <div class="text-danger small field-error" data-for="PAY_PaymentMethodId"></div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Amount <span class="text-danger">*</span></label>
+                    @Html.TextBoxFor(m => m.PAY_Amount, new { @class = "form-control", type = "number", min = "0", step = "0.01" })
+                    <div class="text-danger small field-error" data-for="PAY_Amount"></div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Payment Date</label>
+                    @Html.TextBoxFor(m => m.PAY_PaymentDate, "{0:yyyy-MM-dd}", new { @class = "form-control ims-datepicker-input", @id = "PAY_PaymentDate" })
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Transaction Reference</label>
+                    @Html.TextBoxFor(m => m.PAY_TransactionReference, new { @class = "form-control", placeholder = "Reference number" })
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">Notes</label>
+                    @Html.TextAreaFor(m => m.PAY_Notes, new { @class = "form-control", rows = "2" })
+                </div>
+            </div>
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <a asp-controller="Fees" asp-action="Payments" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check me-1"></i> Save Payment</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+<script src="~/js/common/datepicker.js"></script>
+<script>
+$(function(){
+    IMSDatePicker.init({ input: '#PAY_PaymentDate', format: 'dd/MM/yyyy', valueFormat: 'yyyy-MM-dd', placeholder: 'DD/MM/YYYY' });
+    $("form").on("submit", function(e){
+        e.preventDefault();
+        var $form = $(this), $btn = $form.find("button[type='submit']");
+        $btn.prop("disabled", true).html('<span class="spinner-border spinner-border-sm me-1"></span> Saving...');
+        $.ajax({ url: $form.attr("action"), type: "POST", data: $form.serialize(),
+            success: function(r){ if(r.success){ if(window.toastr) toastr.success(r.message); setTimeout(function(){window.location.href="/Fees/Payments";},700); } else { if(window.toastr) toastr.error(r.message); $btn.prop("disabled", false).html('<i class="fa-solid fa-check me-1"></i> Save Payment'); } },
+            error: function(){ if(window.toastr) toastr.error("Request failed."); $btn.prop("disabled", false).html('<i class="fa-solid fa-check me-1"></i> Save Payment'); }
+        });
+    });
+});
+</script>
+}

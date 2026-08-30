@@ -1,0 +1,26 @@
+@model IMS.Models.ViewModels.TimetableDetailsViewModel
+@{ ViewData["Title"] = "Timetable Details"; }
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0"><i class="fa-solid fa-calendar-days me-2"></i>Timetable Details</h3>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.TT_Id" class="btn btn-outline-primary"><i class="fa-solid fa-pen me-1"></i> Edit</a>
+        <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-4">Day</dt><dd class="col-sm-8">@Model.DayName</dd>
+            <dt class="col-sm-4">Time</dt><dd class="col-sm-8">@Model.TT_StartTime.ToString(@"hh\:mm") - @Model.TT_EndTime.ToString(@"hh\:mm")</dd>
+            <dt class="col-sm-4">Subject</dt><dd class="col-sm-8">@Model.SubjectName</dd>
+            <dt class="col-sm-4">Staff</dt><dd class="col-sm-8">@Model.StaffName</dd>
+            <dt class="col-sm-4">Classroom</dt><dd class="col-sm-8">@Model.ClassroomName</dd>
+            <dt class="col-sm-4">Batch</dt><dd class="col-sm-8">@Model.BatchName</dd>
+            <dt class="col-sm-4">Effective From</dt><dd class="col-sm-8">@(Model.TT_EffectiveFrom?.ToString("dd-MMM-yyyy") ?? "-")</dd>
+            <dt class="col-sm-4">Effective To</dt><dd class="col-sm-8">@(Model.TT_EffectiveTo?.ToString("dd-MMM-yyyy") ?? "-")</dd>
+            <dt class="col-sm-4">Created</dt><dd class="col-sm-8">@Model.TT_CreatedAt.ToString("dd-MMM-yyyy HH:mm")</dd>
+        </dl>
+    </div>
+</div>

@@ -1,0 +1,56 @@
+@model IMS.Models.ViewModels.FeeInvoiceFormViewModel
+@{ ViewData["Title"] = "Create Invoice"; }
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0"><i class="fa-solid fa-file-invoice me-2"></i>Create Invoice</h3>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form id="invoiceForm" asp-controller="Fees" asp-action="AddInvoice" method="post">
+            @Html.AntiForgeryToken()
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Student <span class="text-danger">*</span></label>
+                    @Html.DropDownListFor(m => m.FI_StudentId, Model.StudentOptions, "Select Student", new { @class = "form-select" })
+                    <div class="text-danger small field-error" data-for="FI_StudentId"></div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Invoice Date</label>
+                    @Html.TextBoxFor(m => m.FI_InvoiceDate, "{0:yyyy-MM-dd}", new { @class = "form-control ims-datepicker-input", @id = "FI_InvoiceDate" })
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Due Date</label>
+                    @Html.TextBoxFor(m => m.FI_DueDate, "{0:yyyy-MM-dd}", new { @class = "form-control ims-datepicker-input", @id = "FI_DueDate" })
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Notes</label>
+                    @Html.TextAreaFor(m => m.FI_Notes, new { @class = "form-control", rows = "2" })
+                </div>
+            </div>
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <a asp-controller="Fees" asp-action="Invoices" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check me-1"></i> Create Invoice</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+<script src="~/js/common/datepicker.js"></script>
+<script>
+$(function(){
+    IMSDatePicker.init({ input: '#FI_InvoiceDate', format: 'dd/MM/yyyy', valueFormat: 'yyyy-MM-dd', placeholder: 'DD/MM/YYYY' });
+    IMSDatePicker.init({ input: '#FI_DueDate', format: 'dd/MM/yyyy', valueFormat: 'yyyy-MM-dd', placeholder: 'DD/MM/YYYY' });
+    $("form").on("submit", function(e){
+        e.preventDefault();
+        var $form = $(this), $btn = $form.find("button[type='submit']");
+        $btn.prop("disabled", true).html('<span class="spinner-border spinner-border-sm me-1"></span> Saving...');
+        $.ajax({ url: $form.attr("action"), type: "POST", data: $form.serialize(),
+            success: function(r){ if(r.success){ if(window.toastr) toastr.success(r.message); setTimeout(function(){window.location.href="/Fees/Invoices";},700); } else { if(window.toastr) toastr.error(r.message); $btn.prop("disabled", false).html('<i class="fa-solid fa-check me-1"></i> Create Invoice'); } },
+            error: function(){ if(window.toastr) toastr.error("Request failed."); $btn.prop("disabled", false).html('<i class="fa-solid fa-check me-1"></i> Create Invoice'); }
+        });
+    });
+});
+</script>
+}

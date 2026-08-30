@@ -1,0 +1,96 @@
+@model IMS.Models.ViewModels.ExamDetailsViewModel
+@{ ViewData["Title"] = "Exam Details"; }
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0"><i class="fa-solid fa-file-pen me-2"></i>Exam Details</h3>
+    <div>
+        <a asp-controller="Exam" asp-action="Edit" asp-route-id="@Model.EX_Id" class="btn btn-outline-primary btn-sm">
+            <i class="fa-solid fa-pen me-1"></i> Edit
+        </a>
+        <a asp-controller="Exam" asp-action="MarksEntry" asp-route-id="@Model.EX_Id" class="btn btn-outline-success btn-sm">
+            <i class="fa-solid fa-pen-to-square me-1"></i> Marks Entry
+        </a>
+        <a asp-controller="Exam" asp-action="Index" class="btn btn-outline-secondary btn-sm">Back to List</a>
+    </div>
+</div>
+
+<div class="card shadow-sm mb-3">
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label text-muted">Exam Name</label>
+                <div class="fw-semibold">@Model.EX_Name</div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label text-muted">Exam Code</label>
+                <div class="fw-semibold">@Model.EX_Code</div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label text-muted">Type</label>
+                <div class="fw-semibold">@Model.ExamTypeName</div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label text-muted">Status</label>
+                <div class="fw-semibold"><span class="badge @StatusBadgeClass(Model.EX_Status)">@Model.EX_Status</span></div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label text-muted">Course</label>
+                <div class="fw-semibold">@Model.CourseName</div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label text-muted">Batch</label>
+                <div class="fw-semibold">@Model.BatchName</div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label text-muted">Academic Year</label>
+                <div class="fw-semibold">@Model.AcademicYearName</div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label text-muted">Date Range</label>
+                <div class="fw-semibold">@Model.EX_StartDate.ToString("dd-MMM-yyyy") to @Model.EX_EndDate.ToString("dd-MMM-yyyy")</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.Subjects.Any())
+{
+    <div class="card shadow-sm">
+        <div class="card-header"><h6 class="mb-0">Subjects</h6></div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Subject</th>
+                        <th>Max Marks</th>
+                        <th>Pass Marks</th>
+                        <th>Weightage (%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var s in Model.Subjects)
+                    {
+                        <tr>
+                            <td>@(s.SubjectOptions.FirstOrDefault(x => x.Value == s.ES_SubjectId.ToString())?.Text ?? "-")</td>
+                            <td>@s.ES_MaxMarks</td>
+                            <td>@s.ES_PassMarks</td>
+                            <td>@(s.ES_Weightage?.ToString() ?? "-")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@functions {
+    string StatusBadgeClass(string status) => status switch
+    {
+        "Draft" => "bg-secondary",
+        "Scheduled" => "bg-info text-dark",
+        "In Progress" => "bg-warning text-dark",
+        "Completed" => "bg-success",
+        "Cancelled" => "bg-danger",
+        _ => "bg-light text-dark"
+    };
+}

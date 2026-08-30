@@ -1,0 +1,92 @@
+@model IMS.Models.ViewModels.AdmissionApplicationDetailsViewModel
+@{ ViewData["Title"] = "Application Details"; }
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0"><i class="fa-solid fa-file-lines me-2"></i>@Model.AA_ApplicationNumber</h3>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.AA_Id" class="btn btn-outline-primary"><i class="fa-solid fa-pen me-1"></i> Edit</a>
+        <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header"><h5 class="mb-0">Applicant Information</h5></div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Application Number</dt><dd class="col-sm-8">@Model.AA_ApplicationNumber</dd>
+                    <dt class="col-sm-4">Name</dt><dd class="col-sm-8">@Model.FullName</dd>
+                    <dt class="col-sm-4">Date of Birth</dt><dd class="col-sm-8">@(Model.AA_DateOfBirth?.ToString("dd-MMM-yyyy") ?? "-")</dd>
+                    <dt class="col-sm-4">Gender</dt><dd class="col-sm-8">@(Model.AA_Gender ?? "-")</dd>
+                    <dt class="col-sm-4">Email</dt><dd class="col-sm-8">@(Model.AA_Email ?? "-")</dd>
+                    <dt class="col-sm-4">Phone</dt><dd class="col-sm-8">@Model.AA_Phone</dd>
+                    <dt class="col-sm-4">Course</dt><dd class="col-sm-8">@Model.CourseName</dd>
+                    <dt class="col-sm-4">Academic Year</dt><dd class="col-sm-8">@Model.AcademicYearName</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-header"><h5 class="mb-0">Status</h5></div>
+            <div class="card-body text-center">
+                <h4><span class="badge @StatusBadge(Model.AA_Status) fs-6">@Model.AA_Status</span></h4>
+                <p class="text-muted small mb-0">Submitted: @(Model.AA_SubmittedAt?.ToString("dd-MMM-yyyy HH:mm") ?? "-")</p>
+                @if (Model.AA_ReviewedAt.HasValue)
+                {
+                    <p class="text-muted small">Reviewed: @Model.AA_ReviewedAt.Value.ToString("dd-MMM-yyyy HH:mm")</p>
+                }
+            </div>
+        </div>
+        <div class="card shadow-sm mt-3">
+            <div class="card-header"><h5 class="mb-0">Review</h5></div>
+            <div class="card-body">
+                <form id="reviewForm">
+                    <input type="hidden" name="AA_Id" value="@Model.AA_Id" />
+                    <div class="mb-3">
+                        <label class="form-label">Decision</label>
+                        <select name="AA_Status" class="form-select">
+                            <option value="Approved">Approve</option>
+                            <option value="Rejected">Reject</option>
+                            <option value="Waitlisted">Waitlist</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Notes</label>
+                        <textarea name="AA_Notes" class="form-control" rows="3">@Model.AA_Notes</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100"><i class="fa-solid fa-check me-1"></i> Submit Review</button>
+                </form>
+            </div>
+        </div>
+        <div class="card shadow-sm mt-3">
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-5">Created</dt><dd class="col-sm-7">@Model.AA_CreatedAt.ToString("dd-MMM-yyyy HH:mm")</dd>
+                    <dt class="col-sm-5">Updated</dt><dd class="col-sm-7">@Model.AA_UpdatedAt.ToString("dd-MMM-yyyy HH:mm")</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.AntiForgeryToken()
+
+@functions { string StatusBadge(string s) => s switch { "Submitted" => "bg-info text-dark", "UnderReview" => "bg-warning text-dark", "Approved" => "bg-success", "Rejected" => "bg-danger", "Waitlisted" => "bg-secondary", _ => "bg-light text-dark" }; }
+
+@section Scripts {
+<script>
+$(function () {
+    $("#reviewForm").on("submit", function (e) {
+        e.preventDefault();
+        var $form = $(this), $btn = $form.find("button[type='submit']");
+        $btn.prop("disabled", true).html('<span class="spinner-border spinner-border-sm me-1"></span> Processing...');
+        $.ajax({ url: "/AdmissionApplication/Review", type: "POST", data: $form.serialize() + "&__RequestVerificationToken=" + $("input[name='__RequestVerificationToken']").val(),
+            success: function (r) { if (r.success) { if (window.toastr) toastr.success(r.message); setTimeout(function(){location.reload();},1000); } else { if (window.toastr) toastr.error(r.message); $btn.prop("disabled", false).html('<i class="fa-solid fa-check me-1"></i> Submit Review'); } },
+            error: function () { if (window.toastr) toastr.error("Request failed."); $btn.prop("disabled", false).html('<i class="fa-solid fa-check me-1"></i> Submit Review'); }
+        });
+    });
+});
+</script>
+}

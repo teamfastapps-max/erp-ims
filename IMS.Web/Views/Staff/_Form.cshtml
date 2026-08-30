@@ -1,0 +1,60 @@
+@model IMS.Models.ViewModels.StaffFormViewModel
+
+@if (Model.ST_Id.HasValue)
+{
+    @Html.HiddenFor(m => m.ST_Id)
+}
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <label for="ST_BranchId" class="form-label">Branch <span class="text-danger">*</span></label>
+        @Html.DropDownListFor(m => m.ST_BranchId, Model.BranchOptions, "Select Branch", new { @class = "form-select" })
+        <div class="text-danger small field-error" data-for="ST_BranchId"></div>
+    </div>
+    <div class="col-md-6">
+        <label for="ST_EmployeeCode" class="form-label">Employee Code <span class="text-danger">*</span></label>
+        @Html.TextBoxFor(m => m.ST_EmployeeCode, new { @class = "form-control", placeholder = "e.g. EMP-001" })
+        <div class="text-danger small field-error" data-for="ST_EmployeeCode"></div>
+    </div>
+    <div class="col-md-4">
+        <label for="ST_FirstName" class="form-label">First Name <span class="text-danger">*</span></label>
+        @Html.TextBoxFor(m => m.ST_FirstName, new { @class = "form-control", placeholder = "First name" })
+        <div class="text-danger small field-error" data-for="ST_FirstName"></div>
+    </div>
+    <div class="col-md-4">
+        <label for="ST_LastName" class="form-label">Last Name <span class="text-danger">*</span></label>
+        @Html.TextBoxFor(m => m.ST_LastName, new { @class = "form-control", placeholder = "Last name" })
+        <div class="text-danger small field-error" data-for="ST_LastName"></div>
+    </div>
+    <div class="col-md-4">
+        <label for="ST_DepartmentId" class="form-label">Department</label>
+        @Html.DropDownListFor(m => m.ST_DepartmentId, Model.DepartmentOptions, "Select Department", new { @class = "form-select" })
+    </div>
+    <div class="col-md-4">
+        <label for="ST_DesignationId" class="form-label">Designation</label>
+        @Html.DropDownListFor(m => m.ST_DesignationId, Model.DesignationOptions, "Select Designation", new { @class = "form-select" })
+    </div>
+    <div class="col-md-4">
+        <label for="ST_Email" class="form-label">Email</label>
+        @Html.TextBoxFor(m => m.ST_Email, new { @class = "form-control", type = "email", placeholder = "email@example.com" })
+    </div>
+    <div class="col-md-4">
+        <label for="ST_Phone" class="form-label">Phone</label>
+        @Html.TextBoxFor(m => m.ST_Phone, new { @class = "form-control", placeholder = "Phone number" })
+    </div>
+    <div class="col-md-4">
+        <label for="ST_JoiningDate" class="form-label">Joining Date</label>
+        @Html.TextBoxFor(m => m.ST_JoiningDate, "{0:yyyy-MM-dd}", new { @class = "form-control ims-datepicker-input", placeholder = "DD/MM/YYYY", @id = "ST_JoiningDate" })
+    </div>
+    <div class="col-md-4">
+        <label for="ST_Status" class="form-label">Status <span class="text-danger">*</span></label>
+        @Html.DropDownListFor(m => m.ST_Status, Model.StatusOptions, new { @class = "form-select" })
+    </div>
+</div>
+
+<div class="d-flex justify-content-end gap-2 mt-4">
+    <a asp-controller="Staff" asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+    <button type="submit" class="btn btn-primary">
+        <i class="fa-solid fa-check me-1"></i> Save Staff
+    </button>
+</div>

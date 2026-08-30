@@ -1,0 +1,29 @@
+@model IMS.Models.ViewModels.EnrollmentDetailsViewModel
+@{ ViewData["Title"] = "Enrollment Details"; }
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0"><i class="fa-solid fa-user-plus me-2"></i>@Model.E_EnrollmentNumber</h3>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.E_Id" class="btn btn-outline-primary"><i class="fa-solid fa-pen me-1"></i> Edit</a>
+        <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-4">Enrollment Number</dt><dd class="col-sm-8">@Model.E_EnrollmentNumber</dd>
+            <dt class="col-sm-4">Student</dt><dd class="col-sm-8">@Model.StudentName</dd>
+            <dt class="col-sm-4">Course</dt><dd class="col-sm-8">@Model.CourseName</dd>
+            <dt class="col-sm-4">Batch</dt><dd class="col-sm-8">@Model.BatchName</dd>
+            <dt class="col-sm-4">Academic Year</dt><dd class="col-sm-8">@Model.AcademicYearName</dd>
+            <dt class="col-sm-4">Enrollment Date</dt><dd class="col-sm-8">@Model.E_EnrollmentDate.ToString("dd-MMM-yyyy")</dd>
+            <dt class="col-sm-4">Status</dt><dd class="col-sm-8"><span class="badge @StatusBadge(Model.E_Status)">@Model.E_Status</span></dd>
+            <dt class="col-sm-4">Completion Date</dt><dd class="col-sm-8">@(Model.E_CompletionDate?.ToString("dd-MMM-yyyy") ?? "-")</dd>
+            <dt class="col-sm-4">Created</dt><dd class="col-sm-8">@Model.E_CreatedAt.ToString("dd-MMM-yyyy HH:mm")</dd>
+            <dt class="col-sm-4">Updated</dt><dd class="col-sm-8">@Model.E_UpdatedAt.ToString("dd-MMM-yyyy HH:mm")</dd>
+        </dl>
+    </div>
+</div>
+
+@functions { string StatusBadge(string s) => s switch { "Active" => "bg-success", "Completed" => "bg-info text-dark", "Withdrawn" => "bg-warning text-dark", "Transferred" => "bg-primary", _ => "bg-light text-dark" }; }

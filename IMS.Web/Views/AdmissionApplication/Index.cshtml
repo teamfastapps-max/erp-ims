@@ -1,0 +1,92 @@
+@model IMS.Models.ViewModels.AdmissionApplicationIndexViewModel
+@{ ViewData["Title"] = "Admission Applications"; }
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0"><i class="fa-solid fa-file-lines me-2"></i>Admission Applications</h3>
+    <a asp-controller="AdmissionApplication" asp-action="Create" class="btn btn-primary">
+        <i class="fa-solid fa-plus me-1"></i> New Application
+    </a>
+</div>
+
+<div class="card shadow-sm mb-3">
+    <div class="card-body">
+        @using (Html.BeginForm("Index", "AdmissionApplication", FormMethod.Get, new { @class = "row g-3 align-items-end" }))
+        {
+            <div class="col-md-3">
+                @Html.Label("searchTerm", "Search", new { @class = "form-label" })
+                @Html.TextBox("searchTerm", Model.SearchTerm, new { @class = "form-control", placeholder = "Application # or name" })
+            </div>
+            <div class="col-md-2">
+                @Html.Label("status", "Status", new { @class = "form-label" })
+                @Html.DropDownList("status", Model.StatusOptions, "All Statuses", new { @class = "form-select" })
+            </div>
+            <div class="col-md-2 d-grid">
+                <button type="submit" class="btn btn-outline-primary"><i class="fa-solid fa-search me-1"></i> Filter</button>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="table-responsive p-3">
+        <table id="dataTable" class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Application #</th>
+                    <th>Name</th>
+                    <th>Course</th>
+                    <th>Academic Year</th>
+                    <th>Submitted</th>
+                    <th>Status</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Applications.Any())
+                {
+                    <tr><td colspan="7" class="text-center text-muted py-4">No applications found.</td></tr>
+                }
+                else
+                {
+                    foreach (var a in Model.Applications)
+                    {
+                        <tr id="aa-row-@a.AA_Id">
+                            <td>@a.AA_ApplicationNumber</td>
+                            <td>@a.FullName</td>
+                            <td>@a.CourseName</td>
+                            <td>@a.AcademicYearName</td>
+                            <td>@(a.AA_SubmittedAt?.ToString("dd-MMM-yyyy") ?? "-")</td>
+                            <td><span class="badge @StatusBadge(a.AA_Status)">@a.AA_Status</span></td>
+                            <td class="text-end">
+                                <a asp-action="Details" asp-route-id="@a.AA_Id" class="btn btn-sm btn-outline-secondary" title="View"><i class="fa-solid fa-eye"></i></a>
+                                <a asp-action="Edit" asp-route-id="@a.AA_Id" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fa-solid fa-pen"></i></a>
+                                <button class="btn btn-sm btn-outline-danger aa-delete-btn" data-id="@a.AA_Id" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@Html.AntiForgeryToken()
+
+@functions { string StatusBadge(string s) => s switch { "Submitted" => "bg-info text-dark", "UnderReview" => "bg-warning text-dark", "Approved" => "bg-success", "Rejected" => "bg-danger", "Waitlisted" => "bg-secondary", _ => "bg-light text-dark" }; }
+
+@section Scripts {
+<script>
+$(function () {
+    $('#dataTable').DataTable({ pageLength: 10, lengthMenu: [10, 25, 50, 100], order: [[0, 'desc']] });
+    $(document).on("click", ".aa-delete-btn", function () {
+        var id = $(this).data("id");
+        if (!confirm("Delete this application?")) return;
+        $.ajax({ url: "/AdmissionApplication/DeleteApplication/" + id, type: "POST",
+            data: { __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val() },
+            success: function (r) { if (r.success) { if (window.toastr) toastr.success(r.message); $("#aa-row-" + id).fadeOut(300, function(){$(this).remove();}); } else { if (window.toastr) toastr.error(r.message); } },
+            error: function () { if (window.toastr) toastr.error("Request failed."); }
+        });
+    });
+});
+</script>
+}
