@@ -16,7 +16,7 @@ namespace IMS.Models.Session
         public string UserType { get; set; }
         public string CustomRoleId { get; set; }
         public string CustomRoleName { get; set; }
-        public string Permissions { get; set; }   // comma-separated
+        public string Permissions { get; set; }   
         public string KeycloakId { get; set; }
         public string UserId { get; set; }
         public string PreferredUsername { get; set; }

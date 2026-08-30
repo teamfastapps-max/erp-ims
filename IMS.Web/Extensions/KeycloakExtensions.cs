@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using IMS.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
-using IMS.Models.Session;
-using IMS.Services;
-using IMS.Services.Interfaces;
+using System.Globalization;
+using System.Text.Json;
+
 
 namespace IMS.Web.Extensions
 {
@@ -23,6 +23,14 @@ namespace IMS.Web.Extensions
             .AddCookie(options =>
             {
                 options.AccessDeniedPath = "/Home/AccessDenied";
+                options.Events = new CookieAuthenticationEvents
+                {
+                    // Runs on every authenticated request, before the controller executes.
+                    // If the access token stored in the cookie is at/near expiry, silently
+                    // exchange the refresh_token for a new pair via Keycloak's token
+                    // endpoint and re-issue the cookie - no redirect, no visible re-login.
+                    OnValidatePrincipal = async context => await TryRefreshTokenAsync(context, keycloak)
+                };
             })
             .AddOpenIdConnect(options =>
             {
@@ -97,6 +105,66 @@ namespace IMS.Web.Extensions
 
             services.AddAuthorization();
             return services;
+        }
+        private static async Task TryRefreshTokenAsync(CookieValidatePrincipalContext context, IConfigurationSection keycloak)
+        {
+            var expiresAtValue = context.Properties.GetTokenValue("expires_at");
+            if (string.IsNullOrEmpty(expiresAtValue)) return; 
+
+            var expiresAt = DateTimeOffset.Parse(expiresAtValue, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+
+            // Refresh a little early (60s buffer) rather than racing the exact expiry moment.
+            if (expiresAt > DateTimeOffset.UtcNow.AddSeconds(60)) return;
+
+            var refreshToken = context.Properties.GetTokenValue("refresh_token");
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                context.RejectPrincipal();
+                context.HttpContext.Response.Cookies.Delete(CookieAuthenticationDefaults.AuthenticationScheme);
+                return;
+            }
+
+            var httpClientFactory = context.HttpContext.RequestServices.GetRequiredService<IHttpClientFactory>();
+            var client = httpClientFactory.CreateClient();
+            var tokenEndpoint = $"{keycloak["Authority"]}/protocol/openid-connect/token";
+
+            HttpResponseMessage response;
+            try
+            {
+                response = await client.PostAsync(tokenEndpoint, new FormUrlEncodedContent(new Dictionary<string, string>
+                {
+                    ["grant_type"] = "refresh_token",
+                    ["client_id"] = keycloak["ClientId"],
+                    ["client_secret"] = keycloak["ClientSecret"],
+                    ["refresh_token"] = refreshToken
+                }));
+            }
+            catch
+            {
+                // Network/Keycloak unreachable - don't kill the session over a transient
+                // blip; let the request proceed with the (possibly stale) existing token.
+                return;
+            }
+
+            if (!response.IsSuccessStatusCode)
+            {
+                // Refresh token itself is expired/revoked - force a real re-login.
+                context.RejectPrincipal();
+                await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                return;
+            }
+
+            var payload = await response.Content.ReadFromJsonAsync<JsonElement>();
+            var newAccessToken = payload.GetProperty("access_token").GetString();
+            var newRefreshToken = payload.GetProperty("refresh_token").GetString();
+            var expiresIn = payload.GetProperty("expires_in").GetInt32();
+            var newExpiresAt = DateTimeOffset.UtcNow.AddSeconds(expiresIn).ToString("o", CultureInfo.InvariantCulture);
+
+            context.Properties.UpdateTokenValue("access_token", newAccessToken);
+            context.Properties.UpdateTokenValue("refresh_token", newRefreshToken);
+            context.Properties.UpdateTokenValue("expires_at", newExpiresAt);
+
+            context.ShouldRenew = true; // re-issues the cookie with the updated tokens
         }
     }
 }

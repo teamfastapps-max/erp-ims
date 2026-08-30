@@ -22,7 +22,7 @@ namespace IMS.Web.Extensions
             services.AddScoped<IEnrollmentService, EnrollmentService>();
             services.AddScoped<ITimetableService, TimetableService>();
             services.AddScoped<IAdmissionApplicationService, AdmissionApplicationService>();
-
+            services.AddScoped<ITeacherService, TeacherService>();
             services.AddScoped<IExpenseService, ExpenseService>();
             services.AddScoped<IStaffService, StaffService>();
             services.AddScoped<IAttendanceService, AttendanceService>();

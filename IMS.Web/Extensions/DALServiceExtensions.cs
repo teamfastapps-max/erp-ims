@@ -1,3 +1,4 @@
+using IMS.DAL;
 using IMS.DAL.Common;
 using IMS.DAL.Interfaces;
 using IMS.DAL.Repositories;
@@ -33,6 +34,7 @@ namespace IMS.Web.Extensions
             services.AddScoped<IFeeStructureItemDAL, FeeStructureItemDAL>();
             services.AddScoped<IFeeInvoiceDAL, FeeInvoiceDAL>();
             services.AddScoped<IPaymentDAL, PaymentDAL>();
+            services.AddScoped<ITeacherDAL, TeacherDAL>();
 
             return services;
         }

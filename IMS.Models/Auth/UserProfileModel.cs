@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IMS.Models.TenantUser;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,6 +20,12 @@ namespace IMS.Models.Auth
         public TenantDetailsModel TenantDetails { get; set; }
         public string KeycloakId { get; set; }
         public string Id { get; set; }
+        public string Phone { get; set; }
+        public LocationModel Location { get; set; }
+        public string ProfilePic { get; set; }
+        public string Status { get; set; }
+        public DateTime? CreatedAt { get; set; }
+        public bool Deleted { get; set; }
     }
 
     public class TenantDetailsModel
