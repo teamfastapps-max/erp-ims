@@ -1,3 +1,4 @@
+using IMS.DAL;
 using IMS.DAL.Common;
 using IMS.DAL.Interfaces;
 using IMS.DAL.Repositories;
@@ -14,6 +15,7 @@ namespace IMS.Web.Extensions
             services.AddScoped<IDropdownDAL, DropdownDAL>();
             services.AddScoped<IStudentDAL, StudentDAL>();
             services.AddScoped<IGuardianDAL, GuardianDAL>();
+            services.AddScoped<ITeacherDAL, TeacherDAL>();
 
             return services;
         }

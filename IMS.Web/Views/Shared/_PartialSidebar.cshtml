@@ -45,8 +45,7 @@
 
             <li class="nav-item">
                 <a class="nav-link @isActive("Teacher", "Teacher")"
-                   asp-area="Teacher"
-                   asp-controller="Teacher"
+                   asp-controller="Teachers"
                    asp-action="Index">
 
                     <i class="fa-solid fa-chalkboard-user"></i>
@@ -56,10 +55,6 @@
 
 
             <li class="nav-item">
-                @* <a class="nav-link @isActive("Student", "Student")"
-                   asp-area="Student"
-                   asp-controller="Student"
-                   asp-action="Index"> *@
                     <a class="nav-link @isActive("Student", "Student")"
                        asp-controller="Students"
                        asp-action="Index">
