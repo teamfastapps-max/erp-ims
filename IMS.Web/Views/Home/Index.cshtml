@@ -1,4 +1,4 @@
-﻿@{
+﻿@* @{
     Layout = "~/Views/Shared/_LayoutHome.cshtml";
 }
 
@@ -124,4 +124,271 @@
 
     </div>
 
-</div>
+</div> *@
+
+
+@{
+    ViewData["Title"] = "Home";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+}
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <span class="hero-eyebrow hero-fade-up">Admissions open for 2026–27</span>
+                <h1 class="hero-fade-up">Where every student's<br /><em>day is accounted for.</em></h1>
+                <p class="lead hero-fade-up">
+                    From the classroom to the report card, one system connects academics, attendance,
+                    examinations and fees — so parents, teachers and staff are always looking at the same picture.
+                </p>
+                <div class="hero-actions hero-fade-up">
+                    <a class="btn-brass" asp-controller="Home" asp-action="Admission">
+                        <i class="bi bi-file-earmark-text"></i> Apply for Admission
+                    </a>
+                    <a class="btn-outline-ink" style="color:var(--parchment);border-color:var(--rule-on-dark);" asp-controller="Home" asp-action="Academics">
+                        Explore Academics
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="notice-panel">
+                    <div class="notice-panel-head">
+                        <h3><i class="bi bi-pin-angle me-2"></i>Notice Board</h3>
+                        <a asp-controller="Home" asp-action="Notices">View all</a>
+                    </div>
+                    <ul class="notice-list">
+                        <li>
+                            <div class="notice-date"><span class="day">18</span><span class="mon">Sep</span></div>
+                            <div class="notice-body">
+                                <span class="notice-tag urgent">Urgent</span>
+                                <h6>Half-yearly exam datesheet released</h6>
+                                <p>Classes VI–XII — check the academics section for the full schedule.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="notice-date"><span class="day">25</span><span class="mon">Sep</span></div>
+                            <div class="notice-body">
+                                <span class="notice-tag event">Event</span>
+                                <h6>Annual Sports Day</h6>
+                                <p>Parents are welcome from 9:00 AM at the main ground.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="notice-date"><span class="day">02</span><span class="mon">Oct</span></div>
+                            <div class="notice-body">
+                                <span class="notice-tag academic">Academic</span>
+                                <h6>PTM for Classes IX–X</h6>
+                                <p>Report cards will be shared ahead of the meeting.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============ STATS ============ -->
+<section class="stats-strip">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-6 col-md-3">
+                <div class="stat-item"><div class="stat-num">1,200+</div><div class="stat-label">Students enrolled</div></div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-item"><div class="stat-num">85</div><div class="stat-label">Faculty members</div></div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-item"><div class="stat-num">24</div><div class="stat-label">Years of teaching</div></div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-item"><div class="stat-num">98%</div><div class="stat-label">Board exam pass rate</div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section class="section">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-5">
+                <span class="section-label">About the school</span>
+                <h2 class="mb-3">A campus built around steady, visible progress</h2>
+                <p class="about-lead">
+                    We keep class sizes small enough for teachers to actually know every student,
+                    and we keep parents in the loop the same way a good school always has —
+                    just without the paper diary getting lost in a schoolbag.
+                </p>
+                <a class="btn-outline-ink mt-2" asp-controller="Home" asp-action="About">Read our full story</a>
+            </div>
+            <div class="col-lg-7">
+                <div class="value-row">
+                    <div class="value-icon"><i class="bi bi-person-workspace"></i></div>
+                    <div><h6>Experienced faculty</h6><p>Most of our teaching staff have been with us for over eight years.</p></div>
+                </div>
+                <div class="value-row">
+                    <div class="value-icon"><i class="bi bi-flask"></i></div>
+                    <div><h6>Modern labs &amp; library</h6><p>Dedicated science, computer and language labs alongside a 6,000-book library.</p></div>
+                </div>
+                <div class="value-row">
+                    <div class="value-icon"><i class="bi bi-trophy"></i></div>
+                    <div><h6>Sports &amp; activities</h6><p>Athletics, football, chess and classical music, built into the weekly timetable.</p></div>
+                </div>
+                <div class="value-row">
+                    <div class="value-icon"><i class="bi bi-shield-check"></i></div>
+                    <div><h6>A safe, supervised campus</h6><p>CCTV-monitored premises with verified staff and a visitor sign-in at every gate.</p></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============ ACADEMICS ============ -->
+<section class="section section-tight" style="background:var(--parchment-dim);">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-2">
+            <div>
+                <span class="section-label">Academics</span>
+                <h2 class="mb-0">Every stage, one continuous curriculum</h2>
+            </div>
+            <a class="btn-outline-ink" asp-controller="Home" asp-action="Academics">View full curriculum</a>
+        </div>
+        <div class="ledger">
+            <div class="ledger-row">
+                <div class="ledger-stage">Pre-Primary</div>
+                <div class="ledger-desc">Nursery to UKG — play-based learning focused on language, motor skills and early numeracy.</div>
+                <a asp-controller="Home" asp-action="Academics">Details</a>
+            </div>
+            <div class="ledger-row">
+                <div class="ledger-stage">Primary</div>
+                <div class="ledger-desc">Classes I–V — foundational literacy, mathematics and environmental science.</div>
+                <a asp-controller="Home" asp-action="Academics">Details</a>
+            </div>
+            <div class="ledger-row">
+                <div class="ledger-stage">Middle &amp; Secondary</div>
+                <div class="ledger-desc">Classes VI–X — CBSE curriculum with dedicated science and computer labs.</div>
+                <a asp-controller="Home" asp-action="Academics">Details</a>
+            </div>
+            <div class="ledger-row">
+                <div class="ledger-stage">Senior Secondary</div>
+                <div class="ledger-desc">Classes XI–XII — Science, Commerce and Humanities streams.</div>
+                <a asp-controller="Home" asp-action="Academics">Details</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============ ADMISSION STEPS ============ -->
+<section class="section">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="section-label">Admission</span>
+            <h2>Four steps from enquiry to enrollment</h2>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="step-item">
+                    <div class="step-num">1</div>
+                    <h6>Submit an enquiry</h6>
+                    <p>Fill out the admission enquiry form with your child's grade and basic details.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="step-item">
+                    <div class="step-num">2</div>
+                    <h6>Share documents</h6>
+                    <p>Upload birth certificate, previous report card and address proof.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="step-item">
+                    <div class="step-num">3</div>
+                    <h6>Interaction</h6>
+                    <p>A short, informal meeting with the child and a parent — no formal testing before Class III.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="step-item">
+                    <div class="step-num">4</div>
+                    <h6>Confirm enrollment</h6>
+                    <p>Pay the admission fee and receive your child's student ID and class assignment.</p>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-5">
+            <a class="btn-brass" style="background:var(--ink);color:var(--parchment);" asp-controller="Home" asp-action="Admission">
+                <i class="bi bi-file-earmark-text"></i> Start Your Application
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="section section-tight" style="background:var(--parchment-dim);">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-2">
+            <div>
+                <span class="section-label">Campus life</span>
+                <h2 class="mb-0">A look around the school</h2>
+            </div>
+            <a class="btn-outline-ink" asp-controller="Home" asp-action="Gallery">Open full gallery</a>
+        </div>
+
+        <div class="gallery-grid">
+            <div class="gallery-tile g-tall"><img src="https://picsum.photos/seed/campus1/500/700" alt="Campus building" loading="lazy" /></div>
+            <div class="gallery-tile"><img src="https://picsum.photos/seed/campus2/500/300" alt="Classroom" loading="lazy" /></div>
+            <div class="gallery-tile"><img src="https://picsum.photos/seed/campus3/500/300" alt="Library" loading="lazy" /></div>
+            <div class="gallery-tile"><img src="https://picsum.photos/seed/campus4/500/300" alt="Sports ground" loading="lazy" /></div>
+            <div class="gallery-tile"><img src="https://picsum.photos/seed/campus5/500/300" alt="Science lab" loading="lazy" /></div>
+            <div class="gallery-tile g-tall"><img src="https://picsum.photos/seed/campus4/500/300" alt="Annual day event" loading="lazy" /></div>
+            <div class="gallery-tile g-tall"><img src="https://picsum.photos/seed/campus2/500/300" alt="Annual day event" loading="lazy" /></div>
+
+        </div>
+    </div>
+</section>
+<!-- ============ CAMPUS TOUR VIDEO ============ -->
+<section class="section">
+    <div class="container">
+        <div class="text-center mb-4">
+            <span class="section-label">Take a look inside</span>
+            <h2>A two-minute walk through campus</h2>
+        </div>
+        <div class="ratio ratio-16x9 mx-auto" style="max-width:900px;border-radius:10px;overflow:hidden;border:1px solid var(--rule);">
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/T_-CKCc6pcs?si=MXv-TFI5bxYkMe_m" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </div>
+    </div>
+</section>
+<!-- ============ TESTIMONIALS ============ -->
+<section class="section">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-md-6">
+                <div class="testimonial-card">
+                    <p>"What I notice most is that I always know what's going on — attendance, homework, upcoming exams, all in one place instead of scattered across group chats."</p>
+                    <cite>— Parent, Class VII</cite>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="testimonial-card">
+                    <p>"The teachers actually know my daughter's name and how she's doing, not just her roll number. That's rarer than it should be."</p>
+                    <cite>— Parent, Class III</cite>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="cta-band">
+    <div class="container">
+        <h2>Ready to see the campus for yourself?</h2>
+        <p>Book a visit, or start your child's application today.</p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a class="btn-brass" asp-controller="Home" asp-action="Admission">Apply for Admission</a>
+            <a class="btn-outline-ink" style="color:var(--parchment);border-color:var(--rule-on-dark);" asp-controller="Home" asp-action="Contact">Contact Us</a>
+        </div>
+    </div>
+</section>

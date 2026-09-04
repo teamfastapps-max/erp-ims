@@ -1,0 +1,132 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] — School Management System</title>
+    <meta name="description" content="School Management System — admissions, academics, notices, and secure portal access for students, staff, and administrators." />
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/publicsite.css" />
+    <link rel="stylesheet" href="~/css/contact.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/notice.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <header class="site-header">
+        <div class="container site-header-inner">
+            <a class="brand" asp-controller="Home" asp-action="Index">
+                <span class="brand-mark"><i class="bi bi-mortarboard-fill"></i></span>
+                <span class="brand-name">School Management System</span>
+            </a>
+
+            <button class="nav-toggle d-lg-none" type="button" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <nav class="main-nav" id="mainNav">
+                <a asp-controller="Home" asp-action="Index">Home</a>
+                <a asp-controller="Home" asp-action="About">About</a>
+                <a asp-controller="Home" asp-action="Academics">Academics</a>
+                <a asp-controller="Home" asp-action="Admission">Admission</a>
+                <a asp-controller="Home" asp-action="Notices">Notice Board</a>
+                <a asp-controller="Home" asp-action="Gallery">Gallery</a>
+                <a asp-controller="Home" asp-action="Contact">Contact</a>
+
+                <div class="nav-portal dropdown">
+                    <button class="btn-portal dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Portal Login
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end portal-menu">
+                        <li>
+                            <a class="dropdown-item" asp-controller="Home" asp-action="Login">
+                                <i class="bi bi-shield-lock"></i>
+                                <span><strong>Admin &amp; Staff</strong><small>Secure sign-in via institute account</small></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" asp-controller="Home" asp-action="Login">
+                                <i class="bi bi-person-video3"></i>
+                                <span><strong>Teacher</strong><small>Access your classes and students</small></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" asp-controller="Student" asp-action="Login">
+                                <i class="bi bi-mortarboard"></i>
+                                <span><strong>Student</strong><small>View attendance, results and fees</small></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        @RenderBody()
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="brand-row">
+                        <span class="brand-mark"><i class="bi bi-mortarboard-fill"></i></span>
+                        <span class="brand-name">School Management System</span>
+                    </div>
+                    <p>A unified platform for admissions, academics, attendance, examinations, and secure campus access — built around how a school actually runs.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h6>Quick Links</h6>
+                    <a asp-controller="Home" asp-action="About">About Us</a>
+                    <a asp-controller="Home" asp-action="Admission">Admission</a>
+                    <a asp-controller="Home" asp-action="Notices">Notice Board</a>
+                    <a asp-controller="Home" asp-action="Calendar">Holiday Calendar</a>
+                    <a asp-controller="Home" asp-action="Gallery">Gallery</a>
+                </div>
+
+                <div class="footer-col">
+                    <h6>Academics</h6>
+                    <a asp-controller="Home" asp-action="Academics">Pre-Primary &amp; Primary</a>
+                    <a asp-controller="Home" asp-action="Academics">Middle &amp; Secondary</a>
+                    <a asp-controller="Home" asp-action="Academics">Senior Secondary</a>
+                    <a asp-controller="Home" asp-action="Academics">Sports &amp; Activities</a>
+                </div>
+
+                <div class="footer-col">
+                    <h6>Contact</h6>
+                    <p class="footer-contact"><i class="bi bi-geo-alt"></i>123 Campus Road, Your City, State 000000</p>
+                    <p class="footer-contact"><i class="bi bi-telephone"></i>+91 00000 00000</p>
+                    <p class="footer-contact"><i class="bi bi-envelope"></i>info@yourschool.edu</p>
+                </div>
+            </div>
+
+            <div class="footer-rule"></div>
+
+            <div class="footer-bottom">
+                <span>&copy; @DateTime.Now.Year School Management System. All rights reserved.</span>
+                <span class="footer-bottom-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Use</a>
+                </span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/publicsite.js"></script>
+    <script src="~/js/contact.js" asp-append-version="true"></script>
+    <script src="~/js/notice.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

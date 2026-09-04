@@ -1,0 +1,623 @@
+﻿/* ============================================
+                   ABOUT PAGE
+                ============================================ */
+
+.about-page {
+    overflow: hidden;
+}
+
+/* ---------- Hero ---------- */
+
+.about-hero {
+    position: relative;
+    padding: 100px 0 110px;
+    background: linear-gradient(135deg, #f7f3eb 0%, #fffdf8 55%, #f1eee7 100%);
+}
+
+    .about-hero::after {
+        content: "";
+        position: absolute;
+        width: 380px;
+        height: 380px;
+        border-radius: 50%;
+        background: rgba(175, 132, 77, 0.08);
+        right: -150px;
+        top: -150px;
+    }
+
+.about-hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 760px;
+}
+
+.about-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+    color: #8b6539;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+    .about-eyebrow::before {
+        content: "";
+        width: 38px;
+        height: 1px;
+        background: #b18a5c;
+    }
+
+.about-hero h1 {
+    margin: 0;
+    font-family: "Fraunces", Georgia, serif;
+    font-size: clamp(48px, 7vw, 82px);
+    line-height: 1.02;
+    font-weight: 500;
+    letter-spacing: -2px;
+    color: #24221f;
+}
+
+    .about-hero h1 em {
+        color: #946b3d;
+    }
+
+.about-hero-text {
+    max-width: 680px;
+    margin-top: 28px;
+    color: #69645d;
+    font-size: 17px;
+    line-height: 1.9;
+}
+
+.about-hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 35px;
+    margin-top: 35px;
+}
+
+.about-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #4f4b45;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+    .about-meta-item i {
+        color: #a47645;
+        font-size: 19px;
+    }
+
+
+/* ---------- Intro ---------- */
+
+.about-intro {
+    padding: 105px 0;
+    background: #fff;
+}
+
+.about-section-tag {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #987044;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+}
+
+    .about-section-tag::before {
+        content: "";
+        width: 35px;
+        height: 1px;
+        background: #b58a59;
+    }
+
+.about-heading {
+    margin-top: 16px;
+    font-family: "Fraunces", Georgia, serif;
+    font-size: clamp(36px, 4vw, 54px);
+    line-height: 1.15;
+    font-weight: 500;
+    color: #292724;
+}
+
+    .about-heading em {
+        color: #986f42;
+    }
+
+.about-copy {
+    color: #66615a;
+    font-size: 15px;
+    line-height: 1.9;
+}
+
+    .about-copy + .about-copy {
+        margin-top: 18px;
+    }
+
+/* ---------- Highlight card ---------- */
+
+.about-highlight {
+    position: relative;
+    padding: 45px;
+    background: #f3efe7;
+    border: 1px solid #e7e0d4;
+    min-height: 330px;
+}
+
+    .about-highlight::before {
+        content: "“";
+        position: absolute;
+        top: 15px;
+        left: 28px;
+        font-family: "Fraunces", Georgia, serif;
+        font-size: 100px;
+        line-height: 1;
+        color: #d7c6ae;
+    }
+
+.about-highlight-content {
+    position: relative;
+    z-index: 1;
+    padding-top: 45px;
+}
+
+.about-highlight h3 {
+    font-family: "Fraunces", Georgia, serif;
+    font-size: 29px;
+    line-height: 1.35;
+    font-weight: 500;
+    color: #302d29;
+}
+
+.about-highlight p {
+    margin-top: 22px;
+    color: #716b63;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+
+/* ---------- Numbers ---------- */
+
+.about-numbers {
+    padding: 70px 0;
+    background: #272522;
+    color: #fff;
+}
+
+.number-item {
+    text-align: center;
+    padding: 15px 20px;
+}
+
+    .number-item + .number-item {
+        border-left: 1px solid rgba(255,255,255,.12);
+    }
+
+.number-value {
+    font-family: "Fraunces", Georgia, serif;
+    font-size: 48px;
+    line-height: 1;
+    color: #e2c49c;
+}
+
+.number-label {
+    margin-top: 12px;
+    color: #aaa59e;
+    font-size: 12px;
+    letter-spacing: .5px;
+}
+
+
+/* ---------- Mission / Vision ---------- */
+
+.mission-section {
+    padding: 105px 0;
+    background: #faf9f6;
+}
+
+.mission-card {
+    height: 100%;
+    padding: 40px;
+    background: #fff;
+    border: 1px solid #e8e3da;
+    transition: transform .3s ease, box-shadow .3s ease;
+}
+
+    .mission-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 18px 40px rgba(42, 37, 30, .07);
+    }
+
+.mission-icon {
+    width: 54px;
+    height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f2eadf;
+    color: #956d42;
+    font-size: 23px;
+    margin-bottom: 25px;
+}
+
+.mission-card h3 {
+    font-family: "Fraunces", Georgia, serif;
+    font-size: 29px;
+    font-weight: 500;
+    color: #2d2a26;
+}
+
+.mission-card p {
+    margin: 15px 0 0;
+    color: #6b665f;
+    font-size: 14px;
+    line-height: 1.85;
+}
+
+
+/* ---------- Modules ---------- */
+
+.modules-section {
+    padding: 105px 0;
+    background: #fff;
+}
+
+.modules-intro {
+    max-width: 650px;
+}
+
+.modules-list {
+    margin-top: 50px;
+}
+
+.module-item {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 21px 0;
+    border-bottom: 1px solid #e8e4dc;
+}
+
+.module-number {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #d9cdbd;
+    border-radius: 50%;
+    color: #987044;
+    font-family: "Fraunces", Georgia, serif;
+    font-size: 14px;
+}
+
+.module-icon {
+    color: #987044;
+    font-size: 20px;
+    width: 25px;
+}
+
+.module-item h5 {
+    margin: 0;
+    color: #302d29;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.module-item p {
+    margin: 4px 0 0;
+    color: #8a857d;
+    font-size: 12px;
+}
+
+
+/* ---------- Why us ---------- */
+
+.why-about-section {
+    padding: 105px 0;
+    background: #f4f0e8;
+}
+
+.why-list {
+    margin-top: 35px;
+}
+
+.why-item {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 27px;
+}
+
+.why-check {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #2c2925;
+    color: #e2c49c;
+    border-radius: 50%;
+    font-size: 14px;
+}
+
+.why-item h5 {
+    margin: 0;
+    color: #302d29;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.why-item p {
+    margin: 5px 0 0;
+    color: #706a62;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.why-visual {
+    position: relative;
+    min-height: 470px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.school-emblem {
+    width: 250px;
+    height: 250px;
+    border: 1px solid #cdbb9f;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,.5);
+    box-shadow: 0 0 0 25px rgba(255,255,255,.35), 0 0 0 50px rgba(255,255,255,.18);
+}
+
+    .school-emblem i {
+        font-size: 55px;
+        color: #947047;
+    }
+
+    .school-emblem span {
+        margin-top: 15px;
+        color: #625b52;
+        font-family: "Fraunces", Georgia, serif;
+        font-size: 20px;
+    }
+
+.visual-card {
+    position: absolute;
+    padding: 17px 20px;
+    background: #fff;
+    border: 1px solid #e5ded3;
+    box-shadow: 0 12px 30px rgba(43,36,27,.08);
+}
+
+    .visual-card strong {
+        display: block;
+        color: #302d29;
+        font-size: 13px;
+    }
+
+    .visual-card small {
+        display: block;
+        margin-top: 3px;
+        color: #89837a;
+        font-size: 10px;
+    }
+
+.visual-card-one {
+    left: 0;
+    top: 75px;
+}
+
+.visual-card-two {
+    right: 0;
+    bottom: 85px;
+}
+
+
+/* ---------- CTA ---------- */
+
+.about-cta {
+    padding: 100px 0;
+    background: #282522;
+    color: #fff;
+}
+
+.about-cta-inner {
+    max-width: 760px;
+    margin: auto;
+    text-align: center;
+}
+
+.about-cta-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(226,196,156,.35);
+    color: #e2c49c;
+    font-size: 25px;
+}
+
+.about-cta h2 {
+    font-family: "Fraunces", Georgia, serif;
+    font-size: clamp(35px, 5vw, 55px);
+    line-height: 1.15;
+    font-weight: 500;
+}
+
+    .about-cta h2 em {
+        color: #dfbd91;
+    }
+
+.about-cta p {
+    max-width: 620px;
+    margin: 18px auto 30px;
+    color: #aaa59e;
+    line-height: 1.8;
+    font-size: 14px;
+}
+
+.about-cta .btn {
+    padding: 12px 25px;
+    border-radius: 0;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.about-btn-primary {
+    background: #dfbd91;
+    color: #292521;
+    border: 1px solid #dfbd91;
+}
+
+    .about-btn-primary:hover {
+        background: #efd2ac;
+        color: #292521;
+    }
+
+.about-btn-outline {
+    margin-left: 8px;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,.25);
+}
+
+    .about-btn-outline:hover {
+        background: rgba(255,255,255,.08);
+        color: #fff;
+    }
+
+
+/* ---------- Reveal ---------- */
+
+.about-reveal {
+    opacity: 0;
+    transform: translateY(25px);
+    transition: opacity .7s ease, transform .7s ease;
+}
+
+    .about-reveal.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+
+/* ---------- Responsive ---------- */
+
+@@media (max-width: 991.98px) {
+    .about-hero {
+        padding: 75px 0 80px;
+    }
+
+    .about-intro,
+    .mission-section,
+    .modules-section,
+    .why-about-section {
+        padding: 75px 0;
+    }
+
+    .number-item:nth-child(3) {
+        border-left: 0;
+    }
+
+    .why-visual {
+        min-height: 400px;
+    }
+}
+
+@@media (max-width: 767.98px) {
+    .about-hero h1 {
+        font-size: 48px;
+    }
+
+    .about-hero-text {
+        font-size: 15px;
+    }
+
+    .about-hero-meta {
+        gap: 15px;
+        flex-direction: column;
+    }
+
+    .about-highlight {
+        margin-top: 20px;
+        padding: 30px;
+    }
+
+    .number-item {
+        margin-bottom: 20px;
+    }
+
+        .number-item + .number-item {
+            border-left: 0;
+        }
+
+    .mission-card {
+        padding: 30px;
+    }
+
+    .why-visual {
+        min-height: 350px;
+    }
+
+    .school-emblem {
+        width: 190px;
+        height: 190px;
+    }
+
+        .school-emblem i {
+            font-size: 40px;
+        }
+
+    .visual-card-one {
+        left: 5px;
+    }
+
+    .visual-card-two {
+        right: 5px;
+    }
+
+    .about-btn-outline {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+}
+
+@@media (max-width: 575.98px) {
+    .about-hero h1 {
+        font-size: 43px;
+    }
+
+    .about-section-tag {
+        font-size: 10px;
+    }
+
+    .about-heading {
+        font-size: 36px;
+    }
+
+    .number-value {
+        font-size: 38px;
+    }
+
+    .why-visual {
+        display: none;
+    }
+}
