@@ -1,0 +1,1394 @@
+﻿@{
+    ViewData["Title"] = "Academics";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/academics.css"
+          asp-append-version="true" />
+}
+
+
+<div class="academics-page">
+
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+
+    <section class="academics-hero">
+
+        <div class="academics-hero-grid"></div>
+
+        <div class="container">
+
+            <div class="academics-hero-layout">
+
+                <div class="academics-hero-content">
+
+                    <span class="academics-eyebrow">
+                        ACADEMICS & LEARNING
+                    </span>
+
+                    <h1>
+                        Learning that
+                        <span>goes beyond</span>
+                        the classroom.
+                    </h1>
+
+                    <p>
+                        Our academic programme combines strong foundations,
+                        curiosity-driven learning and real-world experiences
+                        to help every student grow with confidence.
+                    </p>
+
+
+                    <div class="academics-hero-actions">
+
+                        <a asp-controller="Home"
+                           asp-action="Admission"
+                           class="academics-btn-primary">
+
+                            Explore Admission
+
+                            <i class="bi bi-arrow-up-right"></i>
+
+                        </a>
+
+                        <a href="#academicJourney"
+                           class="academics-btn-link">
+
+                            Explore our approach
+
+                            <i class="bi bi-arrow-down"></i>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <!-- HERO ACADEMIC CARD -->
+
+                <div class="academics-hero-card">
+
+                    <div class="hero-card-top">
+
+                        <span>
+                            ACADEMIC YEAR
+                        </span>
+
+                        <strong>
+                            2026—27
+                        </strong>
+
+                    </div>
+
+
+                    <div class="hero-card-middle">
+
+                        <div class="hero-orbit">
+
+                            <div class="orbit-ring orbit-ring-one"></div>
+
+                            <div class="orbit-ring orbit-ring-two"></div>
+
+                            <div class="orbit-center">
+
+                                <i class="bi bi-mortarboard-fill"></i>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="hero-card-bottom">
+
+                        <div>
+                            <strong>01</strong>
+                            <span>Curiosity</span>
+                        </div>
+
+                        <div>
+                            <strong>02</strong>
+                            <span>Knowledge</span>
+                        </div>
+
+                        <div>
+                            <strong>03</strong>
+                            <span>Character</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         INTRO / PHILOSOPHY
+    ====================================================== -->
+
+    <section class="academic-philosophy">
+
+        <div class="container">
+
+            <div class="philosophy-grid">
+
+
+                <div class="philosophy-heading">
+
+                    <span class="academic-section-tag">
+                        OUR APPROACH
+                    </span>
+
+                    <h2>
+                        Education should
+                        <em>create thinkers.</em>
+                    </h2>
+
+                </div>
+
+
+                <div class="philosophy-content">
+
+                    <p class="philosophy-lead">
+                        We believe education is not simply about
+                        remembering information. It is about learning
+                        how to ask better questions, solve problems,
+                        communicate ideas and understand the world.
+                    </p>
+
+                    <p>
+                        Our academic environment balances structured
+                        curriculum with exploration. Students are given
+                        the knowledge, guidance and confidence they need
+                        to become independent learners.
+                    </p>
+
+
+                    <div class="philosophy-signature">
+
+                        <span class="signature-line"></span>
+
+                        <span>
+                            Academic Philosophy
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         ACADEMIC STAGES
+    ====================================================== -->
+
+    <section class="academic-stages"
+             id="academicJourney">
+
+        <div class="container">
+
+            <div class="stages-header">
+
+                <div>
+
+                    <span class="academic-section-tag">
+                        ACADEMIC JOURNEY
+                    </span>
+
+                    <h2>
+                        One journey.
+                        <em>Different stages.</em>
+                    </h2>
+
+                </div>
+
+                <p>
+                    Our curriculum evolves with the age, ability and
+                    developmental needs of every learner.
+                </p>
+
+            </div>
+
+
+            <!-- STAGE NAVIGATION -->
+
+            <div class="stage-tabs">
+
+                <button type="button"
+                        class="stage-tab active"
+                        data-stage="preprimary">
+
+                    <span class="stage-number">
+                        01
+                    </span>
+
+                    <span>
+                        Pre-Primary
+                    </span>
+
+                </button>
+
+
+                <button type="button"
+                        class="stage-tab"
+                        data-stage="primary">
+
+                    <span class="stage-number">
+                        02
+                    </span>
+
+                    <span>
+                        Primary
+                    </span>
+
+                </button>
+
+
+                <button type="button"
+                        class="stage-tab"
+                        data-stage="middle">
+
+                    <span class="stage-number">
+                        03
+                    </span>
+
+                    <span>
+                        Middle School
+                    </span>
+
+                </button>
+
+
+                <button type="button"
+                        class="stage-tab"
+                        data-stage="secondary">
+
+                    <span class="stage-number">
+                        04
+                    </span>
+
+                    <span>
+                        Secondary
+                    </span>
+
+                </button>
+
+            </div>
+
+
+            <!-- STAGE CONTENT -->
+
+            <div class="stage-content">
+
+
+                <!-- PRE PRIMARY -->
+
+                <div class="stage-panel active"
+                     data-panel="preprimary">
+
+                    <div class="stage-panel-info">
+
+                        <span class="stage-label">
+                            STAGE 01
+                        </span>
+
+                        <h3>
+                            Discovering the
+                            <em>joy of learning.</em>
+                        </h3>
+
+                        <p>
+                            Our early years programme focuses on
+                            exploration, language, movement, creativity
+                            and social development through meaningful
+                            experiences.
+                        </p>
+
+                        <div class="stage-age">
+                            <i class="bi bi-calendar3"></i>
+
+                            <span>
+                                Early Years · Ages 3–5
+                            </span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="stage-subjects">
+
+                        <div class="subject-card">
+                            <i class="bi bi-chat-heart"></i>
+                            <span>Language & Communication</span>
+                        </div>
+
+                        <div class="subject-card">
+                            <i class="bi bi-calculator"></i>
+                            <span>Early Mathematics</span>
+                        </div>
+
+                        <div class="subject-card">
+                            <i class="bi bi-palette"></i>
+                            <span>Creative Expression</span>
+                        </div>
+
+                        <div class="subject-card">
+                            <i class="bi bi-tree"></i>
+                            <span>Exploration & Nature</span>
+                        </div>
+
+                        <div class="subject-card">
+                            <i class="bi bi-people"></i>
+                            <span>Social Development</span>
+                        </div>
+
+                        <div class="subject-card">
+                            <i class="bi bi-music-note-beamed"></i>
+                            <span>Music & Movement</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PRIMARY -->
+
+                <div class="stage-panel"
+                     data-panel="primary">
+
+                    <div class="stage-panel-info">
+
+                        <span class="stage-label">
+                            STAGE 02
+                        </span>
+
+                        <h3>
+                            Building strong
+                            <em>foundations.</em>
+                        </h3>
+
+                        <p>
+                            Students develop strong literacy,
+                            numeracy and scientific foundations while
+                            learning to collaborate, communicate and
+                            think independently.
+                        </p>
+
+                        <div class="stage-age">
+
+                            <i class="bi bi-calendar3"></i>
+
+                            <span>
+                                Primary · Classes I–V
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="stage-subjects">
+
+                        <div class="subject-card">
+                            <i class="bi bi-book"></i>
+                            <span>English</span>
+                        </div>
+
+                        <div class="subject-card">
+                            <i class="bi bi-calculator"></i>
+                            <span>Mathematics</span>
+                        </div>
+
+                        <div class="subject-card">
+                            <i class="bi bi-globe2"></i>
+                            <span>Environmental Studies</span>
+                        </div>
+
+                        <div class="subject-card">
+                            <i class="bi bi-translate"></i>
+                            <span>Languages</span>
+                        </div>
+
+                        <div class="subject-card">
+                            <i class="bi bi-palette"></i>
+                            <span>Art & Creativity</span>
+                        </div>
+
+                        <div class="subject-card">
+                            <i class="bi bi-trophy"></i>
+                            <span>Sports & Games</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- MIDDLE SCHOOL -->
+
+                <div class="stage-panel"
+                     data-panel="middle">
+
+                    <div class="stage-panel-info">
+
+                        <span class="stage-label">
+                            STAGE 03
+                        </span>
+
+                        <h3>
+                            Questioning,
+                            <em>connecting & thinking.</em>
+                        </h3>
+
+                        <p>
+                            Students move from foundational learning
+                            towards deeper subject understanding,
+                            analytical thinking and independent work.
+                        </p>
+
+                        <div class="stage-age">
+
+                            <i class="bi bi-calendar3"></i>
+
+                            <span>
+                                Middle School · Classes VI–VIII
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="stage-subjects">
+
+                        <div class="subject-card">
+                            <i class="bi bi-book"></i>
+                            <span>English & Literature</span>
+                        </div>
+
+                        <div class="subject-card">
+                            <i class="bi bi-calculator"></i>
+                            <span>Mathematics</span>
+                        </div>
+
+                        <div class="subject-card">
+                            <i class="bi bi-flask"></i>
+                            <span>Science</span>
+                        </div>
+
+                        <div class="subject-card">
+                            <i class="bi bi-globe2"></i>
+                            <span>Social Science</span>
+                        </div>
+
+                        <div class="subject-card">
+                            <i class="bi bi-laptop"></i>
+                            <span>Computer Education</span>
+                        </div>
+
+                        <div class="subject-card">
+                            <i class="bi bi-lightbulb"></i>
+                            <span>Projects & Research</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SECONDARY -->
+
+                <div class="stage-panel"
+                     data-panel="secondary">
+
+                    <div class="stage-panel-info">
+
+                        <span class="stage-label">
+                            STAGE 04
+                        </span>
+
+                        <h3>
+                            Preparing for the
+                            <em>world ahead.</em>
+                        </h3>
+
+                        <p>
+                            Secondary education develops academic
+                            depth, examination readiness and the
+                            confidence required for future studies.
+                        </p>
+
+                        <div class="stage-age">
+
+                            <i class="bi bi-calendar3"></i>
+
+                            <span>
+                                Secondary · Classes IX–XII
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="stage-subjects">
+
+                        <div class="subject-card">
+                            <i class="bi bi-book"></i>
+                            <span>Languages</span>
+                        </div>
+
+                        <div class="subject-card">
+                            <i class="bi bi-calculator"></i>
+                            <span>Mathematics</span>
+                        </div>
+
+                        <div class="subject-card">
+                            <i class="bi bi-flask"></i>
+                            <span>Physics & Chemistry</span>
+                        </div>
+
+                        <div class="subject-card">
+                            <i class="bi bi-globe2"></i>
+                            <span>Social Sciences</span>
+                        </div>
+
+                        <div class="subject-card">
+                            <i class="bi bi-pc-display"></i>
+                            <span>Technology</span>
+                        </div>
+
+                        <div class="subject-card">
+                            <i class="bi bi-bar-chart"></i>
+                            <span>Career Preparation</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         LEARNING AREAS
+    ====================================================== -->
+
+    <section class="learning-areas">
+
+        <div class="container">
+
+            <div class="learning-header">
+
+                <span class="academic-section-tag">
+                    CORE LEARNING
+                </span>
+
+                <h2>
+                    More than
+                    <em>subjects.</em>
+                </h2>
+
+                <p>
+                    A modern education develops academic knowledge
+                    alongside creativity, communication, technology,
+                    physical wellbeing and character.
+                </p>
+
+            </div>
+
+
+            <div class="learning-grid">
+
+
+                <article class="learning-card learning-card-featured">
+
+                    <span class="learning-number">
+                        01
+                    </span>
+
+                    <div class="learning-icon">
+                        <i class="bi bi-lightbulb"></i>
+                    </div>
+
+                    <h3>
+                        Critical Thinking
+                    </h3>
+
+                    <p>
+                        Students learn to question information,
+                        identify patterns, analyse situations and
+                        develop reasoned solutions.
+                    </p>
+
+                    <span class="learning-arrow">
+                        <i class="bi bi-arrow-up-right"></i>
+                    </span>
+
+                </article>
+
+
+                <article class="learning-card">
+
+                    <span class="learning-number">
+                        02
+                    </span>
+
+                    <div class="learning-icon">
+                        <i class="bi bi-chat-square-text"></i>
+                    </div>
+
+                    <h3>
+                        Communication
+                    </h3>
+
+                    <p>
+                        Reading, writing, speaking and listening are
+                        developed through classroom interaction and
+                        collaborative work.
+                    </p>
+
+                    <span class="learning-arrow">
+                        <i class="bi bi-arrow-up-right"></i>
+                    </span>
+
+                </article>
+
+
+                <article class="learning-card">
+
+                    <span class="learning-number">
+                        03
+                    </span>
+
+                    <div class="learning-icon">
+                        <i class="bi bi-palette"></i>
+                    </div>
+
+                    <h3>
+                        Creativity
+                    </h3>
+
+                    <p>
+                        Art, design, music and creative projects give
+                        students space to imagine, experiment and
+                        express themselves.
+                    </p>
+
+                    <span class="learning-arrow">
+                        <i class="bi bi-arrow-up-right"></i>
+                    </span>
+
+                </article>
+
+
+                <article class="learning-card">
+
+                    <span class="learning-number">
+                        04
+                    </span>
+
+                    <div class="learning-icon">
+                        <i class="bi bi-cpu"></i>
+                    </div>
+
+                    <h3>
+                        Digital Learning
+                    </h3>
+
+                    <p>
+                        Technology is introduced as a tool for research,
+                        collaboration, creativity and responsible
+                        digital citizenship.
+                    </p>
+
+                    <span class="learning-arrow">
+                        <i class="bi bi-arrow-up-right"></i>
+                    </span>
+
+                </article>
+
+
+                <article class="learning-card">
+
+                    <span class="learning-number">
+                        05
+                    </span>
+
+                    <div class="learning-icon">
+                        <i class="bi bi-person-check"></i>
+                    </div>
+
+                    <h3>
+                        Character
+                    </h3>
+
+                    <p>
+                        Respect, responsibility, empathy and integrity
+                        are woven into everyday school life.
+                    </p>
+
+                    <span class="learning-arrow">
+                        <i class="bi bi-arrow-up-right"></i>
+                    </span>
+
+                </article>
+
+
+                <article class="learning-card">
+
+                    <span class="learning-number">
+                        06
+                    </span>
+
+                    <div class="learning-icon">
+                        <i class="bi bi-heart-pulse"></i>
+                    </div>
+
+                    <h3>
+                        Wellbeing
+                    </h3>
+
+                    <p>
+                        Physical activity, social connection and
+                        emotional wellbeing support healthy development.
+                    </p>
+
+                    <span class="learning-arrow">
+                        <i class="bi bi-arrow-up-right"></i>
+                    </span>
+
+                </article>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         MODERN TEACHING MODEL
+    ====================================================== -->
+
+    <section class="teaching-model">
+
+        <div class="container">
+
+            <div class="teaching-layout">
+
+
+                <div class="teaching-visual">
+
+                    <div class="teaching-circle">
+
+                        <div class="circle-core">
+
+                            <span>
+                                LEARN
+                            </span>
+
+                            <strong>
+                                DO
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="floating-learning-card card-one">
+
+                        <i class="bi bi-search"></i>
+
+                        <span>
+                            Explore
+                        </span>
+
+                    </div>
+
+
+                    <div class="floating-learning-card card-two">
+
+                        <i class="bi bi-puzzle"></i>
+
+                        <span>
+                            Connect
+                        </span>
+
+                    </div>
+
+
+                    <div class="floating-learning-card card-three">
+
+                        <i class="bi bi-stars"></i>
+
+                        <span>
+                            Create
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="teaching-content">
+
+                    <span class="academic-section-tag">
+                        HOW WE TEACH
+                    </span>
+
+                    <h2>
+                        From
+                        <em>learning</em>
+                        to doing.
+                    </h2>
+
+                    <p class="teaching-lead">
+                        The strongest learning happens when students
+                        can connect ideas with experience.
+                    </p>
+
+
+                    <div class="teaching-points">
+
+                        <div class="teaching-point">
+
+                            <span>
+                                01
+                            </span>
+
+                            <div>
+                                <h4>
+                                    Inquiry-led learning
+                                </h4>
+
+                                <p>
+                                    Encourage students to ask,
+                                    investigate and discover.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="teaching-point">
+
+                            <span>
+                                02
+                            </span>
+
+                            <div>
+                                <h4>
+                                    Project-based experiences
+                                </h4>
+
+                                <p>
+                                    Apply classroom concepts through
+                                    practical projects and activities.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="teaching-point">
+
+                            <span>
+                                03
+                            </span>
+
+                            <div>
+                                <h4>
+                                    Collaborative learning
+                                </h4>
+
+                                <p>
+                                    Build communication and teamwork
+                                    through meaningful collaboration.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="teaching-point">
+
+                            <span>
+                                04
+                            </span>
+
+                            <div>
+
+                                <h4>
+                                    Individual attention
+                                </h4>
+
+                                <p>
+                                    Teachers monitor progress and
+                                    provide support based on student needs.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         ASSESSMENT
+    ====================================================== -->
+
+    <section class="assessment-section">
+
+        <div class="container">
+
+            <div class="assessment-heading">
+
+                <span class="academic-section-tag">
+                    ASSESSMENT
+                </span>
+
+                <h2>
+                    Progress is more than
+                    <em>a number.</em>
+                </h2>
+
+                <p>
+                    We use assessment as a way to understand learning,
+                    identify strengths and support areas where students
+                    can improve.
+                </p>
+
+            </div>
+
+
+            <div class="assessment-grid">
+
+
+                <div class="assessment-item">
+
+                    <div class="assessment-icon">
+                        <i class="bi bi-journal-check"></i>
+                    </div>
+
+                    <div>
+
+                        <span>
+                            01
+                        </span>
+
+                        <h3>
+                            Continuous Learning
+                        </h3>
+
+                        <p>
+                            Regular classroom activities and assignments
+                            help teachers understand progress throughout
+                            the academic year.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="assessment-item">
+
+                    <div class="assessment-icon">
+                        <i class="bi bi-clipboard-data"></i>
+                    </div>
+
+                    <div>
+
+                        <span>
+                            02
+                        </span>
+
+                        <h3>
+                            Periodic Assessment
+                        </h3>
+
+                        <p>
+                            Structured assessments help students
+                            consolidate knowledge and prepare for
+                            academic milestones.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="assessment-item">
+
+                    <div class="assessment-icon">
+                        <i class="bi bi-people"></i>
+                    </div>
+
+                    <div>
+
+                        <span>
+                            03
+                        </span>
+
+                        <h3>
+                            Parent Partnership
+                        </h3>
+
+                        <p>
+                            Parents receive meaningful updates about
+                            academic development, participation and
+                            overall progress.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         BEYOND CLASSROOM
+    ====================================================== -->
+
+    <section class="beyond-classroom">
+
+        <div class="container">
+
+            <div class="beyond-header">
+
+                <div>
+
+                    <span class="academic-section-tag">
+                        BEYOND THE CLASSROOM
+                    </span>
+
+                    <h2>
+                        Education happens
+                        <em>everywhere.</em>
+                    </h2>
+
+                </div>
+
+                <p>
+                    Experiences outside traditional lessons help
+                    students discover interests, develop confidence
+                    and build lasting skills.
+                </p>
+
+            </div>
+
+
+            <div class="beyond-grid">
+
+                <div class="beyond-card">
+
+                    <i class="bi bi-trophy"></i>
+
+                    <span>
+                        SPORTS
+                    </span>
+
+                    <h3>
+                        Teamwork & Competition
+                    </h3>
+
+                </div>
+
+
+                <div class="beyond-card">
+
+                    <i class="bi bi-music-note-beamed"></i>
+
+                    <span>
+                        PERFORMING ARTS
+                    </span>
+
+                    <h3>
+                        Music & Expression
+                    </h3>
+
+                </div>
+
+
+                <div class="beyond-card">
+
+                    <i class="bi bi-flask"></i>
+
+                    <span>
+                        DISCOVERY
+                    </span>
+
+                    <h3>
+                        Science & Exploration
+                    </h3>
+
+                </div>
+
+
+                <div class="beyond-card">
+
+                    <i class="bi bi-globe2"></i>
+
+                    <span>
+                        COMMUNITY
+                    </span>
+
+                    <h3>
+                        Learning Beyond School
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         ACADEMIC JOURNEY TIMELINE
+    ====================================================== -->
+
+    <section class="academic-timeline">
+
+        <div class="container">
+
+            <div class="timeline-heading">
+
+                <span class="academic-section-tag">
+                    THE JOURNEY
+                </span>
+
+                <h2>
+                    Growing with every
+                    <em>academic year.</em>
+                </h2>
+
+            </div>
+
+
+            <div class="timeline">
+
+                <div class="timeline-line"></div>
+
+
+                <div class="timeline-item">
+
+                    <div class="timeline-number">
+                        01
+                    </div>
+
+                    <div class="timeline-content">
+
+                        <span>
+                            EARLY YEARS
+                        </span>
+
+                        <h3>
+                            Discover
+                        </h3>
+
+                        <p>
+                            Curiosity, confidence, communication and
+                            the joy of discovering something new.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="timeline-item">
+
+                    <div class="timeline-number">
+                        02
+                    </div>
+
+                    <div class="timeline-content">
+
+                        <span>
+                            PRIMARY YEARS
+                        </span>
+
+                        <h3>
+                            Build
+                        </h3>
+
+                        <p>
+                            Strong foundations in literacy, numeracy,
+                            science and creative thinking.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="timeline-item">
+
+                    <div class="timeline-number">
+                        03
+                    </div>
+
+                    <div class="timeline-content">
+
+                        <span>
+                            MIDDLE YEARS
+                        </span>
+
+                        <h3>
+                            Explore
+                        </h3>
+
+                        <p>
+                            Deeper subject knowledge, critical thinking,
+                            projects and independent learning.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="timeline-item">
+
+                    <div class="timeline-number">
+                        04
+                    </div>
+
+                    <div class="timeline-content">
+
+                        <span>
+                            SENIOR YEARS
+                        </span>
+
+                        <h3>
+                            Prepare
+                        </h3>
+
+                        <p>
+                            Academic confidence, examination readiness
+                            and preparation for future pathways.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CTA
+    ====================================================== -->
+
+    <section class="academics-cta">
+
+        <div class="container">
+
+            <div class="academics-cta-inner">
+
+                <div>
+
+                    <span class="academic-section-tag">
+                        READY TO BEGIN?
+                    </span>
+
+                    <h2>
+                        Give your child
+                        <em>a strong beginning.</em>
+                    </h2>
+
+                    <p>
+                        Learn more about our academic programme,
+                        admissions and the opportunities available
+                        to our students.
+                    </p>
+
+                </div>
+
+
+                <div class="academics-cta-actions">
+
+                    <a asp-controller="Home"
+                       asp-action="Admission"
+                       class="academics-btn-primary">
+
+                        Admission Information
+
+                        <i class="bi bi-arrow-up-right"></i>
+
+                    </a>
+
+
+                    <a asp-controller="Home"
+                       asp-action="Contact"
+                       class="academics-btn-outline">
+
+                        Talk to the School
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+</div>
+
+
+@section Scripts {
+
+    <script src="~/js/academics.js" asp-append-version="true"></script>
+
+}

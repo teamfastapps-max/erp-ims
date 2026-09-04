@@ -1,0 +1,740 @@
+﻿@{
+    ViewData["Title"] = "Gallery";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/gallery.css" asp-append-version="true" />
+}
+
+<div class="gallery-page">
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+
+    <section class="gallery-hero">
+
+        <div class="gallery-hero-pattern"></div>
+
+        <div class="container">
+
+            <div class="gallery-hero-content">
+
+                <span class="gallery-eyebrow">
+                    CAMPUS LIFE
+                </span>
+
+                <h1>
+                    Moments that
+                    <span>tell our story.</span>
+                </h1>
+
+                <p>
+                    Take a closer look at life across our campus —
+                    classrooms, celebrations, activities, sports and
+                    the everyday moments that make our school special.
+                </p>
+
+                <div class="gallery-hero-meta">
+
+                    <div class="hero-meta-item">
+                        <strong>25+</strong>
+                        <span>Years of memories</span>
+                    </div>
+
+                    <div class="hero-meta-line"></div>
+
+                    <div class="hero-meta-item">
+                        <strong>100+</strong>
+                        <span>Campus moments</span>
+                    </div>
+
+                    <div class="hero-meta-line"></div>
+
+                    <div class="hero-meta-item">
+                        <strong>12</strong>
+                        <span>Gallery categories</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         GALLERY INTRO
+    ====================================================== -->
+
+    <section class="gallery-intro">
+
+        <div class="container">
+
+            <div class="gallery-section-heading">
+
+                <div>
+
+                    <span class="section-tag">
+                        SCHOOL IN PICTURES
+                    </span>
+
+                    <h2>
+                        A glimpse into
+                        <em>school life.</em>
+                    </h2>
+
+                </div>
+
+                <p>
+                    Every photograph captures a small part of the
+                    learning, friendship and experiences that happen
+                    across our school community.
+                </p>
+
+            </div>
+
+
+            <!-- FILTERS -->
+
+            <div class="gallery-filters">
+
+                <button class="gallery-filter active"
+                        type="button"
+                        data-filter="all">
+                    All
+                </button>
+
+                <button class="gallery-filter"
+                        type="button"
+                        data-filter="campus">
+                    Campus
+                </button>
+
+                <button class="gallery-filter"
+                        type="button"
+                        data-filter="academics">
+                    Academics
+                </button>
+
+                <button class="gallery-filter"
+                        type="button"
+                        data-filter="events">
+                    Events
+                </button>
+
+                <button class="gallery-filter"
+                        type="button"
+                        data-filter="sports">
+                    Sports
+                </button>
+
+                <button class="gallery-filter"
+                        type="button"
+                        data-filter="activities">
+                    Activities
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         FEATURED GALLERY
+    ====================================================== -->
+
+    <section class="gallery-main">
+
+        <div class="container">
+
+            <div class="gallery-grid">
+
+
+                <!-- IMAGE 1 - LARGE -->
+
+                <article class="gallery-item gallery-item-large"
+                         data-category="campus"
+                         data-title="Our School Campus"
+                         data-description="A welcoming campus designed to support learning, creativity and community.">
+
+                    <button type="button"
+                            class="gallery-image-btn"
+                            data-gallery-open
+                            aria-label="Open Our School Campus">
+
+                        <img src="~/images/gallery/campus-01.jpg"
+                             alt="School campus"
+                             loading="lazy" />
+
+                        <span class="gallery-overlay">
+
+                            <span class="gallery-overlay-content">
+
+                                <small>Campus</small>
+
+                                <strong>
+                                    Our School Campus
+                                </strong>
+
+                                <span class="gallery-view">
+                                    <i class="bi bi-arrows-fullscreen"></i>
+                                </span>
+
+                            </span>
+
+                        </span>
+
+                    </button>
+
+                </article>
+
+
+                <!-- IMAGE 2 -->
+
+                <article class="gallery-item"
+                         data-category="academics"
+                         data-title="Learning Beyond Books"
+                         data-description="Interactive classroom experiences encourage curiosity and independent thinking.">
+
+                    <button type="button"
+                            class="gallery-image-btn"
+                            data-gallery-open>
+
+                        <img src="~/images/gallery/academics-01.jpg"
+                             alt="Students learning in classroom"
+                             loading="lazy" />
+
+                        <span class="gallery-overlay">
+
+                            <span class="gallery-overlay-content">
+
+                                <small>Academics</small>
+
+                                <strong>
+                                    Learning Beyond Books
+                                </strong>
+
+                                <span class="gallery-view">
+                                    <i class="bi bi-arrows-fullscreen"></i>
+                                </span>
+
+                            </span>
+
+                        </span>
+
+                    </button>
+
+                </article>
+
+
+                <!-- IMAGE 3 -->
+
+                <article class="gallery-item"
+                         data-category="activities"
+                         data-title="Creative Activities"
+                         data-description="Students discover their interests through creative and hands-on activities.">
+
+                    <button type="button"
+                            class="gallery-image-btn"
+                            data-gallery-open>
+
+                        <img src="~/images/gallery/activity-01.jpg"
+                             alt="School activity"
+                             loading="lazy" />
+
+                        <span class="gallery-overlay">
+
+                            <span class="gallery-overlay-content">
+
+                                <small>Activities</small>
+
+                                <strong>
+                                    Creative Activities
+                                </strong>
+
+                                <span class="gallery-view">
+                                    <i class="bi bi-arrows-fullscreen"></i>
+                                </span>
+
+                            </span>
+
+                        </span>
+
+                    </button>
+
+                </article>
+
+
+                <!-- IMAGE 4 -->
+
+                <article class="gallery-item"
+                         data-category="events"
+                         data-title="Annual Celebration"
+                         data-description="Special celebrations bring students, teachers and families together.">
+
+                    <button type="button"
+                            class="gallery-image-btn"
+                            data-gallery-open>
+
+                        <img src="~/images/gallery/event-01.jpg"
+                             alt="School annual event"
+                             loading="lazy" />
+
+                        <span class="gallery-overlay">
+
+                            <span class="gallery-overlay-content">
+
+                                <small>Events</small>
+
+                                <strong>
+                                    Annual Celebration
+                                </strong>
+
+                                <span class="gallery-view">
+                                    <i class="bi bi-arrows-fullscreen"></i>
+                                </span>
+
+                            </span>
+
+                        </span>
+
+                    </button>
+
+                </article>
+
+
+                <!-- IMAGE 5 -->
+
+                <article class="gallery-item gallery-item-wide"
+                         data-category="sports"
+                         data-title="Sports & Games"
+                         data-description="Sports help students build confidence, teamwork and a healthy competitive spirit.">
+
+                    <button type="button"
+                            class="gallery-image-btn"
+                            data-gallery-open>
+
+                        <img src="~/images/gallery/sports-01.jpg"
+                             alt="School sports activities"
+                             loading="lazy" />
+
+                        <span class="gallery-overlay">
+
+                            <span class="gallery-overlay-content">
+
+                                <small>Sports</small>
+
+                                <strong>
+                                    Sports & Games
+                                </strong>
+
+                                <span class="gallery-view">
+                                    <i class="bi bi-arrows-fullscreen"></i>
+                                </span>
+
+                            </span>
+
+                        </span>
+
+                    </button>
+
+                </article>
+
+
+                <!-- IMAGE 6 -->
+
+                <article class="gallery-item"
+                         data-category="campus"
+                         data-title="A Place to Belong"
+                         data-description="Our campus provides spaces where students can learn, explore and connect.">
+
+                    <button type="button"
+                            class="gallery-image-btn"
+                            data-gallery-open>
+
+                        <img src="~/images/gallery/campus-02.jpg"
+                             alt="School campus garden"
+                             loading="lazy" />
+
+                        <span class="gallery-overlay">
+
+                            <span class="gallery-overlay-content">
+
+                                <small>Campus</small>
+
+                                <strong>
+                                    A Place to Belong
+                                </strong>
+
+                                <span class="gallery-view">
+                                    <i class="bi bi-arrows-fullscreen"></i>
+                                </span>
+
+                            </span>
+
+                        </span>
+
+                    </button>
+
+                </article>
+
+
+                <!-- IMAGE 7 -->
+
+                <article class="gallery-item"
+                         data-category="activities"
+                         data-title="Learning Through Play"
+                         data-description="Especially for younger learners, play and exploration are an important part of learning.">
+
+                    <button type="button"
+                            class="gallery-image-btn"
+                            data-gallery-open>
+
+                        <img src="~/images/gallery/activity-02.jpg"
+                             alt="Students participating in activities"
+                             loading="lazy" />
+
+                        <span class="gallery-overlay">
+
+                            <span class="gallery-overlay-content">
+
+                                <small>Activities</small>
+
+                                <strong>
+                                    Learning Through Play
+                                </strong>
+
+                                <span class="gallery-view">
+                                    <i class="bi bi-arrows-fullscreen"></i>
+                                </span>
+
+                            </span>
+
+                        </span>
+
+                    </button>
+
+                </article>
+
+
+                <!-- IMAGE 8 -->
+
+                <article class="gallery-item"
+                         data-category="events"
+                         data-title="School Community"
+                         data-description="Our school community celebrates achievements and important occasions together.">
+
+                    <button type="button"
+                            class="gallery-image-btn"
+                            data-gallery-open>
+
+                        <img src="~/images/gallery/event-02.jpg"
+                             alt="School community event"
+                             loading="lazy" />
+
+                        <span class="gallery-overlay">
+
+                            <span class="gallery-overlay-content">
+
+                                <small>Events</small>
+
+                                <strong>
+                                    School Community
+                                </strong>
+
+                                <span class="gallery-view">
+                                    <i class="bi bi-arrows-fullscreen"></i>
+                                </span>
+
+                            </span>
+
+                        </span>
+
+                    </button>
+
+                </article>
+
+
+                <!-- IMAGE 9 -->
+
+                <article class="gallery-item gallery-item-large"
+                         data-category="academics"
+                         data-title="Inside the Classroom"
+                         data-description="A supportive classroom environment where students are encouraged to ask, explore and learn.">
+
+                    <button type="button"
+                            class="gallery-image-btn"
+                            data-gallery-open>
+
+                        <img src="~/images/gallery/academics-02.jpg"
+                             alt="Inside school classroom"
+                             loading="lazy" />
+
+                        <span class="gallery-overlay">
+
+                            <span class="gallery-overlay-content">
+
+                                <small>Academics</small>
+
+                                <strong>
+                                    Inside the Classroom
+                                </strong>
+
+                                <span class="gallery-view">
+                                    <i class="bi bi-arrows-fullscreen"></i>
+                                </span>
+
+                            </span>
+
+                        </span>
+
+                    </button>
+
+                </article>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         VIDEO SECTION
+    ====================================================== -->
+
+    <section class="gallery-video-section">
+
+        <div class="container">
+
+            <div class="gallery-video-layout">
+
+                <div class="gallery-video-content">
+
+                    <span class="section-tag">
+                        TAKE A LOOK INSIDE
+                    </span>
+
+                    <h2>
+                        A two-minute walk
+                        <em>through campus.</em>
+                    </h2>
+
+                    <p>
+                        From classrooms and activity spaces to the
+                        playground and common areas, take a quick look
+                        at the environment where our students learn,
+                        grow and make memories.
+                    </p>
+
+                    <a asp-controller="Home"
+                       asp-action="Contact"
+                       class="gallery-video-link">
+                        Plan a campus visit
+                        <i class="bi bi-arrow-up-right"></i>
+                    </a>
+
+                </div>
+
+
+                <div class="gallery-video">
+
+                    <div class="video-frame">
+                        <iframe width="560" height="315" title="Campus Tour" loading="lazy" src="https://www.youtube.com/embed/T_-CKCc6pcs?si=MXv-TFI5bxYkMe_m" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         GALLERY NOTE
+    ====================================================== -->
+
+    <section class="gallery-note">
+
+        <div class="container">
+
+            <div class="gallery-note-inner">
+
+                <div class="gallery-note-icon">
+                    <i class="bi bi-camera"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        SCHOOL LIFE
+                    </span>
+
+                    <h3>
+                        More than photographs.
+                        <em>These are our memories.</em>
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         ADMISSION CTA
+    ====================================================== -->
+
+    <section class="gallery-cta">
+
+        <div class="container">
+
+            <div class="gallery-cta-inner">
+
+                <div>
+
+                    <span class="section-tag">
+                        WANT TO SEE MORE?
+                    </span>
+
+                    <h2>
+                        Come and experience
+                        <em>our school.</em>
+                    </h2>
+
+                    <p>
+                        Photographs can show you the campus.
+                        A visit lets you experience it.
+                    </p>
+
+                </div>
+
+                <div class="gallery-cta-actions">
+
+                    <a asp-controller="Home"
+                       asp-action="Contact"
+                       class="gallery-btn-primary">
+                        Contact the School
+                        <i class="bi bi-arrow-up-right"></i>
+                    </a>
+
+                    <a asp-controller="Home"
+                       asp-action="Admission"
+                       class="gallery-btn-outline">
+                        Admission Information
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<!-- =========================================================
+     IMAGE LIGHTBOX MODAL
+========================================================== -->
+
+<div class="gallery-lightbox"
+     id="galleryLightbox"
+     aria-hidden="true">
+
+    <div class="lightbox-backdrop"
+         data-gallery-close>
+    </div>
+
+    <div class="lightbox-dialog">
+
+        <button type="button"
+                class="lightbox-close"
+                data-gallery-close
+                aria-label="Close gallery">
+            <i class="bi bi-x-lg"></i>
+        </button>
+
+        <div class="lightbox-image-wrap">
+
+            <img id="lightboxImage"
+                 src=""
+                 alt="" />
+
+        </div>
+
+        <div class="lightbox-info">
+
+            <div>
+
+                <span id="lightboxCategory">
+                    Gallery
+                </span>
+
+                <h3 id="lightboxTitle">
+                    School Gallery
+                </h3>
+
+                <p id="lightboxDescription">
+                </p>
+
+            </div>
+
+            <div class="lightbox-counter">
+
+                <strong id="lightboxCurrent">
+                    01
+                </strong>
+
+                <span>/</span>
+
+                <span id="lightboxTotal">
+                    09
+                </span>
+
+            </div>
+
+        </div>
+
+        <button type="button"
+                class="lightbox-prev"
+                id="lightboxPrev"
+                aria-label="Previous image">
+
+            <i class="bi bi-arrow-left"></i>
+
+        </button>
+
+        <button type="button"
+                class="lightbox-next"
+                id="lightboxNext"
+                aria-label="Next image">
+
+            <i class="bi bi-arrow-right"></i>
+
+        </button>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    <script src="~/js/gallery.js" asp-append-version="true"></script>
+
+}

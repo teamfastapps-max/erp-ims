@@ -1,0 +1,663 @@
+﻿@using System
+
+@{
+    ViewData["Title"] = "Notice Board";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+
+    var notices = new[]
+    {
+        new
+        {
+            Id = 1,
+            Day = "18",
+            Month = "SEP",
+            Category = "Urgent",
+            CategoryClass = "urgent",
+            Title = "Half-yearly exam datesheet released",
+            Description = "The half-yearly examination schedule has been published. Students and parents are requested to check the academic section for the complete timetable.",
+            Date = new DateTime(2026, 9, 18),
+            Audience = "Classes VI–XII",
+            Icon = "bi-exclamation-circle",
+            Featured = true
+        },
+
+        new
+        {
+            Id = 2,
+            Day = "25",
+            Month = "SEP",
+            Category = "Event",
+            CategoryClass = "event",
+            Title = "Annual Sports Day",
+            Description = "Annual Sports Day will be conducted at the school main ground. Parents are warmly invited to attend and encourage our young athletes.",
+            Date = new DateTime(2026, 9, 25),
+            Audience = "All Students",
+            Icon = "bi-trophy",
+            Featured = false
+        },
+
+        new
+        {
+            Id = 3,
+            Day = "02",
+            Month = "OCT",
+            Category = "Academic",
+            CategoryClass = "academic",
+            Title = "Parent–Teacher Meeting for Classes IX–X",
+            Description = "The Parent–Teacher Meeting will be held to discuss academic progress, attendance and upcoming examination preparation.",
+            Date = new DateTime(2026, 10, 2),
+            Audience = "Classes IX–X",
+            Icon = "bi-people",
+            Featured = false
+        },
+
+        new
+        {
+            Id = 4,
+            Day = "05",
+            Month = "OCT",
+            Category = "Holiday",
+            CategoryClass = "holiday",
+            Title = "School closed for Gandhi Jayanti",
+            Description = "The school will remain closed on account of Gandhi Jayanti. Regular classes will resume from the next working day.",
+            Date = new DateTime(2026, 10, 5),
+            Audience = "All Students",
+            Icon = "bi-calendar-event",
+            Featured = false
+        },
+
+        new
+        {
+            Id = 5,
+            Day = "10",
+            Month = "OCT",
+            Category = "Admission",
+            CategoryClass = "admission",
+            Title = "Admission applications open for 2027–28",
+            Description = "Applications for admission to the upcoming academic session are now open for selected classes.",
+            Date = new DateTime(2026, 10, 10),
+            Audience = "New Admissions",
+            Icon = "bi-file-earmark-text",
+            Featured = false
+        },
+
+        new
+        {
+            Id = 6,
+            Day = "14",
+            Month = "OCT",
+            Category = "Academic",
+            CategoryClass = "academic",
+            Title = "Science exhibition registration",
+            Description = "Students interested in participating in the annual science exhibition can register their projects with their respective class teachers.",
+            Date = new DateTime(2026, 10, 14),
+            Audience = "Classes V–XII",
+            Icon = "bi-lightbulb",
+            Featured = false
+        },
+
+        new
+        {
+            Id = 7,
+            Day = "20",
+            Month = "OCT",
+            Category = "General",
+            CategoryClass = "general",
+            Title = "Updated school bus routes",
+            Description = "School transportation routes have been updated. Parents are requested to review the revised route and pickup timings.",
+            Date = new DateTime(2026, 10, 20),
+            Audience = "Parents",
+            Icon = "bi-bus-front",
+            Featured = false
+        },
+
+        new
+        {
+            Id = 8,
+            Day = "28",
+            Month = "OCT",
+            Category = "Event",
+            CategoryClass = "event",
+            Title = "Children's Day celebration",
+            Description = "The school will organise a special Children's Day celebration with activities, performances and fun learning experiences.",
+            Date = new DateTime(2026, 10, 28),
+            Audience = "Pre-Primary – VIII",
+            Icon = "bi-balloon",
+            Featured = false
+        },
+
+        new
+        {
+            Id = 9,
+            Day = "04",
+            Month = "NOV",
+            Category = "Fees",
+            CategoryClass = "fees",
+            Title = "Second term fee payment reminder",
+            Description = "Parents are requested to complete the second term fee payment within the scheduled payment period.",
+            Date = new DateTime(2026, 11, 4),
+            Audience = "Parents",
+            Icon = "bi-credit-card",
+            Featured = false
+        },
+
+        new
+        {
+            Id = 10,
+            Day = "12",
+            Month = "NOV",
+            Category = "Academic",
+            CategoryClass = "academic",
+            Title = "Pre-board examination schedule",
+            Description = "The pre-board examination timetable for senior classes has been published by the academic department.",
+            Date = new DateTime(2026, 11, 12),
+            Audience = "Classes X & XII",
+            Icon = "bi-journal-text",
+            Featured = false
+        }
+    };
+
+    var categories = new[]
+    {
+        "All Notices",
+        "Academic",
+        "Admission",
+        "Event",
+        "Holiday",
+        "Fees",
+        "General",
+        "Urgent"
+    };
+}
+
+<div class="notice-page">
+
+    <!-- =====================================================
+         HERO
+         ===================================================== -->
+
+    <section class="notice-hero">
+
+        <div class="container">
+
+            <div class="notice-hero-grid">
+
+                <div class="notice-hero-content">
+
+                    <span class="notice-eyebrow">
+                        SCHOOL INFORMATION
+                    </span>
+
+                    <h1>
+                        Stay informed.<br />
+                        <span>Stay connected.</span>
+                    </h1>
+
+                    <p>
+                        Important announcements, academic updates,
+                        school events and everything families need
+                        to know — all in one place.
+                    </p>
+
+                </div>
+
+
+                <div class="notice-hero-side">
+
+                    <div class="notice-hero-icon">
+                        <i class="bi bi-pin-angle"></i>
+                    </div>
+
+                    <span>NOTICE BOARD</span>
+
+                    <strong>
+                        Latest school<br />
+                        announcements
+                    </strong>
+
+                    <small>
+                        Updated regularly by the
+                        school administration.
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         NOTICE BOARD
+         ===================================================== -->
+
+    <section class="notice-section">
+
+        <div class="container">
+
+            <!-- Header -->
+            <div class="notice-section-header">
+
+                <div>
+
+                    <span class="section-tag">
+                        ANNOUNCEMENTS
+                    </span>
+
+                    <h2>
+                        School
+                        <span>Notice Board</span>
+                    </h2>
+
+                </div>
+
+
+                <div class="notice-total">
+
+                    <strong>@notices.Length</strong>
+
+                    <span>
+                        Published<br />
+                        notices
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- Search + Filter -->
+            <div class="notice-toolbar">
+
+                <div class="notice-search">
+
+                    <i class="bi bi-search"></i>
+
+                    <input type="text"
+                           id="noticeSearch"
+                           placeholder="Search notices..."
+                           autocomplete="off" />
+
+                    <button type="button"
+                            id="clearSearch"
+                            aria-label="Clear search">
+
+                        <i class="bi bi-x"></i>
+
+                    </button>
+
+                </div>
+
+
+                <div class="notice-filter">
+
+                    <button type="button"
+                            class="filter-btn active"
+                            data-category="all">
+
+                        All Notices
+
+                    </button>
+
+                    @foreach (var category in categories.Skip(1))
+                    {
+                        <button type="button"
+                                class="filter-btn"
+                                data-category="@category.ToLowerInvariant()">
+
+                            @category
+
+                        </button>
+                    }
+
+                </div>
+
+            </div>
+
+
+            <!-- Featured Notice -->
+            @{
+                var featured = notices.FirstOrDefault(x => x.Featured);
+            }
+
+            @if (featured != null)
+            {
+                <div class="featured-notice"
+                     data-category="@featured.Category.ToLowerInvariant()"
+                     data-title="@featured.Title.ToLowerInvariant()"
+                     data-description="@featured.Description.ToLowerInvariant()">
+
+                    <div class="featured-date">
+
+                        <span class="featured-day">
+                            @featured.Day
+                        </span>
+
+                        <span class="featured-month">
+                            @featured.Month
+                        </span>
+
+                    </div>
+
+
+                    <div class="featured-icon">
+                        <i class="bi @featured.Icon"></i>
+                    </div>
+
+
+                    <div class="featured-content">
+
+                        <div class="notice-meta">
+
+                            <span class="notice-category @featured.CategoryClass">
+                                @featured.Category
+                            </span>
+
+                            <span class="notice-featured-label">
+                                <i class="bi bi-pin-angle-fill"></i>
+                                Featured
+                            </span>
+
+                        </div>
+
+                        <h3>
+                            @featured.Title
+                        </h3>
+
+                        <p>
+                            @featured.Description
+                        </p>
+
+                        <div class="featured-footer">
+
+                            <span>
+                                <i class="bi bi-people"></i>
+                                @featured.Audience
+                            </span>
+
+                            <span>
+                                <i class="bi bi-calendar3"></i>
+                                @featured.Date.ToString("dd MMM yyyy")
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <button type="button"
+                            class="notice-read-btn"
+                            data-notice-title="@featured.Title"
+                            data-notice-description="@featured.Description"
+                            data-notice-category="@featured.Category"
+                            data-notice-date="@featured.Date.ToString("dd MMM yyyy")">
+
+                        Read Notice
+
+                        <i class="bi bi-arrow-up-right"></i>
+
+                    </button>
+
+                </div>
+            }
+
+
+            <!-- Notice List -->
+            <div id="noticeList"
+                 class="notice-list">
+
+                @foreach (var notice in notices.Where(x => !x.Featured))
+                {
+                    <article class="notice-card"
+                             data-category="@notice.Category.ToLowerInvariant()"
+                             data-title="@notice.Title.ToLowerInvariant()"
+                             data-description="@notice.Description.ToLowerInvariant()">
+
+                        <!-- Date -->
+                        <div class="notice-date">
+
+                            <span class="notice-day">
+                                @notice.Day
+                            </span>
+
+                            <span class="notice-month">
+                                @notice.Month
+                            </span>
+
+                        </div>
+
+
+                        <!-- Icon -->
+                        <div class="notice-card-icon @notice.CategoryClass">
+                            <i class="bi @notice.Icon"></i>
+                        </div>
+
+
+                        <!-- Content -->
+                        <div class="notice-card-content">
+
+                            <div class="notice-meta">
+
+                                <span class="notice-category @notice.CategoryClass">
+                                    @notice.Category
+                                </span>
+
+                                <span class="notice-audience">
+                                    @notice.Audience
+                                </span>
+
+                            </div>
+
+                            <h3>
+                                @notice.Title
+                            </h3>
+
+                            <p>
+                                @notice.Description
+                            </p>
+
+                        </div>
+
+
+                        <!-- Action -->
+                        <div class="notice-card-action">
+
+                            <button type="button"
+                                    class="notice-open-btn"
+                                    data-notice-title="@notice.Title"
+                                    data-notice-description="@notice.Description"
+                                    data-notice-category="@notice.Category"
+                                    data-notice-date="@notice.Date.ToString("dd MMM yyyy")">
+
+                                <i class="bi bi-arrow-up-right"></i>
+
+                            </button>
+
+                        </div>
+
+                    </article>
+                }
+
+            </div>
+
+
+            <!-- No Result -->
+            <div id="noticeEmpty"
+                 class="notice-empty d-none">
+
+                <div class="notice-empty-icon">
+                    <i class="bi bi-search"></i>
+                </div>
+
+                <h3>
+                    No notices found
+                </h3>
+
+                <p>
+                    Try a different search term or select another category.
+                </p>
+
+                <button type="button"
+                        id="resetNotices"
+                        class="reset-notices-btn">
+
+                    View All Notices
+
+                </button>
+
+            </div>
+
+
+            <!-- Bottom Information -->
+            <div class="notice-bottom-info">
+
+                <div>
+                    <i class="bi bi-info-circle"></i>
+
+                    <span>
+                        Notices are published by the school administration
+                        and may be updated when required.
+                    </span>
+                </div>
+
+                <a asp-controller="Home"
+                   asp-action="Contact">
+
+                    Have a question?
+                    Contact us
+
+                    <i class="bi bi-arrow-up-right"></i>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CALENDAR CTA
+         ===================================================== -->
+
+    <section class="notice-calendar">
+
+        <div class="container">
+
+            <div class="calendar-card">
+
+                <div class="calendar-icon">
+                    <i class="bi bi-calendar3"></i>
+                </div>
+
+                <div class="calendar-content">
+
+                    <span>
+                        PLAN AHEAD
+                    </span>
+
+                    <h2>
+                        Looking for the
+                        <em>school calendar?</em>
+                    </h2>
+
+                    <p>
+                        Keep track of important academic dates,
+                        examinations, holidays and school events.
+                    </p>
+
+                </div>
+
+                <a asp-controller="Home"
+                   asp-action="Academics"
+                   class="calendar-btn">
+
+                    Explore Academics
+
+                    <i class="bi bi-arrow-up-right"></i>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         NOTICE DETAILS MODAL
+         ===================================================== -->
+
+    <div class="modal fade"
+         id="noticeModal"
+         tabindex="-1"
+         aria-labelledby="noticeModalLabel"
+         aria-hidden="true">
+
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+
+            <div class="modal-content notice-modal">
+
+                <div class="modal-header">
+
+                    <div>
+
+                        <span id="modalCategory"
+                              class="notice-category">
+                            Notice
+                        </span>
+
+                        <h2 id="noticeModalLabel">
+                            Notice Details
+                        </h2>
+
+                    </div>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close">
+                    </button>
+
+                </div>
+
+
+                <div class="modal-body">
+
+                    <div class="modal-date">
+                        <i class="bi bi-calendar3"></i>
+
+                        <span id="modalDate">
+                        </span>
+                    </div>
+
+                    <div class="modal-divider"></div>
+
+                    <p id="modalDescription">
+                    </p>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="modal-close-btn"
+                            data-bs-dismiss="modal">
+
+                        Close
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

@@ -69,5 +69,24 @@ namespace IMS.Web.Controllers
         {
             return View();
         }
+        public IActionResult About() => View();
+        public IActionResult Academics() => View();
+        public IActionResult Admission() => View();
+        public IActionResult Notices() => View();
+        public IActionResult Gallery() => View();
+        public IActionResult Calendar() => View();
+        public IActionResult Contact() => View();
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public IActionResult Contact(ContactViewModel model)
+        //{
+        //    if (!ModelState.IsValid)
+        //        return View(model);
+
+        //    TempData["ContactSuccess"] =
+        //        "Thank you! Your message has been received.";
+
+        //    return RedirectToAction(nameof(Contact));
+        //}
     }
 }
