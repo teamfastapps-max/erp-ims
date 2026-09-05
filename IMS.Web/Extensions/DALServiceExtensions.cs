@@ -35,6 +35,9 @@ namespace IMS.Web.Extensions
             services.AddScoped<IFeeInvoiceDAL, FeeInvoiceDAL>();
             services.AddScoped<IPaymentDAL, PaymentDAL>();
             services.AddScoped<ITeacherDAL, TeacherDAL>();
+            services.AddScoped<ITeacherAttendanceDAL, TeacherAttendanceDAL>();
+            services.AddScoped<ITeacherLeaveDAL, TeacherLeaveDAL>();
+
 
             return services;
         }
