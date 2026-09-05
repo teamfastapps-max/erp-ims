@@ -1,0 +1,126 @@
+@model IMS.Models.Portal.PortalMarkSheetViewModel
+@{
+    ViewData["Title"] = "Examination Mark Sheet";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4 no-print">
+    <div>
+        <h4 class="fw-bold mb-1"><i class="fa-solid fa-file-lines text-primary me-2"></i>Academic Mark Sheet &amp; Results</h4>
+        <p class="text-muted small mb-0">Official academic performance records, grades, and term report cards</p>
+    </div>
+    @if (Model.ExamResults.Count > 0)
+    {
+        <button onclick="window.print()" class="btn btn-primary rounded-pill">
+            <i class="fa-solid fa-print me-2"></i>Print Mark Sheet
+        </button>
+    }
+</div>
+
+@if (Model.ExamResults.Count == 0)
+{
+    <div class="portal-card text-center py-5">
+        <i class="fa-solid fa-graduation-cap fs-1 text-muted mb-2"></i>
+        <h5 class="fw-bold text-dark">No Published Results</h5>
+        <p class="text-muted mb-0">Exam results will appear here as soon as examination evaluations are finalized and published.</p>
+    </div>
+}
+else
+{
+    @foreach (var res in Model.ExamResults)
+    {
+        var subjectsForExam = Model.SubjectMarks.Where(m => m.ExamId == res.ExamId).ToList();
+
+        <div class="portal-card print-voucher mb-4">
+            <div class="portal-card-header bg-light d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="fw-bold text-dark mb-0">@res.ExamName (@res.ExamCode)</h5>
+                    <small class="text-muted">Published: @(res.PublishedAt.HasValue ? res.PublishedAt.Value.ToString("dd MMM yyyy") : "Official Release")</small>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge @(res.ResultStatus.ToLower() == "pass" ? "bg-success" : "bg-danger") fs-6 px-3 py-1">
+                        @res.ResultStatus.ToUpper()
+                    </span>
+                    @if (!string.IsNullOrEmpty(res.OverallGrade))
+                    {
+                        <span class="badge bg-primary fs-6 px-3 py-1">Grade @res.OverallGrade</span>
+                    }
+                </div>
+            </div>
+
+            <div class="portal-card-body p-4">
+                <!-- Overall Result Summary Row -->
+                <div class="row g-3 mb-4 text-center">
+                    <div class="col-4">
+                        <div class="p-3 bg-light border rounded-3">
+                            <div class="text-muted small fw-semibold">Total Marks</div>
+                            <div class="fs-4 fw-bold text-dark">@res.TotalMarks.ToString("N0")</div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-3 bg-light border rounded-3">
+                            <div class="text-muted small fw-semibold">Marks Obtained</div>
+                            <div class="fs-4 fw-bold text-primary">@res.MarksObtained.ToString("N0")</div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-3 bg-light border rounded-3">
+                            <div class="text-muted small fw-semibold">Percentage</div>
+                            <div class="fs-4 fw-bold text-success">@res.Percentage.ToString("N1")%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subject-Wise Marks Breakdown Table -->
+                <h6 class="fw-bold text-dark mb-2">Subject Performance Details</h6>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle mb-0 text-center small">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="text-start ps-3">Subject Name</th>
+                                <th>Code</th>
+                                <th>Max Marks</th>
+                                <th>Pass Marks</th>
+                                <th>Marks Obtained</th>
+                                <th>Percentage</th>
+                                <th>Grade</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var sm in subjectsForExam)
+                            {
+                                var passed = sm.MarksObtained >= sm.PassMarks;
+                                <tr>
+                                    <td class="text-start ps-3 fw-semibold text-dark">@sm.SubjectName</td>
+                                    <td>@(sm.SubjectCode ?? "-")</td>
+                                    <td>@sm.MaxMarks.ToString("N0")</td>
+                                    <td>@sm.PassMarks.ToString("N0")</td>
+                                    <td class="fw-bold text-primary">@sm.MarksObtained.ToString("N0")</td>
+                                    <td>@(sm.Percentage.HasValue ? $"{sm.Percentage.Value:N1}%" : "-")</td>
+                                    <td>@(sm.Grade ?? "-")</td>
+                                    <td>
+                                        <span class="badge @(passed ? "bg-success-subtle text-success" : "bg-danger-subtle text-danger")">
+                                            @(passed ? "Pass" : "Needs Improvement")
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                @if (!string.IsNullOrEmpty(res.Remarks))
+                {
+                    <div class="mt-3 p-2 border rounded bg-light small text-muted">
+                        <strong>Teacher's Evaluation Remarks:</strong> @res.Remarks
+                    </div>
+                }
+            </div>
+
+            <div class="portal-card-footer bg-light px-4 py-3 d-flex justify-content-between align-items-center small text-muted">
+                <span>Computer generated official mark sheet.</span>
+                <span>Verified by Academic Council</span>
+            </div>
+        </div>
+    }
+}

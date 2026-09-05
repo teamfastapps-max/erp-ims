@@ -1,0 +1,117 @@
+@model IMS.Models.Portal.PortalTCApplyViewModel
+@{
+    ViewData["Title"] = "Apply for Transfer Certificate (TC)";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h4 class="fw-bold mb-1"><i class="fa-solid fa-file-export text-primary me-2"></i>Transfer Certificate (TC) Application</h4>
+        <p class="text-muted small mb-0">Apply for school leaving certificate and track institutional clearance approvals</p>
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- Apply Form Card -->
+    <div class="col-12 col-lg-5">
+        <div class="portal-card">
+            <div class="portal-card-header">
+                <h5 class="portal-card-title"><i class="fa-solid fa-file-circle-plus text-primary"></i>New TC Request</h5>
+            </div>
+            <div class="portal-card-body">
+                <form asp-area="StudentPortal" asp-controller="Requests" asp-action="TCApply" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label asp-for="ExpectedLeavingDate" class="form-label small fw-semibold">Expected School Leaving Date</label>
+                        <input asp-for="ExpectedLeavingDate" type="date" class="form-control rounded-3" required />
+                        <span asp-validation-for="ExpectedLeavingDate" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Reason" class="form-label small fw-semibold">Reason for Requesting TC</label>
+                        <textarea asp-for="Reason" class="form-control rounded-3" rows="4" placeholder="e.g. Relocation, completion of secondary schooling, transfer to higher secondary..." required></textarea>
+                        <span asp-validation-for="Reason" class="text-danger small"></span>
+                    </div>
+
+                    <div class="alert alert-warning rounded-3 py-2 px-3 small mb-4">
+                        <i class="fa-solid fa-triangle-exclamation me-1"></i>
+                        TC issuance requires complete clearance from the School Library, Laboratory, and Accounts Section.
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 fw-semibold">
+                        <i class="fa-solid fa-paper-plane me-2"></i>Submit TC Application
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Applications Status History Card -->
+    <div class="col-12 col-lg-7">
+        <div class="portal-card">
+            <div class="portal-card-header">
+                <h5 class="portal-card-title"><i class="fa-solid fa-list-check text-secondary"></i>TC Application Status</h5>
+                <span class="badge bg-secondary-subtle text-dark">@Model.Applications.Count Total</span>
+            </div>
+            <div class="portal-card-body p-0">
+                @if (Model.Applications.Count == 0)
+                {
+                    <div class="text-center py-5 text-muted">
+                        <i class="fa-solid fa-file-circle-question fs-1 mb-2 text-secondary"></i>
+                        <p class="mb-0 fw-semibold">No Transfer Certificate requests submitted</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="p-3 d-flex flex-column gap-3">
+                        @foreach (var app in Model.Applications)
+                        {
+                            <div class="p-3 border rounded-3 bg-light">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="fw-bold text-dark fs-6">@app.ApplicationNumber</span>
+                                    <span class="badge @(app.Status.ToLower() == "issued" ? "bg-success" : (app.Status.ToLower() == "approved" ? "bg-primary" : "bg-warning text-dark")) px-3 py-1">
+                                        @app.Status.ToUpper()
+                                    </span>
+                                </div>
+
+                                <div class="text-muted small mb-2">
+                                    <div><strong>Application Date:</strong> @app.ApplicationDate.ToString("dd MMM yyyy")</div>
+                                    <div><strong>Expected Leaving:</strong> @app.ExpectedLeavingDate.ToString("dd MMM yyyy")</div>
+                                    <div><strong>Reason:</strong> @app.Reason</div>
+                                </div>
+
+                                <!-- Clearance Checklist Status -->
+                                <div class="p-2 rounded bg-white border mt-2">
+                                    <div class="small fw-semibold text-muted mb-1">Clearance Checklist:</div>
+                                    <div class="d-flex gap-3 small">
+                                        <span>
+                                            <i class="fa-solid @(app.LibraryClearance ? "fa-circle-check text-success" : "fa-circle-xmark text-danger") me-1"></i>Library
+                                        </span>
+                                        <span>
+                                            <i class="fa-solid @(app.FeeClearance ? "fa-circle-check text-success" : "fa-circle-xmark text-danger") me-1"></i>Accounts/Fee
+                                        </span>
+                                        <span>
+                                            <i class="fa-solid @(app.LabClearance ? "fa-circle-check text-success" : "fa-circle-xmark text-danger") me-1"></i>Laboratory
+                                        </span>
+                                    </div>
+                                </div>
+
+                                @if (!string.IsNullOrEmpty(app.CertificateNumber))
+                                {
+                                    <div class="alert alert-success py-2 px-3 small mt-3 mb-0">
+                                        <i class="fa-solid fa-award me-1"></i>
+                                        <strong>Certificate No:</strong> @app.CertificateNumber
+                                        @if (app.IssuedDate.HasValue)
+                                        {
+                                            <span class="ms-2">(Issued on @app.IssuedDate.Value.ToString("dd MMM yyyy"))</span>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

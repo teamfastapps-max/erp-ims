@@ -1,0 +1,111 @@
+@model IMS.Models.Portal.PortalTransportViewModel
+@{
+    ViewData["Title"] = "Bus & Transport Portal";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h4 class="fw-bold mb-1"><i class="fa-solid fa-bus text-primary me-2"></i>Bus &amp; Transport Services</h4>
+        <p class="text-muted small mb-0">Assigned bus route, vehicle information, driver contacts, and schedule</p>
+    </div>
+</div>
+
+@if (!Model.IsAllocated)
+{
+    <div class="portal-card text-center py-5">
+        <i class="fa-solid fa-bus-simple fs-1 text-muted mb-2"></i>
+        <h5 class="fw-bold text-dark">No Transport Route Assigned</h5>
+        <p class="text-muted mb-3">This student account is currently not registered for institute bus transport services.</p>
+        <div class="text-muted small">
+            To subscribe to transport services, please contact the institutional transport coordinator at campus administration.
+        </div>
+    </div>
+}
+else
+{
+    <div class="row g-3">
+        <!-- Route & Vehicle Card -->
+        <div class="col-12 col-lg-6">
+            <div class="portal-card h-100">
+                <div class="portal-card-header">
+                    <h5 class="portal-card-title"><i class="fa-solid fa-route text-primary"></i>Assigned Route &amp; Bus</h5>
+                    <span class="badge bg-success-subtle text-success">Active</span>
+                </div>
+                <div class="portal-card-body">
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label class="text-muted small fw-semibold d-block">Route Name</label>
+                            <span class="fw-bold fs-6 text-dark">@Model.RouteName</span>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="text-muted small fw-semibold d-block">Route Code</label>
+                            <span class="badge bg-light text-dark border">@Model.RouteCode</span>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="text-muted small fw-semibold d-block">Bus / Vehicle No</label>
+                            <span class="fw-bold text-primary fs-6">@Model.VehicleNumber</span>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="text-muted small fw-semibold d-block">Assigned Stop</label>
+                            <span class="fw-semibold text-dark">@Model.StopName</span>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="text-muted small fw-semibold d-block">Morning Pickup Time</label>
+                            <span class="fw-bold text-success fs-6">
+                                <i class="fa-regular fa-clock me-1"></i>@(Model.PickupTime.HasValue ? Model.PickupTime.Value.ToString(@"hh\:mm") : "07:30 AM")
+                            </span>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="text-muted small fw-semibold d-block">Evening Drop Time</label>
+                            <span class="fw-bold text-primary fs-6">
+                                <i class="fa-regular fa-clock me-1"></i>@(Model.DropTime.HasValue ? Model.DropTime.Value.ToString(@"hh\:mm") : "03:30 PM")
+                            </span>
+                        </div>
+                        <div class="col-12">
+                            <label class="text-muted small fw-semibold d-block">Coverage Area</label>
+                            <span class="small">@(Model.StartLocation ?? "Main Campus") ➔ @(Model.EndLocation ?? "City Center")</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Driver & Helper Contacts Card -->
+        <div class="col-12 col-lg-6">
+            <div class="portal-card h-100">
+                <div class="portal-card-header">
+                    <h5 class="portal-card-title"><i class="fa-solid fa-address-book text-success"></i>Staff Contacts</h5>
+                </div>
+                <div class="portal-card-body">
+                    <div class="p-3 border rounded-3 bg-light mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="fw-bold text-dark fs-6">@Model.DriverName</span>
+                            <span class="badge bg-primary">Bus Driver</span>
+                        </div>
+                        <div class="text-muted small mb-2">Primary vehicle operator &amp; navigator</div>
+                        <a href="tel:@Model.DriverPhone" class="btn btn-sm btn-outline-success rounded-pill px-3">
+                            <i class="fa-solid fa-phone me-1"></i>Call @Model.DriverPhone
+                        </a>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.HelperName))
+                    {
+                        <div class="p-3 border rounded-3 bg-light">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="fw-bold text-dark fs-6">@Model.HelperName</span>
+                                <span class="badge bg-secondary">Bus Attendant</span>
+                            </div>
+                            <div class="text-muted small mb-2">Student supervisor &amp; gate attendant</div>
+                            @if (!string.IsNullOrEmpty(Model.HelperPhone))
+                            {
+                                <a href="tel:@Model.HelperPhone" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                                    <i class="fa-solid fa-phone me-1"></i>Call @Model.HelperPhone
+                                </a>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}

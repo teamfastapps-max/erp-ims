@@ -1,0 +1,110 @@
+@model IMS.Models.Portal.PortalClassDetailsViewModel
+@{
+    ViewData["Title"] = "Class & Course Details";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h4 class="fw-bold mb-1"><i class="fa-solid fa-chalkboard-user text-primary me-2"></i>Class &amp; Course Details</h4>
+        <p class="text-muted small mb-0">Overview of enrolled program, batch schedule, and subject curriculum</p>
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- Batch Info Card -->
+    <div class="col-12 col-lg-4">
+        <div class="portal-card h-100">
+            <div class="portal-card-header">
+                <h5 class="portal-card-title"><i class="fa-solid fa-users-rectangle text-primary"></i>Batch Information</h5>
+            </div>
+            <div class="portal-card-body">
+                <div class="mb-3">
+                    <label class="text-muted small fw-semibold d-block">Batch Name</label>
+                    <span class="fw-bold fs-6 text-dark">@Model.BatchName</span>
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted small fw-semibold d-block">Course / Program</label>
+                    <span class="fw-semibold text-primary">@Model.CourseName</span>
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted small fw-semibold d-block">Academic Year</label>
+                    <span>@Model.AcademicYearName</span>
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted small fw-semibold d-block">Start Date</label>
+                    <span>@Model.StartDate.ToString("dd MMM yyyy")</span>
+                </div>
+                @if (Model.EndDate.HasValue)
+                {
+                    <div class="mb-3">
+                        <label class="text-muted small fw-semibold d-block">Estimated Completion</label>
+                        <span>@Model.EndDate.Value.ToString("dd MMM yyyy")</span>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.CourseDescription))
+                {
+                    <div class="border-top pt-2">
+                        <label class="text-muted small fw-semibold d-block">About the Course</label>
+                        <p class="text-muted small mb-0">@Model.CourseDescription</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Enrolled Subjects Table Card -->
+    <div class="col-12 col-lg-8">
+        <div class="portal-card h-100">
+            <div class="portal-card-header">
+                <h5 class="portal-card-title"><i class="fa-solid fa-book text-success"></i>Enrolled Subjects</h5>
+                <span class="badge bg-success-subtle text-success">@Model.Subjects.Count Subjects</span>
+            </div>
+            <div class="portal-card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-3">Code</th>
+                                <th>Subject Name</th>
+                                <th>Type</th>
+                                <th>Credits</th>
+                                <th>Max Marks</th>
+                                <th class="pe-3">Pass Marks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Subjects.Count == 0)
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center py-4 text-muted">
+                                        No subjects mapped to this course yet.
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var sub in Model.Subjects)
+                                {
+                                    <tr>
+                                        <td class="ps-3 fw-bold text-secondary">@(sub.SubjectCode ?? "-")</td>
+                                        <td class="fw-semibold text-dark">
+                                            @sub.SubjectName
+                                            @if (sub.IsMandatory)
+                                            {
+                                                <span class="badge bg-danger-subtle text-danger ms-1" style="font-size: 0.65rem;">Core</span>
+                                            }
+                                        </td>
+                                        <td class="small text-muted">@(sub.IsMandatory ? "Core" : "Elective")</td>
+                                        <td>@(sub.Credits.HasValue ? sub.Credits.Value.ToString() : "-")</td>
+                                        <td class="fw-semibold">@(sub.MaxMarks.HasValue ? sub.MaxMarks.Value.ToString("N0") : "-")</td>
+                                        <td class="pe-3 text-muted">@(sub.PassMarks.HasValue ? sub.PassMarks.Value.ToString("N0") : "-")</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

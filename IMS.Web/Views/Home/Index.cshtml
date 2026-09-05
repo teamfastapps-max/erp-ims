@@ -1,4 +1,4 @@
-﻿@* @{
+@* @{
     Layout = "~/Views/Shared/_LayoutHome.cshtml";
 }
 
@@ -146,6 +146,9 @@
                 <div class="hero-actions hero-fade-up">
                     <a class="btn-brass" asp-controller="Home" asp-action="Admission">
                         <i class="bi bi-file-earmark-text"></i> Apply for Admission
+                    </a>
+                    <a class="btn-outline-ink" href="/Student/Login" style="color:var(--parchment);border-color:var(--rule-on-dark);">
+                        <i class="bi bi-mortarboard me-1"></i> Student Portal
                     </a>
                     <a class="btn-outline-ink" style="color:var(--parchment);border-color:var(--rule-on-dark);" asp-controller="Home" asp-action="Academics">
                         Explore Academics
@@ -388,6 +391,9 @@
         <p>Book a visit, or start your child's application today.</p>
         <div class="d-flex justify-content-center gap-3 flex-wrap">
             <a class="btn-brass" asp-controller="Home" asp-action="Admission">Apply for Admission</a>
+            <a class="btn-brass" href="/Student/Login" style="background:#2563eb;color:#ffffff;border:none;">
+                <i class="bi bi-mortarboard me-1"></i> Student &amp; Guardian Login
+            </a>
             <a class="btn-outline-ink" style="color:var(--parchment);border-color:var(--rule-on-dark);" asp-controller="Home" asp-action="Contact">Contact Us</a>
         </div>
     </div>

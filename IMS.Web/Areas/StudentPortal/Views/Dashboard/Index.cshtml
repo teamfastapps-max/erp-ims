@@ -1,0 +1,205 @@
+@model IMS.Models.Portal.PortalDashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<!-- Student Hero Banner -->
+<div class="student-banner">
+    <div class="d-flex align-items-center gap-3">
+        <div class="student-avatar">
+            @(string.IsNullOrEmpty(Model.Student.StudentName) ? "S" : Model.Student.StudentName.Substring(0, 1).ToUpper())
+        </div>
+        <div>
+            <div class="student-banner-title">Welcome back, @Model.Student.StudentName!</div>
+            <div class="student-banner-sub">
+                <span>Roll: <strong>@(Model.Student.StudentCode ?? Model.Student.AdmissionNumber ?? "N/A")</strong></span>
+                <span class="mx-2">•</span>
+                <span>Batch: <strong>@(Model.Student.BatchName ?? "General")</strong></span>
+                @if (!string.IsNullOrEmpty(Model.Student.CourseName))
+                {
+                    <span class="mx-2">•</span>
+                    <span>Course: <strong>@Model.Student.CourseName</strong></span>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+        <a asp-area="StudentPortal" asp-controller="Dashboard" asp-action="IdCard" class="student-pill text-white text-decoration-none">
+            <i class="fa-solid fa-address-card me-1"></i>Digital I-Card
+        </a>
+        <a asp-area="StudentPortal" asp-controller="Finance" asp-action="Transactions" class="student-pill text-white text-decoration-none">
+            <i class="fa-solid fa-wallet me-1"></i>Fee Statement
+        </a>
+    </div>
+</div>
+
+<!-- 4 Key Stat Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon-box stat-icon-blue">
+                <i class="fa-solid fa-calendar-check"></i>
+            </div>
+            <div class="stat-meta">
+                <div class="stat-value">@Model.Attendance.AttendancePercentage%</div>
+                <div class="stat-label">Attendance</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon-box stat-icon-purple">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <div class="stat-meta">
+                <div class="stat-value">@Model.TodaySchedule.Count</div>
+                <div class="stat-label">Classes Today</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon-box stat-icon-amber">
+                <i class="fa-solid fa-list-check"></i>
+            </div>
+            <div class="stat-meta">
+                <div class="stat-value">@Model.ActiveHomeTasks.Count</div>
+                <div class="stat-label">Active Tasks</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon-box stat-icon-green">
+                <i class="fa-solid fa-indian-rupee-sign"></i>
+            </div>
+            <div class="stat-meta">
+                <div class="stat-value">@Model.Finance.OutstandingBalance.ToString("N0")</div>
+                <div class="stat-label">Fee Due (₹)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Row: Today's Schedule & Quick Actions -->
+<div class="row g-3">
+    <!-- Today's Classes -->
+    <div class="col-12 col-lg-7">
+        <div class="portal-card h-100">
+            <div class="portal-card-header">
+                <h5 class="portal-card-title">
+                    <i class="fa-solid fa-calendar-day text-primary"></i>Today's Class Schedule
+                </h5>
+                <a asp-area="StudentPortal" asp-controller="Academics" asp-action="Timetable" class="btn btn-sm btn-outline-primary rounded-pill">Full Timetable</a>
+            </div>
+            <div class="portal-card-body">
+                @if (Model.TodaySchedule.Count == 0)
+                {
+                    <div class="text-center py-4 text-muted">
+                        <i class="fa-solid fa-mug-hot fs-1 mb-2 text-secondary"></i>
+                        <p class="mb-0 fw-semibold">No scheduled periods for today!</p>
+                        <small>Enjoy your study break or check upcoming assignments.</small>
+                    </div>
+                }
+                else
+                {
+                    <div class="schedule-list">
+                        @foreach (var slot in Model.TodaySchedule)
+                        {
+                            <div class="schedule-item">
+                                <div class="schedule-time">
+                                    <i class="fa-regular fa-clock me-1"></i>@slot.StartTime.ToString(@"hh\:mm")
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="schedule-subject">@slot.SubjectName</div>
+                                    <div class="schedule-teacher">
+                                        <i class="fa-regular fa-user me-1"></i>@(slot.TeacherName ?? "Instructor")
+                                        @if (!string.IsNullOrEmpty(slot.ClassroomName))
+                                        {
+                                            <span class="ms-2 badge bg-light text-dark border">Room: @slot.ClassroomName</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Tasks & Notices -->
+    <div class="col-12 col-lg-5">
+        <!-- Active Tasks Card -->
+        <div class="portal-card mb-3">
+            <div class="portal-card-header">
+                <h5 class="portal-card-title">
+                    <i class="fa-solid fa-pencil text-warning"></i>Active Home Tasks
+                </h5>
+                <a asp-area="StudentPortal" asp-controller="Tasks" asp-action="HomeTasks" class="btn btn-sm btn-link text-decoration-none">View All</a>
+            </div>
+            <div class="portal-card-body">
+                @if (Model.ActiveHomeTasks.Count == 0)
+                {
+                    <div class="text-center py-3 text-muted small">
+                        <i class="fa-regular fa-circle-check text-success fs-3 mb-1 d-block"></i>
+                        All caught up! No pending homework tasks.
+                    </div>
+                }
+                else
+                {
+                    <ul class="list-group list-group-flush">
+                        @foreach (var task in Model.ActiveHomeTasks)
+                        {
+                            <li class="list-group-item px-0 py-2 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="fw-semibold small text-dark">@task.Title</div>
+                                    <div class="text-muted" style="font-size: 0.75rem;">
+                                        <span class="badge bg-primary-subtle text-primary me-1">@task.SubjectName</span>
+                                        Due: @task.DueDate.ToString("dd MMM")
+                                    </div>
+                                </div>
+                                <span class="badge @(task.SubmissionStatus == "Submitted" ? "bg-success" : "bg-warning text-dark")">
+                                    @task.SubmissionStatus
+                                </span>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+
+        <!-- Recent Notices Card -->
+        <div class="portal-card">
+            <div class="portal-card-header">
+                <h5 class="portal-card-title">
+                    <i class="fa-solid fa-bullhorn text-danger"></i>Latest Notices
+                </h5>
+                <a asp-area="StudentPortal" asp-controller="Dashboard" asp-action="Notices" class="btn btn-sm btn-link text-decoration-none">All Notices</a>
+            </div>
+            <div class="portal-card-body">
+                @if (Model.RecentNotices.Count == 0)
+                {
+                    <div class="text-center py-3 text-muted small">No new announcements at this time.</div>
+                }
+                else
+                {
+                    <div class="d-flex flex-column gap-2">
+                        @foreach (var notice in Model.RecentNotices)
+                        {
+                            <div class="p-2 border rounded-3 bg-light">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold text-dark small">@notice.Title</span>
+                                    <span class="text-muted" style="font-size: 0.7rem;">
+                                        @(notice.PublishedAt.HasValue ? notice.PublishedAt.Value.ToString("dd MMM") : "")
+                                    </span>
+                                </div>
+                                <div class="text-muted small text-truncate">@notice.Content</div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

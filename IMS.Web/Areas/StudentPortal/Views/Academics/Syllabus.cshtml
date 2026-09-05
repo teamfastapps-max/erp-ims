@@ -1,0 +1,94 @@
+@model IMS.Models.Portal.PortalSyllabusViewModel
+@{
+    ViewData["Title"] = "Subject Syllabus";
+    var grouped = Model.Units.GroupBy(u => u.SubjectName).ToList();
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h4 class="fw-bold mb-1"><i class="fa-solid fa-book-bookmark text-primary me-2"></i>Subject Syllabus</h4>
+        <p class="text-muted small mb-0">Curriculum units, module outlines, and lesson plan downloads</p>
+    </div>
+</div>
+
+@if (grouped.Count == 0)
+{
+    <div class="portal-card text-center py-5">
+        <i class="fa-solid fa-book-open fs-1 text-muted mb-2"></i>
+        <h5 class="fw-bold text-dark">No Syllabus Units Published</h5>
+        <p class="text-muted mb-0">Course syllabus units will appear here as soon as teachers publish them.</p>
+    </div>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var group in grouped)
+        {
+            <div class="col-12">
+                <div class="portal-card">
+                    <div class="portal-card-header bg-light">
+                        <h5 class="portal-card-title">
+                            <i class="fa-solid fa-layer-group text-primary"></i>@group.Key
+                        </h5>
+                        <span class="badge bg-primary-subtle text-primary">@group.Count() Units</span>
+                    </div>
+                    <div class="portal-card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-3" style="width: 80px;">Unit</th>
+                                        <th>Title &amp; Topics</th>
+                                        <th>Hours</th>
+                                        <th>Status</th>
+                                        <th class="text-end pe-3">Document</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var unit in group.OrderBy(u => u.UnitNumber))
+                                    {
+                                        <tr>
+                                            <td class="ps-3 fw-bold text-primary">Unit @unit.UnitNumber</td>
+                                            <td>
+                                                <div class="fw-semibold text-dark">@unit.UnitTitle</div>
+                                                @if (!string.IsNullOrEmpty(unit.Description))
+                                                {
+                                                    <div class="text-muted small">@unit.Description</div>
+                                                }
+                                            </td>
+                                            <td>@(unit.TotalHours.HasValue ? $"{unit.TotalHours} hrs" : "-")</td>
+                                            <td>
+                                                @if (unit.IsCompleted)
+                                                {
+                                                    <span class="badge bg-success-subtle text-success">
+                                                        <i class="fa-solid fa-circle-check me-1"></i>Completed
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary-subtle text-secondary">In Progress</span>
+                                                }
+                                            </td>
+                                            <td class="text-end pe-3">
+                                                @if (!string.IsNullOrEmpty(unit.FileUrl))
+                                                {
+                                                    <a href="@unit.FileUrl" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill">
+                                                        <i class="fa-solid fa-download me-1"></i>Syllabus PDF
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted small">No file</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

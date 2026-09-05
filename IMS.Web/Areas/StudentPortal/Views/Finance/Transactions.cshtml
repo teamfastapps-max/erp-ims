@@ -1,0 +1,188 @@
+@model IMS.Models.Portal.PortalFeeTransactionViewModel
+@{
+    ViewData["Title"] = "Fee Transactions & Invoices";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h4 class="fw-bold mb-1"><i class="fa-solid fa-receipt text-primary me-2"></i>Fee Transactions &amp; Billing</h4>
+        <p class="text-muted small mb-0">Track itemized tuition dues, payment allocations, and download official receipts</p>
+    </div>
+</div>
+
+<!-- Financial Metrics Overview -->
+<div class="row g-3 mb-4">
+    <div class="col-12 col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon-box stat-icon-blue">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+            </div>
+            <div class="stat-meta">
+                <div class="stat-value">₹@Model.TotalBilled.ToString("N0")</div>
+                <div class="stat-label">Total Billed</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon-box stat-icon-green">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div class="stat-meta">
+                <div class="stat-value">₹@Model.TotalPaid.ToString("N0")</div>
+                <div class="stat-label">Total Paid</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon-box stat-icon-amber">
+                <i class="fa-solid fa-hand-holding-dollar"></i>
+            </div>
+            <div class="stat-meta">
+                <div class="stat-value">₹@Model.OutstandingBalance.ToString("N0")</div>
+                <div class="stat-label">Outstanding Balance</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabs: Invoices & Payment History -->
+<ul class="nav nav-pills mb-3 gap-2" id="financeTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active rounded-pill px-4 py-2 fw-semibold" id="invoices-tab" data-bs-toggle="pill" data-bs-target="#invoices-pane" type="button" role="tab">
+            <i class="fa-solid fa-file-invoice me-1"></i>Fee Invoices (@Model.Invoices.Count)
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link rounded-pill px-4 py-2 fw-semibold" id="payments-tab" data-bs-toggle="pill" data-bs-target="#payments-pane" type="button" role="tab">
+            <i class="fa-solid fa-clock-rotate-left me-1"></i>Payment History (@Model.Payments.Count)
+        </button>
+    </li>
+</ul>
+
+<div class="tab-content" id="financeTabContent">
+    <!-- Invoices Pane -->
+    <div class="tab-pane fade show active" id="invoices-pane" role="tabpanel">
+        <div class="portal-card">
+            <div class="portal-card-header">
+                <h5 class="portal-card-title"><i class="fa-solid fa-list-ul text-primary"></i>Generated Fee Invoices</h5>
+            </div>
+            <div class="portal-card-body p-0">
+                @if (Model.Invoices.Count == 0)
+                {
+                    <div class="text-center py-5 text-muted">
+                        <i class="fa-solid fa-receipt fs-1 mb-2 text-secondary"></i>
+                        <p class="mb-0 fw-semibold">No invoices issued for this student account</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 text-center small">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="text-start ps-3">Invoice No</th>
+                                    <th>Date</th>
+                                    <th>Due Date</th>
+                                    <th>Total Amount</th>
+                                    <th>Paid Amount</th>
+                                    <th>Balance</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var inv in Model.Invoices)
+                                {
+                                    <tr>
+                                        <td class="text-start ps-3 fw-bold text-dark">@inv.InvoiceNumber</td>
+                                        <td>@inv.InvoiceDate.ToString("dd MMM yyyy")</td>
+                                        <td class="@(inv.BalanceAmount > 0 && inv.DueDate < DateTime.Today ? "text-danger fw-bold" : "")">
+                                            @inv.DueDate.ToString("dd MMM yyyy")
+                                        </td>
+                                        <td class="fw-semibold">₹@inv.TotalAmount.ToString("N0")</td>
+                                        <td class="text-success fw-semibold">₹@inv.PaidAmount.ToString("N0")</td>
+                                        <td class="fw-bold @(inv.BalanceAmount > 0 ? "text-danger" : "text-muted")">
+                                            ₹@inv.BalanceAmount.ToString("N0")
+                                        </td>
+                                        <td>
+                                            @switch (inv.Status.ToLower())
+                                            {
+                                                case "paid":
+                                                    <span class="badge bg-success-subtle text-success px-3 py-1 rounded-pill">Paid</span>
+                                                    break;
+                                                case "partially_paid":
+                                                    <span class="badge bg-warning-subtle text-warning px-3 py-1 rounded-pill">Partial</span>
+                                                    break;
+                                                case "overdue":
+                                                    <span class="badge bg-danger-subtle text-danger px-3 py-1 rounded-pill">Overdue</span>
+                                                    break;
+                                                default:
+                                                    <span class="badge bg-info-subtle text-info px-3 py-1 rounded-pill">@inv.Status</span>
+                                                    break;
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Payments Pane -->
+    <div class="tab-pane fade" id="payments-pane" role="tabpanel">
+        <div class="portal-card">
+            <div class="portal-card-header">
+                <h5 class="portal-card-title"><i class="fa-solid fa-credit-card text-success"></i>Completed Payments &amp; Transactions</h5>
+            </div>
+            <div class="portal-card-body p-0">
+                @if (Model.Payments.Count == 0)
+                {
+                    <div class="text-center py-5 text-muted">
+                        <i class="fa-regular fa-credit-card fs-1 mb-2 text-secondary"></i>
+                        <p class="mb-0 fw-semibold">No payment transactions recorded yet</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 text-center small">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="text-start ps-3">Receipt / Payment No</th>
+                                    <th>Date</th>
+                                    <th>Payment Mode</th>
+                                    <th>Reference / Txn ID</th>
+                                    <th>Amount Paid</th>
+                                    <th>Status</th>
+                                    <th class="text-end pe-3">Receipt</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var pay in Model.Payments)
+                                {
+                                    <tr>
+                                        <td class="text-start ps-3 fw-bold text-dark">@pay.PaymentNumber</td>
+                                        <td>@pay.PaymentDate.ToString("dd MMM yyyy, hh:mm tt")</td>
+                                        <td><span class="badge bg-light text-dark border">@(pay.PaymentMethodName ?? "Standard")</span></td>
+                                        <td class="text-muted">@(pay.TransactionReference ?? "-")</td>
+                                        <td class="fw-bold text-success">₹@pay.Amount.ToString("N0")</td>
+                                        <td><span class="badge bg-success-subtle text-success px-3 py-1 rounded-pill">@pay.Status</span></td>
+                                        <td class="text-end pe-3">
+                                            <a asp-area="StudentPortal" asp-controller="Finance" asp-action="Receipt" asp-route-id="@pay.PaymentId" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill">
+                                                <i class="fa-solid fa-file-invoice me-1"></i>View Receipt
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -52,6 +52,15 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
+    name: "student_login_alias",
+    pattern: "Student/Login",
+    defaults: new { area = "StudentPortal", controller = "Auth", action = "Login" });
+
+app.MapControllerRoute(
+    name: "student_portal_area",
+    pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 

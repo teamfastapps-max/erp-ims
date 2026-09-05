@@ -1,0 +1,25 @@
+@{
+    ViewData["Title"] = "No Active Student";
+}
+
+<div class="row justify-content-center py-5">
+    <div class="col-md-6 text-center">
+        <div class="portal-card p-5 shadow-sm">
+            <div class="stat-icon-box stat-icon-amber mx-auto mb-3" style="width: 70px; height: 70px; font-size: 1.8rem;">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h4 class="fw-bold text-dark">No Active Student Profile Linked</h4>
+            <p class="text-muted small">
+                Your account is currently active, but no student records were found linked to your profile in this academic tenant.
+            </p>
+            <p class="text-muted small">
+                If you are a parent or student who recently joined, please contact the institution's administrative office to link your student admission file to your email address.
+            </p>
+            <div class="mt-4">
+                <a asp-area="StudentPortal" asp-controller="Auth" asp-action="Logout" class="btn btn-outline-danger btn-sm px-4 rounded-pill">
+                    <i class="fa-solid fa-arrow-right-from-bracket me-1"></i>Sign Out
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

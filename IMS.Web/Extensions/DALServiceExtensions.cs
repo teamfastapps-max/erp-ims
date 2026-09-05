@@ -37,7 +37,7 @@ namespace IMS.Web.Extensions
             services.AddScoped<ITeacherDAL, TeacherDAL>();
             services.AddScoped<ITeacherAttendanceDAL, TeacherAttendanceDAL>();
             services.AddScoped<ITeacherLeaveDAL, TeacherLeaveDAL>();
-
+            services.AddScoped<IPortalDAL, PortalDAL>();
 
             return services;
         }

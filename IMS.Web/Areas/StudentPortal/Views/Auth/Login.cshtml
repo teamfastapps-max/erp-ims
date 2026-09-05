@@ -1,0 +1,236 @@
+@model IMS.Models.Portal.PortalLoginViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Student & Guardian Portal Login";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ERP-IMS</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <!-- Portal Design System -->
+    <link rel="stylesheet" href="~/css/studentPortal.css" asp-append-version="true" />
+</head>
+<body class="login-page">
+
+    <div class="login-shell">
+
+        <!-- LEFT PANEL: Brand & Feature Showcase (Desktop / Tablet) -->
+        <div class="login-panel-brand">
+            <!-- Brand Top -->
+            <div class="login-brand-top">
+                <div class="brand-badge-icon">
+                    <i class="bi bi-mortarboard-fill"></i>
+                </div>
+                <div>
+                    <div class="brand-title">School Management System</div>
+                    <div class="brand-sub">ERP-IMS Academic Suite</div>
+                </div>
+            </div>
+
+            <!-- Hero Middle Copy -->
+            <div class="login-hero-copy">
+                <div class="portal-pill-badge">
+                    <span class="live-dot"></span> Student &amp; Guardian Portal
+                </div>
+                <h1>
+                    Your School Life,<br />
+                    <span class="accent-gradient">All in One Place.</span>
+                </h1>
+                <p class="hero-desc">
+                    A unified, secure portal designed for students and guardians. Track attendance, view schedules, submit homework, download report cards, and pay fees anytime.
+                </p>
+
+                <div class="brand-features-grid">
+                    <div class="brand-feature-card">
+                        <div class="feat-icon"><i class="bi bi-calendar2-check-fill"></i></div>
+                        <div>
+                            <h6>Live Attendance &amp; Leaves</h6>
+                            <p>Daily check-ins, subject attendance &amp; online leave requests.</p>
+                        </div>
+                    </div>
+                    <div class="brand-feature-card">
+                        <div class="feat-icon"><i class="bi bi-journal-bookmark-fill"></i></div>
+                        <div>
+                            <h6>Academics &amp; Homework</h6>
+                            <p>Class schedules, syllabus tracker &amp; online task submissions.</p>
+                        </div>
+                    </div>
+                    <div class="brand-feature-card">
+                        <div class="feat-icon"><i class="bi bi-award-fill"></i></div>
+                        <div>
+                            <h6>Admit Cards &amp; Results</h6>
+                            <p>Exam hall tickets, mock tests &amp; downloadable report cards.</p>
+                        </div>
+                    </div>
+                    <div class="brand-feature-card">
+                        <div class="feat-icon"><i class="bi bi-credit-card-2-front-fill"></i></div>
+                        <div>
+                            <h6>Fees &amp; Bus Routes</h6>
+                            <p>Transaction ledger, fee receipts &amp; real-time bus stop timings.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Security Info -->
+            <div class="login-brand-footer">
+                <span><i class="bi bi-shield-check text-primary me-1"></i> Secure 256-bit Encrypted Portal</span>
+                <span>•</span>
+                <span>Multi-Ward Guardian Support</span>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL: Authentication Form -->
+        <div class="login-panel-auth">
+            <div class="login-auth-box">
+
+                <!-- Auth Header -->
+                <div class="text-center mb-4">
+                    <div class="auth-icon-circle mb-3">
+                        <i class="bi bi-mortarboard-fill"></i>
+                    </div>
+                    <h2 class="auth-box-title">Portal Sign In</h2>
+                    <p class="auth-box-subtitle">Enter your registered institute email and password</p>
+
+                    <div class="role-pills-badge">
+                        <span class="badge bg-primary text-white rounded-pill px-2 py-1">Student</span>
+                        <span class="text-muted">&amp;</span>
+                        <span class="badge text-white rounded-pill px-2 py-1" style="background:#6366f1;">Guardian / Parent</span>
+                    </div>
+                </div>
+
+                <!-- Validation & Status Alerts -->
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-danger py-2 px-3 small border-0 shadow-sm mb-3 d-flex align-items-start gap-2 rounded-3">
+                        <i class="bi bi-exclamation-octagon-fill text-danger fs-5 mt-n1"></i>
+                        <div>
+                            <div class="fw-semibold">Sign in failed</div>
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger mb-0 ps-0" })
+                        </div>
+                    </div>
+                }
+
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success py-2 px-3 small border-0 shadow-sm mb-3 d-flex align-items-center gap-2 rounded-3">
+                        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                        <span>@TempData["SuccessMessage"]</span>
+                    </div>
+                }
+
+                <!-- Sign In Form -->
+                <form asp-area="StudentPortal" asp-controller="Auth" asp-action="Login" method="post" id="loginForm" novalidate>
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="ReturnUrl" />
+
+                    <!-- Email Field -->
+                    <div class="portal-form-group">
+                        <label asp-for="Email" class="portal-form-label">
+                            <span>Registered Email or Admission No.</span>
+                        </label>
+                        <div class="portal-input-group @(!ViewData.ModelState.IsValid && ViewData.ModelState["Email"]?.Errors.Count > 0 ? "has-error" : "")">
+                            <span class="portal-input-icon"><i class="bi bi-envelope"></i></span>
+                            <input asp-for="Email" type="email" class="portal-input-control" placeholder="name@example.com or ADM/2026/001" autocomplete="username" required autofocus />
+                        </div>
+                        <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="portal-form-group">
+                        <div class="portal-form-label">
+                            <label asp-for="Password" class="mb-0">Password</label>
+                            <a asp-area="StudentPortal" asp-controller="Auth" asp-action="ForgotPassword" class="text-decoration-none small text-primary fw-semibold">
+                                Forgot password?
+                            </a>
+                        </div>
+                        <div class="portal-input-group @(!ViewData.ModelState.IsValid && ViewData.ModelState["Password"]?.Errors.Count > 0 ? "has-error" : "")">
+                            <span class="portal-input-icon"><i class="bi bi-shield-lock"></i></span>
+                            <input asp-for="Password" type="password" class="portal-input-control" id="passwordInput" placeholder="••••••••" autocomplete="current-password" required />
+                            <button class="portal-eye-btn" type="button" id="togglePasswordBtn" title="Show/Hide Password">
+                                <i class="bi bi-eye" id="passwordEyeIcon"></i>
+                            </button>
+                        </div>
+                        <span asp-validation-for="Password" class="text-danger small mt-1 d-block"></span>
+                    </div>
+
+                    <!-- Remember Me -->
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="form-check">
+                            <input asp-for="RememberMe" class="form-check-input" type="checkbox" id="rememberMeCheck" />
+                            <label class="form-check-label small text-secondary" for="rememberMeCheck">Keep me signed in</label>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn-portal-submit" id="submitLoginBtn">
+                        <span>Sign In to Portal</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </button>
+                </form>
+
+                <!-- Initial Password Helper Hint -->
+                <div class="auth-hint-card info mt-4">
+                    <i class="bi bi-info-circle-fill fs-6 flex-shrink-0"></i>
+                    <div>
+                        First time signing in? Default password is <strong>Welcome@123</strong>. You can change this anytime from your portal profile.
+                    </div>
+                </div>
+
+                <!-- Back to School Site -->
+                <div class="text-center mt-4 pt-3 border-top">
+                    <a asp-area="" asp-controller="Home" asp-action="Index" class="back-link">
+                        <i class="bi bi-arrow-left me-1"></i> Return to School Website
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('togglePasswordBtn')?.addEventListener('click', function () {
+            var passInput = document.getElementById('passwordInput');
+            var eyeIcon = document.getElementById('passwordEyeIcon');
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+                eyeIcon.classList.remove('bi-eye');
+                eyeIcon.classList.add('bi-eye-slash');
+            } else {
+                passInput.type = 'password';
+                eyeIcon.classList.remove('bi-eye-slash');
+                eyeIcon.classList.add('bi-eye');
+            }
+        });
+
+        document.getElementById('loginForm')?.addEventListener('submit', function () {
+            var btn = document.getElementById('submitLoginBtn');
+            if (btn) {
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Signing In...';
+                btn.style.opacity = '0.85';
+                btn.style.pointerEvents = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-﻿using IMS.Services.Interfaces;
+using IMS.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -101,6 +101,24 @@ namespace IMS.Web.Extensions
                         context.HandleResponse();
                     }
                 };
+            })
+            .AddCookie("StudentPortalAuth", options =>
+            {
+                options.LoginPath = "/Student/Login";
+                options.LogoutPath = "/StudentPortal/Auth/Logout";
+                options.AccessDeniedPath = "/StudentPortal/Auth/AccessDenied";
+                options.Cookie.Name = "IMS.StudentPortalAuth";
+                options.ExpireTimeSpan = TimeSpan.FromDays(7);
+                options.SlidingExpiration = true;
+            })
+            .AddCookie("PortalAuth", options =>
+            {
+                options.LoginPath = "/Student/Login";
+                options.LogoutPath = "/StudentPortal/Auth/Logout";
+                options.AccessDeniedPath = "/StudentPortal/Auth/AccessDenied";
+                options.Cookie.Name = "IMS.StudentPortalAuth";
+                options.ExpireTimeSpan = TimeSpan.FromDays(7);
+                options.SlidingExpiration = true;
             });
 
             services.AddAuthorization();

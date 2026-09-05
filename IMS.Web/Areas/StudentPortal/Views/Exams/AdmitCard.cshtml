@@ -1,0 +1,134 @@
+@model IMS.Models.Portal.PortalAdmitCardViewModel
+@{
+    ViewData["Title"] = "Examination Admit Card";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4 no-print">
+    <div>
+        <h4 class="fw-bold mb-1"><i class="fa-solid fa-ticket text-primary me-2"></i>Examination Admit Card</h4>
+        <p class="text-muted small mb-0">Official hall ticket for scheduled examinations</p>
+    </div>
+    @if (Model.HasAdmitCard)
+    {
+        <button onclick="window.print()" class="btn btn-primary rounded-pill">
+            <i class="fa-solid fa-print me-2"></i>Print Hall Ticket
+        </button>
+    }
+</div>
+
+@if (!Model.HasAdmitCard)
+{
+    <div class="portal-card text-center py-5">
+        <i class="fa-solid fa-file-circle-xmark fs-1 text-muted mb-2"></i>
+        <h5 class="fw-bold text-dark">No Active Admit Card Available</h5>
+        <p class="text-muted mb-0">There are no upcoming scheduled examinations with released admit cards for your batch.</p>
+    </div>
+}
+else
+{
+    <div class="portal-card print-voucher mx-auto" style="max-width: 850px;">
+        <div class="portal-card-body p-4">
+            <!-- Header -->
+            <div class="text-center border-bottom pb-3 mb-4">
+                <h4 class="fw-bold text-uppercase mb-1">@(Model.OrganizationName ?? "INSTITUTE OF EDUCATION")</h4>
+                <div class="text-muted small">@(Model.CenterName ?? "Main Campus") • @(Model.CenterAddress ?? "")</div>
+                <div class="badge bg-primary text-white fs-6 px-3 py-1 mt-2 text-uppercase">
+                    Official Examination Hall Ticket / Admit Card
+                </div>
+            </div>
+
+            <!-- Candidate Details Row -->
+            <div class="row g-3 mb-4 align-items-center">
+                <div class="col-8 col-sm-9">
+                    <table class="table table-sm table-borderless mb-0 small">
+                        <tr>
+                            <td class="fw-bold text-muted" style="width: 140px;">Candidate Name:</td>
+                            <td class="fw-bold text-dark fs-6">@Model.StudentName</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold text-muted">Roll / Admission No:</td>
+                            <td class="fw-bold text-primary">@(Model.RollNumber ?? Model.StudentCode ?? "N/A")</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold text-muted">Examination:</td>
+                            <td class="fw-semibold">@Model.ExamName (@Model.ExamCode)</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold text-muted">Course / Batch:</td>
+                            <td>@Model.CourseName • @Model.BatchName</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold text-muted">Exam Center:</td>
+                            <td>@(Model.CenterName ?? "Institution Examination Hall")</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-4 col-sm-3 text-center">
+                    <div class="border p-2 rounded bg-light d-inline-block text-center" style="width: 100px; height: 110px;">
+                        <i class="fa-regular fa-user fs-1 text-muted d-block mt-3"></i>
+                        <span class="text-muted" style="font-size: 0.65rem;">Photo</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exam Schedule Table -->
+            <div class="mb-4">
+                <h6 class="fw-bold text-dark mb-2"><i class="fa-solid fa-calendar-days text-primary me-2"></i>Subject Examination Schedule</h6>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-sm align-middle mb-0 text-center small">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th class="text-start">Subject</th>
+                                <th>Code</th>
+                                <th>Exam Date</th>
+                                <th>Timings</th>
+                                <th>Max Marks</th>
+                                <th>Room No</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{ int index = 1; }
+                            @foreach (var s in Model.Schedules)
+                            {
+                                <tr>
+                                    <td>@(index++)</td>
+                                    <td class="text-start fw-semibold">@s.SubjectName</td>
+                                    <td>@(s.SubjectCode ?? "-")</td>
+                                    <td class="fw-bold text-dark">@s.ExamDate.ToString("dd/MM/yyyy")</td>
+                                    <td>@s.StartTime.ToString(@"hh\:mm") - @s.EndTime.ToString(@"hh\:mm")</td>
+                                    <td>@s.MaxMarks.ToString("N0")</td>
+                                    <td>@(s.RoomNumber ?? "Hall A")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Candidate Instructions -->
+            <div class="p-3 border rounded bg-light mb-4 small text-muted">
+                <div class="fw-bold text-dark mb-1">Important Instructions for Candidates:</div>
+                <ol class="ps-3 mb-0" style="font-size: 0.8rem;">
+                    <li>Candidates must bring this Admit Card along with their official Student ID Card to every examination session.</li>
+                    <li>Entry into the examination hall is permitted up to 15 minutes before the scheduled commencement.</li>
+                    <li>Electronic gadgets, mobile phones, and smart watches are strictly prohibited inside the hall.</li>
+                    <li>Candidates must follow all invigilator instructions and adhere to academic integrity standards.</li>
+                </ol>
+            </div>
+
+            <!-- Signatures Section -->
+            <div class="row pt-4 text-center small">
+                <div class="col-4">
+                    <div class="border-top pt-2 fw-semibold text-muted">Candidate Signature</div>
+                </div>
+                <div class="col-4">
+                    <div class="border-top pt-2 fw-semibold text-muted">Invigilator Verification</div>
+                </div>
+                <div class="col-4">
+                    <div class="border-top pt-2 fw-semibold text-muted">Controller of Examinations</div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

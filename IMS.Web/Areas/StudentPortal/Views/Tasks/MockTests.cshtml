@@ -1,0 +1,70 @@
+@model IMS.Models.Portal.PortalMockTestViewModel
+@{
+    ViewData["Title"] = "Mock Tests & Practice";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h4 class="fw-bold mb-1"><i class="fa-solid fa-stopwatch text-primary me-2"></i>Mock Tests &amp; Practice Exams</h4>
+        <p class="text-muted small mb-0">Prepare for board and term exams with timed mock tests</p>
+    </div>
+</div>
+
+@if (Model.Tests.Count == 0)
+{
+    <div class="portal-card text-center py-5">
+        <i class="fa-solid fa-hourglass-start fs-1 text-muted mb-2"></i>
+        <h5 class="fw-bold text-dark">No Mock Tests Scheduled</h5>
+        <p class="text-muted mb-0">Upcoming practice mock tests will be listed here once announced by teachers.</p>
+    </div>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var test in Model.Tests)
+        {
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="portal-card h-100 d-flex flex-column">
+                    <div class="portal-card-header bg-light">
+                        <span class="badge bg-primary-subtle text-primary">@test.SubjectName</span>
+                        <span class="badge @(test.TestStatus == "Completed" ? "bg-success-subtle text-success" : "bg-info-subtle text-info")">
+                            @test.TestStatus
+                        </span>
+                    </div>
+
+                    <div class="portal-card-body flex-grow-1">
+                        <h6 class="fw-bold text-dark mb-2">@test.Title</h6>
+                        <p class="text-muted small mb-3">@test.Description</p>
+
+                        <div class="d-flex justify-content-between text-muted small mb-2">
+                            <span><i class="fa-regular fa-calendar me-1"></i>Date:</span>
+                            <span class="fw-semibold text-dark">@test.TestDate.ToString("dd MMM yyyy, hh:mm tt")</span>
+                        </div>
+                        <div class="d-flex justify-content-between text-muted small mb-2">
+                            <span><i class="fa-regular fa-clock me-1"></i>Duration:</span>
+                            <span class="fw-semibold text-dark">@test.DurationMinutes mins</span>
+                        </div>
+                        <div class="d-flex justify-content-between text-muted small mb-3">
+                            <span><i class="fa-solid fa-bullseye me-1"></i>Total Marks:</span>
+                            <span class="fw-semibold text-dark">@test.TotalMarks.ToString("N0") (Pass: @test.PassMarks.ToString("N0"))</span>
+                        </div>
+
+                        <!-- Score Result if Completed -->
+                        @if (test.Score.HasValue)
+                        {
+                            <div class="p-3 rounded-3 bg-light border text-center">
+                                <div class="text-muted small">Score Obtained</div>
+                                <div class="fs-4 fw-bold @(test.StudentResultStatus == "Pass" ? "text-success" : "text-danger")">
+                                    @test.Score.Value.ToString("N0") / @test.TotalMarks.ToString("N0")
+                                </div>
+                                <div class="small fw-semibold mt-1">
+                                    Percentage: @(test.Percentage.HasValue ? test.Percentage.Value.ToString("N1") + "%" : "N/A") • Grade: @(test.Grade ?? "N/A")
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

@@ -1,0 +1,51 @@
+@model List<IMS.Models.Portal.PortalNoticeDto>
+@{
+    ViewData["Title"] = "Notice Board";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h4 class="fw-bold mb-1"><i class="fa-solid fa-bullhorn text-danger me-2"></i>Institutional Notice Board</h4>
+        <p class="text-muted small mb-0">Official bulletins, holiday schedules, circulars, and announcements</p>
+    </div>
+</div>
+
+@if (Model == null || Model.Count == 0)
+{
+    <div class="portal-card p-5 text-center text-muted">
+        <i class="fa-regular fa-bell-slash fs-1 mb-3 text-secondary"></i>
+        <h5 class="fw-bold text-dark">No Notices Published</h5>
+        <p class="small mb-0">There are currently no active announcements from school administration.</p>
+    </div>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var notice in Model)
+        {
+            <div class="col-12 col-md-6">
+                <div class="portal-card h-100 d-flex flex-column justify-content-between">
+                    <div class="portal-card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="fw-bold text-dark mb-0">@notice.Title</h5>
+                            <span class="badge bg-danger-subtle text-danger">Official</span>
+                        </div>
+                        <p class="text-muted small mb-3" style="line-height: 1.6;">@notice.Content</p>
+                    </div>
+                    <div class="portal-card-footer bg-light border-top px-3 py-2 d-flex justify-content-between align-items-center">
+                        <span class="text-muted small">
+                            <i class="fa-regular fa-calendar-days me-1"></i>
+                            @(notice.PublishedAt.HasValue ? notice.PublishedAt.Value.ToString("dd MMM yyyy") : "Recent")
+                        </span>
+                        @if (notice.ExpiresAt.HasValue)
+                        {
+                            <span class="text-muted small">
+                                <i class="fa-regular fa-clock me-1"></i>Valid till: @notice.ExpiresAt.Value.ToString("dd MMM")
+                            </span>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

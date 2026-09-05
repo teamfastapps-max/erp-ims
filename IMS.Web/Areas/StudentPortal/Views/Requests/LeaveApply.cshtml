@@ -1,0 +1,125 @@
+@model IMS.Models.Portal.PortalLeaveApplyViewModel
+@{
+    ViewData["Title"] = "Apply for Leave";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h4 class="fw-bold mb-1"><i class="fa-solid fa-envelope-open-text text-primary me-2"></i>Apply for Student Leave</h4>
+        <p class="text-muted small mb-0">Submit leave requests to school administration and track approval status</p>
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- Apply Form Card -->
+    <div class="col-12 col-lg-5">
+        <div class="portal-card">
+            <div class="portal-card-header">
+                <h5 class="portal-card-title"><i class="fa-solid fa-paper-plane text-primary"></i>New Leave Application</h5>
+            </div>
+            <div class="portal-card-body">
+                <form asp-area="StudentPortal" asp-controller="Requests" asp-action="LeaveApply" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label asp-for="LeaveType" class="form-label small fw-semibold">Leave Type</label>
+                        <select asp-for="LeaveType" class="form-select rounded-3">
+                            <option value="Sick">Sick Leave</option>
+                            <option value="Casual">Casual Leave</option>
+                            <option value="Medical">Medical Emergency</option>
+                            <option value="FamilyFunction">Family Function</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <span asp-validation-for="LeaveType" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label asp-for="FromDate" class="form-label small fw-semibold">From Date</label>
+                            <input asp-for="FromDate" type="date" class="form-control rounded-3" required />
+                            <span asp-validation-for="FromDate" class="text-danger small"></span>
+                        </div>
+                        <div class="col-6">
+                            <label asp-for="ToDate" class="form-label small fw-semibold">To Date</label>
+                            <input asp-for="ToDate" type="date" class="form-control rounded-3" required />
+                            <span asp-validation-for="ToDate" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Reason" class="form-label small fw-semibold">Reason for Absence</label>
+                        <textarea asp-for="Reason" class="form-control rounded-3" rows="4" placeholder="Briefly describe the reason for your leave request..." required></textarea>
+                        <span asp-validation-for="Reason" class="text-danger small"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 fw-semibold">
+                        <i class="fa-solid fa-paper-plane me-2"></i>Submit Application
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Past Applications History Card -->
+    <div class="col-12 col-lg-7">
+        <div class="portal-card">
+            <div class="portal-card-header">
+                <h5 class="portal-card-title"><i class="fa-solid fa-clock-rotate-left text-secondary"></i>Leave Request History</h5>
+                <span class="badge bg-secondary-subtle text-dark">@Model.Leaves.Count Total</span>
+            </div>
+            <div class="portal-card-body p-0">
+                @if (Model.Leaves.Count == 0)
+                {
+                    <div class="text-center py-5 text-muted">
+                        <i class="fa-regular fa-calendar fs-1 mb-2 text-secondary"></i>
+                        <p class="mb-0 fw-semibold">No leave applications submitted yet</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 text-center small">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="text-start ps-3">Duration</th>
+                                    <th>Days</th>
+                                    <th>Type</th>
+                                    <th>Reason</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var l in Model.Leaves)
+                                {
+                                    <tr>
+                                        <td class="text-start ps-3">
+                                            <div class="fw-semibold text-dark">@l.FromDate.ToString("dd MMM") - @l.ToDate.ToString("dd MMM yyyy")</div>
+                                            <div class="text-muted" style="font-size: 0.72rem;">Applied by: @l.AppliedBy</div>
+                                        </td>
+                                        <td>@l.TotalDays</td>
+                                        <td><span class="badge bg-light text-dark border">@l.LeaveType</span></td>
+                                        <td class="text-truncate" style="max-width: 160px;" title="@l.Reason">@l.Reason</td>
+                                        <td>
+                                            @if (string.Equals(l.Status, "Approved", StringComparison.OrdinalIgnoreCase))
+                                            {
+                                                <span class="badge bg-success-subtle text-success px-3 py-1 rounded-pill">Approved</span>
+                                            }
+                                            else if (string.Equals(l.Status, "Rejected", StringComparison.OrdinalIgnoreCase))
+                                            {
+                                                <span class="badge bg-danger-subtle text-danger px-3 py-1 rounded-pill" title="@l.RejectionReason">Rejected</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-warning-subtle text-warning px-3 py-1 rounded-pill">@(l.Status ?? "Pending")</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

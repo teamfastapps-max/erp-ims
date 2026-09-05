@@ -1,0 +1,290 @@
+@using IMS.Models.Portal
+@{
+    var activeWard = ViewBag.ActiveWard as LinkedStudentDto;
+    var linkedStudents = ViewBag.LinkedStudents as List<LinkedStudentDto> ?? new List<LinkedStudentDto>();
+    var userType = ViewBag.CurrentUserType as string ?? "STUDENT";
+    var userFullName = ViewBag.CurrentUserFullName as string ?? "Portal User";
+    var currentStudentId = (Guid)(ViewBag.CurrentStudentId ?? Guid.Empty);
+    var currentCtrl = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAct = ViewContext.RouteData.Values["action"]?.ToString();
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>@ViewData["Title"] - Student &amp; Guardian Portal</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+    <link rel="stylesheet" href="~/css/studentPortal.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="portal-body">
+
+    <!-- Top Navigation Bar -->
+    <nav class="portal-navbar">
+        <div class="container-fluid d-flex align-items-center justify-content-between p-0">
+            <!-- Brand -->
+            <a asp-area="StudentPortal" asp-controller="Dashboard" asp-action="Index" class="portal-brand">
+                <i class="fa-solid fa-graduation-cap text-primary fs-4"></i>
+                <span>ERP-IMS</span>
+                <span class="portal-brand-badge">Student Portal</span>
+            </a>
+
+            <!-- Center/Right: Ward Switcher & Profile Dropdown -->
+            <div class="d-flex align-items-center gap-3">
+                @if (userType == "GUARDIAN" && linkedStudents.Count > 1)
+                {
+                    <div class="d-flex align-items-center gap-1">
+                        <label for="wardSelect" class="d-none d-md-inline small text-muted fw-semibold">Ward:</label>
+                        <select id="wardSelect" class="ward-switcher-select shadow-sm" onchange="switchActiveStudent(this.value)">
+                            @foreach (var ward in linkedStudents)
+                            {
+                                if (ward.StudentId == currentStudentId)
+                                {
+                                    <option value="@ward.StudentId" selected>👤 @ward.StudentName (@(ward.BatchName ?? "Active"))</option>
+                                }
+                                else
+                                {
+                                    <option value="@ward.StudentId">👤 @ward.StudentName (@(ward.BatchName ?? "Active"))</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                }
+                else if (activeWard != null)
+                {
+                    <div class="d-none d-sm-flex align-items-center gap-2 px-3 py-1 bg-light border rounded-pill small">
+                        <i class="fa-solid fa-user-graduate text-primary"></i>
+                        <span class="fw-semibold">@activeWard.StudentName</span>
+                        @if (!string.IsNullOrEmpty(activeWard.BatchName))
+                        {
+                            <span class="badge bg-primary-subtle text-primary">@activeWard.BatchName</span>
+                        }
+                    </div>
+                }
+
+                <!-- User Dropdown Menu -->
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary rounded-pill d-flex align-items-center gap-2 px-3 py-1 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-circle-user fs-5 text-primary"></i>
+                        <span class="d-none d-md-inline fw-semibold">@userFullName</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2">
+                        <li class="px-3 py-2 border-bottom">
+                            <div class="fw-bold text-dark">@userFullName</div>
+                            <div class="text-muted small">@userType.ToUpper()</div>
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2" asp-area="StudentPortal" asp-controller="Dashboard" asp-action="Profile">
+                                <i class="fa-regular fa-id-badge me-2 text-muted"></i>My Profile
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                                <i class="fa-solid fa-key me-2 text-muted"></i>Change Password
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider my-1"></li>
+                        <li>
+                            <form asp-area="StudentPortal" asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="dropdown-item py-2 text-danger">
+                                    <i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Sign Out
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Wrapper with Sidebar & Content Canvas -->
+    <div class="portal-wrapper">
+
+        <!-- Sidebar Navigation (Desktop) -->
+        <aside class="portal-sidebar no-print">
+            <div class="portal-nav-section">Main</div>
+            <a asp-area="StudentPortal" asp-controller="Dashboard" asp-action="Index" class="portal-nav-link @(currentCtrl == "Dashboard" && currentAct == "Index" ? "active" : "")">
+                <i class="fa-solid fa-house"></i>
+                <span>Dashboard</span>
+            </a>
+            <a asp-area="StudentPortal" asp-controller="Dashboard" asp-action="Profile" class="portal-nav-link @(currentCtrl == "Dashboard" && currentAct == "Profile" ? "active" : "")">
+                <i class="fa-solid fa-user-graduate"></i>
+                <span>Student Info</span>
+            </a>
+            <a asp-area="StudentPortal" asp-controller="Dashboard" asp-action="IdCard" class="portal-nav-link @(currentCtrl == "Dashboard" && currentAct == "IdCard" ? "active" : "")">
+                <i class="fa-solid fa-address-card"></i>
+                <span>Student I-Card</span>
+            </a>
+            <a asp-area="StudentPortal" asp-controller="Dashboard" asp-action="GuardianIdCard" class="portal-nav-link @(currentCtrl == "Dashboard" && currentAct == "GuardianIdCard" ? "active" : "")">
+                <i class="fa-solid fa-id-card-clip"></i>
+                <span>Guardian I-Card</span>
+            </a>
+            <a asp-area="StudentPortal" asp-controller="Dashboard" asp-action="Notices" class="portal-nav-link @(currentCtrl == "Dashboard" && currentAct == "Notices" ? "active" : "")">
+                <i class="fa-solid fa-bullhorn"></i>
+                <span>Notice Board</span>
+            </a>
+
+            <div class="portal-nav-section">Academics</div>
+            <a asp-area="StudentPortal" asp-controller="Academics" asp-action="Attendance" class="portal-nav-link @(currentCtrl == "Academics" && currentAct == "Attendance" ? "active" : "")">
+                <i class="fa-solid fa-calendar-check"></i>
+                <span>Attendance</span>
+            </a>
+            <a asp-area="StudentPortal" asp-controller="Academics" asp-action="Timetable" class="portal-nav-link @(currentCtrl == "Academics" && currentAct == "Timetable" ? "active" : "")">
+                <i class="fa-solid fa-clock"></i>
+                <span>Class Schedule</span>
+            </a>
+            <a asp-area="StudentPortal" asp-controller="Academics" asp-action="Syllabus" class="portal-nav-link @(currentCtrl == "Academics" && currentAct == "Syllabus" ? "active" : "")">
+                <i class="fa-solid fa-book-open"></i>
+                <span>Syllabus</span>
+            </a>
+            <a asp-area="StudentPortal" asp-controller="Academics" asp-action="ClassDetails" class="portal-nav-link @(currentCtrl == "Academics" && currentAct == "ClassDetails" ? "active" : "")">
+                <i class="fa-solid fa-chalkboard-user"></i>
+                <span>Class Details</span>
+            </a>
+
+            <div class="portal-nav-section">Learning &amp; Tests</div>
+            <a asp-area="StudentPortal" asp-controller="Tasks" asp-action="HomeTasks" class="portal-nav-link @(currentCtrl == "Tasks" && currentAct == "HomeTasks" ? "active" : "")">
+                <i class="fa-solid fa-list-check"></i>
+                <span>Home Task</span>
+            </a>
+            <a asp-area="StudentPortal" asp-controller="Tasks" asp-action="MockTests" class="portal-nav-link @(currentCtrl == "Tasks" && currentAct == "MockTests" ? "active" : "")">
+                <i class="fa-solid fa-laptop-file"></i>
+                <span>Mock Test</span>
+            </a>
+
+            <div class="portal-nav-section">Examinations</div>
+            <a asp-area="StudentPortal" asp-controller="Exams" asp-action="AdmitCard" class="portal-nav-link @(currentCtrl == "Exams" && currentAct == "AdmitCard" ? "active" : "")">
+                <i class="fa-solid fa-ticket"></i>
+                <span>Admit Card</span>
+            </a>
+            <a asp-area="StudentPortal" asp-controller="Exams" asp-action="MarkSheet" class="portal-nav-link @(currentCtrl == "Exams" && currentAct == "MarkSheet" ? "active" : "")">
+                <i class="fa-solid fa-square-poll-vertical"></i>
+                <span>Mark Sheet</span>
+            </a>
+
+            <div class="portal-nav-section">Finance &amp; Services</div>
+            <a asp-area="StudentPortal" asp-controller="Finance" asp-action="Transactions" class="portal-nav-link @(currentCtrl == "Finance" && (currentAct == "Transactions" || currentAct == "Receipt") ? "active" : "")">
+                <i class="fa-solid fa-receipt"></i>
+                <span>Fees &amp; Receipts</span>
+            </a>
+            <a asp-area="StudentPortal" asp-controller="Requests" asp-action="LeaveApply" class="portal-nav-link @(currentCtrl == "Requests" && currentAct == "LeaveApply" ? "active" : "")">
+                <i class="fa-solid fa-person-walking-arrow-right"></i>
+                <span>Leave Apply</span>
+            </a>
+            <a asp-area="StudentPortal" asp-controller="Requests" asp-action="Transport" class="portal-nav-link @(currentCtrl == "Requests" && currentAct == "Transport" ? "active" : "")">
+                <i class="fa-solid fa-bus"></i>
+                <span>Bus Portal</span>
+            </a>
+            <a asp-area="StudentPortal" asp-controller="Requests" asp-action="TCApply" class="portal-nav-link @(currentCtrl == "Requests" && currentAct == "TCApply" ? "active" : "")">
+                <i class="fa-solid fa-file-signature"></i>
+                <span>TC Apply</span>
+            </a>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="portal-content">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
+                    <i class="fa-solid fa-circle-check me-2"></i>@TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
+                    <i class="fa-solid fa-circle-exclamation me-2"></i>@TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- Mobile Bottom Navigation Bar (<768px) -->
+    <nav class="portal-bottom-nav no-print">
+        <div class="portal-bottom-nav-inner">
+            <a asp-area="StudentPortal" asp-controller="Dashboard" asp-action="Index" class="bottom-nav-item @(currentCtrl == "Dashboard" && currentAct == "Index" ? "active" : "")">
+                <i class="fa-solid fa-house"></i>
+                <span>Home</span>
+            </a>
+            <a asp-area="StudentPortal" asp-controller="Academics" asp-action="Attendance" class="bottom-nav-item @(currentCtrl == "Academics" && currentAct == "Attendance" ? "active" : "")">
+                <i class="fa-solid fa-calendar-check"></i>
+                <span>Attendance</span>
+            </a>
+            <a asp-area="StudentPortal" asp-controller="Tasks" asp-action="HomeTasks" class="bottom-nav-item @(currentCtrl == "Tasks" && currentAct == "HomeTasks" ? "active" : "")">
+                <i class="fa-solid fa-list-check"></i>
+                <span>Tasks</span>
+            </a>
+            <a asp-area="StudentPortal" asp-controller="Finance" asp-action="Transactions" class="bottom-nav-item @(currentCtrl == "Finance" ? "active" : "")">
+                <i class="fa-solid fa-receipt"></i>
+                <span>Fees</span>
+            </a>
+            <a asp-area="StudentPortal" asp-controller="Dashboard" asp-action="Profile" class="bottom-nav-item @(currentCtrl == "Dashboard" && currentAct == "Profile" ? "active" : "")">
+                <i class="fa-solid fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Change Password Modal -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title fw-bold" id="changePasswordModalLabel">
+                        <i class="fa-solid fa-shield-halved text-primary me-2"></i>Change Password
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="changePasswordForm" asp-area="StudentPortal" asp-controller="Auth" asp-action="ChangePassword" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Current Password</label>
+                            <input type="password" name="CurrentPassword" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">New Password</label>
+                            <input type="password" name="NewPassword" class="form-control" minlength="6" required />
+                            <div class="form-text">Minimum 6 characters with mixed letters and digits recommended.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Confirm New Password</label>
+                            <input type="password" name="ConfirmPassword" class="form-control" minlength="6" required />
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-light">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary px-4">Update Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Form for Ward Switching -->
+    <form id="switchWardForm" asp-area="StudentPortal" asp-controller="Auth" asp-action="SwitchStudent" method="post" style="display:none;">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="studentId" id="switchStudentIdInput" value="" />
+        <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+    </form>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="~/js/student-portal.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

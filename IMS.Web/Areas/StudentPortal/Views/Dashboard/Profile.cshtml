@@ -1,0 +1,150 @@
+@model IMS.Models.Portal.StudentProfileViewModel
+@{
+    ViewData["Title"] = "Student Profile";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h4 class="fw-bold mb-1"><i class="fa-solid fa-user-graduate text-primary me-2"></i>Student Information</h4>
+        <p class="text-muted small mb-0">Complete academic profile and registered guardian contact details</p>
+    </div>
+    <a asp-area="StudentPortal" asp-controller="Dashboard" asp-action="IdCard" class="btn btn-outline-primary rounded-pill btn-sm">
+        <i class="fa-solid fa-address-card me-1"></i>View Digital I-Card
+    </a>
+</div>
+
+<div class="row g-3">
+    <!-- Left Column: Personal & Academic Bio -->
+    <div class="col-12 col-lg-8">
+        <div class="portal-card mb-3">
+            <div class="portal-card-header">
+                <h5 class="portal-card-title"><i class="fa-regular fa-id-badge text-primary"></i>Personal Details</h5>
+            </div>
+            <div class="portal-card-body">
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label class="text-muted small fw-semibold d-block">Full Name</label>
+                        <span class="fw-bold text-dark fs-6">@Model.Student.StudentName</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="text-muted small fw-semibold d-block">Student Code / Roll No</label>
+                        <span class="fw-semibold text-dark">@(Model.Student.StudentCode ?? "N/A")</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="text-muted small fw-semibold d-block">Admission Number</label>
+                        <span class="badge bg-primary-subtle text-primary fs-6">@(Model.Student.AdmissionNumber ?? "N/A")</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="text-muted small fw-semibold d-block">Date of Birth</label>
+                        <span>@(Model.DateOfBirth ?? "Not Specified")</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="text-muted small fw-semibold d-block">Gender</label>
+                        <span class="text-capitalize">@(Model.Student.Gender ?? "N/A")</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="text-muted small fw-semibold d-block">Blood Group</label>
+                        <span class="badge bg-danger-subtle text-danger">@(Model.Student.BloodGroup ?? "N/A")</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="text-muted small fw-semibold d-block">Contact Phone</label>
+                        <span>@(Model.Phone ?? "N/A")</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="text-muted small fw-semibold d-block">Email</label>
+                        <span>@(Model.Email ?? "N/A")</span>
+                    </div>
+                    <div class="col-12">
+                        <label class="text-muted small fw-semibold d-block">Residential Address</label>
+                        <span>@($"{Model.AddressLine1} {Model.AddressLine2}, {Model.City} {Model.State} {Model.PostalCode}".Trim().TrimEnd(','))</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Academic Enrollment Card -->
+        <div class="portal-card">
+            <div class="portal-card-header">
+                <h5 class="portal-card-title"><i class="fa-solid fa-graduation-cap text-success"></i>Academic Enrollment</h5>
+            </div>
+            <div class="portal-card-body">
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label class="text-muted small fw-semibold d-block">Batch</label>
+                        <span class="fw-semibold text-dark">@(Model.Student.BatchName ?? "General")</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="text-muted small fw-semibold d-block">Course / Program</label>
+                        <span class="fw-semibold text-dark">@(Model.Student.CourseName ?? "General Curriculum")</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="text-muted small fw-semibold d-block">Academic Year</label>
+                        <span>@(Model.Student.AcademicYearName ?? "Current Year")</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="text-muted small fw-semibold d-block">Branch</label>
+                        <span>@(Model.Student.BranchName ?? "Main Campus")</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="text-muted small fw-semibold d-block">Enrollment Status</label>
+                        <span class="badge bg-success-subtle text-success">@(Model.Status ?? "Active")</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="text-muted small fw-semibold d-block">Admission Date</label>
+                        <span>@(Model.AdmissionDate ?? "N/A")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Guardians Information -->
+    <div class="col-12 col-lg-4">
+        <div class="portal-card h-100">
+            <div class="portal-card-header">
+                <h5 class="portal-card-title"><i class="fa-solid fa-people-roof text-secondary"></i>Guardians</h5>
+            </div>
+            <div class="portal-card-body">
+                @if (Model.Guardians.Count == 0)
+                {
+                    <p class="text-muted small">No guardian details recorded.</p>
+                }
+                else
+                {
+                    <div class="d-flex flex-column gap-3">
+                        @foreach (var g in Model.Guardians)
+                        {
+                            <div class="p-3 border rounded-3 bg-light">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="fw-bold text-dark">@g.GuardianName</span>
+                                    @if (g.IsPrimary)
+                                    {
+                                        <span class="badge bg-primary">Primary</span>
+                                    }
+                                </div>
+                                <div class="text-muted small mb-1">
+                                    <i class="fa-solid fa-link me-1"></i>Relation: <strong>@g.Relationship</strong>
+                                </div>
+                                <div class="text-muted small mb-1">
+                                    <i class="fa-solid fa-phone me-1"></i>Phone: @g.Phone
+                                </div>
+                                @if (!string.IsNullOrEmpty(g.Email))
+                                {
+                                    <div class="text-muted small mb-1">
+                                        <i class="fa-regular fa-envelope me-1"></i>Email: @g.Email
+                                    </div>
+                                }
+                                @if (!string.IsNullOrEmpty(g.Occupation))
+                                {
+                                    <div class="text-muted small">
+                                        <i class="fa-solid fa-briefcase me-1"></i>Occupation: @g.Occupation
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
