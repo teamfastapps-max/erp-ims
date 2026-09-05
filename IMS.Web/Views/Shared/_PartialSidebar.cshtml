@@ -43,6 +43,41 @@
         <div class="nav-section-label">Academic Management</div>
 
         <ul class="nav flex-column">
+            <permission-check code="@Permissions.ApproveTeacherLeave">
+                <li class="nav-item">
+                    <a class="nav-link @isActive("", "TeacherLeave")" asp-controller="TeacherLeave" asp-action="Index">
+                        <i class="fa-solid fa-calendar-xmark"></i>
+                        <span>Leave Requests</span>
+                    </a>
+                </li>
+            </permission-check>
+
+            <permission-check code="@Permissions.ApplyTeacherLeave">
+                <li class="nav-item">
+                    <a class="nav-link @isActive("", "TeacherLeave")" asp-controller="TeacherLeave" asp-action="MyLeave">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        <span>My Leave</span>
+                    </a>
+                </li>
+            </permission-check>
+
+            <permission-check code="@Permissions.ManageTeacherAttendance">
+                <li class="nav-item">
+                    <a class="nav-link @isActive("", "TeacherAttendance")" asp-controller="TeacherAttendance" asp-action="Index">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        <span>Teacher Attendance</span>
+                    </a>
+                </li>
+            </permission-check>
+
+            <permission-check code="@Permissions.ViewOwnTeacherAttendance">
+                <li class="nav-item">
+                    <a class="nav-link @isActive("", "TeacherAttendance")" asp-controller="TeacherAttendance" asp-action="TeacherAttendance">
+                        <i class="fa-solid fa-calendar-week"></i>
+                        <span>My Attendance</span>
+                    </a>
+                </li>
+            </permission-check>
 
             <permission-check code="@Permissions.ViewTeacher">
                 <li class="nav-item">

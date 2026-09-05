@@ -1,0 +1,106 @@
+@using IMS.Helpers.Constants
+@model IMS.Models.ViewModels.TeacherAttendanceViewModel
+@{
+    ViewData["Title"] = "My Attendance";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0"><i class="fa-solid fa-calendar-week me-2"></i>My Attendance</h3>
+</div>
+
+@Html.AntiForgeryToken()
+
+<permission-check code="@Permissions.MarkOwnTeacherAttendance">
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white">
+            <h6 class="mb-0">Mark Today's Attendance — @DateTime.Today.ToString("dd-MMM-yyyy (dddd)")</h6>
+        </div>
+        <div class="card-body">
+            @if (Model.TodayStatus == "OnLeave")
+            {
+                <div class="alert alert-info mb-0">
+                    <i class="fa-solid fa-circle-info me-1"></i>
+                    You have an approved leave covering today — no need to mark attendance.
+                </div>
+            }
+            else
+            {
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label class="form-label">Status</label>
+                        <select id="markOwnStatus" class="form-select">
+                            <option value="">-- Select --</option>
+                            <option value="Present" selected="@(Model.TodayStatus == "Present")">Present</option>
+                            <option value="Late" selected="@(Model.TodayStatus == "Late")">Late</option>
+                            <option value="HalfDay" selected="@(Model.TodayStatus == "HalfDay")">Half-day</option>
+                        </select>
+                    </div>
+                    <div class="col-md-5">
+                        <label class="form-label">Remarks (optional)</label>
+                        <input type="text" id="markOwnRemarks" class="form-control" value="@Model.TodayRemarks" />
+                    </div>
+                    <div class="col-md-3 d-grid">
+                        <button type="button" id="markOwnBtn" class="btn btn-primary">
+                            <i class="fa-solid fa-check me-1"></i>
+                            @(Model.TodayStatus != null ? "Update Today" : "Mark Today")
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</permission-check>
+
+<div class="card shadow-sm mb-3">
+    <div class="card-body">
+        @using (Html.BeginForm("TeacherAttendance", "TeacherAttendance", FormMethod.Get, new { @class = "row g-3 align-items-end" }))
+        {
+            <div class="col-md-3">
+                <label class="form-label">From</label>
+                <input type="date" name="fromDate" class="form-control" value="@Model.FromDate.ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">To</label>
+                <input type="date" name="toDate" class="form-control" value="@Model.ToDate.ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="col-md-2 d-grid">
+                <button type="submit" class="btn btn-outline-primary">Filter</button>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead class="table-light"><tr><th>Date</th><th>Status</th><th>Remarks</th></tr></thead>
+            <tbody>
+                @if (!Model.History.Any())
+                {
+                    <tr><td colspan="3" class="text-center text-muted py-4">No attendance records in this range.</td></tr>
+                }
+                else
+                {
+                    foreach (var h in Model.History)
+                    {
+                        <tr>
+                            <td>@h.Date.ToString("dd-MMM-yyyy (ddd)")</td>
+                            <td>
+                                <span class="badge @(h.Status switch {
+                                    "Present" => "bg-success", "Absent" => "bg-danger",
+                                    "Late" => "bg-warning text-dark", "OnLeave" => "bg-info text-dark",
+                                    _ => "bg-secondary" })">@h.Status</span>
+                            </td>
+                            <td>@(h.Remarks ?? "-")</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="~/css/teacherHr.css" />
+    <script src="~/js/teacherAttendance.js"></script>
+}

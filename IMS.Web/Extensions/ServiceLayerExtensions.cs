@@ -28,6 +28,9 @@ namespace IMS.Web.Extensions
             services.AddScoped<IAttendanceService, AttendanceService>();
             services.AddScoped<IExamService, ExamService>();
             services.AddScoped<IFeeService, FeeService>();
+            services.AddScoped<ITeacherAttendanceService, TeacherAttendanceService>();
+            services.AddScoped<ITeacherLeaveService, TeacherLeaveService>();
+            services.AddScoped<ITeacherDirectoryLookup, TeacherApiDirectoryLookup>();
 
             return services;
         }
