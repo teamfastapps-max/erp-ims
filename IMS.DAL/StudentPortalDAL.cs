@@ -10,11 +10,11 @@ using IMS.Models.Portal;
 
 namespace IMS.DAL
 {
-    public class PortalDAL : IPortalDAL
+    public class StudentStudentPortalDAL : IStudentPortalDAL
     {
         private readonly DBHelper _dbHelper;
 
-        public PortalDAL(DBHelper dbHelper)
+        public StudentStudentPortalDAL(DBHelper dbHelper)
         {
             _dbHelper = dbHelper;
         }
@@ -101,7 +101,7 @@ namespace IMS.DAL
                     Gender = reader["Gender"]?.ToString(),
                     BloodGroup = reader["BloodGroup"]?.ToString(),
                     BranchName = reader["BranchName"]?.ToString(),
-                    BatchId = reader["BatchId"] != DBNull.Value ? (Guid?)reader["BatchId"] : null,
+                    BatchId = HasColumn(reader, "BatchId") && reader["BatchId"] != DBNull.Value ? (Guid?)reader["BatchId"] : null,
                     BatchName = reader["BatchName"]?.ToString(),
                     CourseName = reader["CourseName"]?.ToString(),
                     AcademicYearName = reader["AcademicYearName"]?.ToString()
@@ -284,12 +284,13 @@ namespace IMS.DAL
             return vm;
         }
 
-        public async Task<GuardianIdCardViewModel> GetGuardianIdCardDataAsync(Guid guardianId, Guid tenantId)
+        public async Task<GuardianIdCardViewModel> GetGuardianIdCardDataAsync(Guid? guardianId, Guid? studentId, Guid tenantId)
         {
             var vm = new GuardianIdCardViewModel();
             using var conn = _dbHelper.GetConnection();
             using var cmd = _dbHelper.CreateCommand("SP_Portal_GetGuardianIdCardData", conn);
-            cmd.Parameters.Add("@GuardianId", SqlDbType.UniqueIdentifier).Value = guardianId;
+            cmd.Parameters.Add("@GuardianId", SqlDbType.UniqueIdentifier).Value = guardianId.HasValue && guardianId.Value != Guid.Empty ? guardianId.Value : DBNull.Value;
+            cmd.Parameters.Add("@StudentId", SqlDbType.UniqueIdentifier).Value = studentId.HasValue && studentId.Value != Guid.Empty ? studentId.Value : DBNull.Value;
             cmd.Parameters.Add("@TenantId", SqlDbType.UniqueIdentifier).Value = tenantId;
 
             await conn.OpenAsync();
@@ -297,7 +298,7 @@ namespace IMS.DAL
 
             if (await reader.ReadAsync())
             {
-                vm.GuardianId = (Guid)reader["GuardianId"];
+                vm.GuardianId = reader["GuardianId"] != DBNull.Value ? (Guid)reader["GuardianId"] : Guid.Empty;
                 vm.GuardianName = reader["GuardianName"]?.ToString() ?? string.Empty;
                 vm.Phone = reader["Phone"]?.ToString() ?? string.Empty;
                 vm.Email = reader["Email"]?.ToString();
@@ -996,6 +997,95 @@ namespace IMS.DAL
             await conn.OpenAsync();
             var rows = await cmd.ExecuteScalarAsync();
             return Convert.ToInt32(rows) > 0;
+        }
+
+        public async Task<bool> DeleteLeaveAsync(Guid leaveId, Guid studentId, Guid tenantId)
+        {
+            using var conn = _dbHelper.GetConnection();
+            using var cmd = _dbHelper.CreateCommand("SP_StudentLeaves_Delete", conn);
+            cmd.Parameters.Add("@LeaveId", SqlDbType.UniqueIdentifier).Value = leaveId;
+            cmd.Parameters.Add("@TenantId", SqlDbType.UniqueIdentifier).Value = tenantId;
+
+            await conn.OpenAsync();
+            var result = await cmd.ExecuteScalarAsync();
+            return result != null && Convert.ToInt32(result) > 0;
+        }
+
+        public async Task<bool> DeleteTCAsync(Guid tcId, Guid studentId, Guid tenantId)
+        {
+            using var conn = _dbHelper.GetConnection();
+            using var cmd = _dbHelper.CreateCommand("SP_TransferCertificates_Delete", conn);
+            cmd.Parameters.Add("@TCId", SqlDbType.UniqueIdentifier).Value = tcId;
+            cmd.Parameters.Add("@TenantId", SqlDbType.UniqueIdentifier).Value = tenantId;
+
+            await conn.OpenAsync();
+            var result = await cmd.ExecuteScalarAsync();
+            return result != null && Convert.ToInt32(result) > 0;
+        }
+
+        public async Task<TransferCertificatePrintViewModel?> GetTCForPrintAsync(Guid tcId, Guid studentId, Guid tenantId)
+        {
+            using var conn = _dbHelper.GetConnection();
+            using var cmd = _dbHelper.CreateCommand("SP_TransferCertificates_GetById", conn);
+            cmd.Parameters.Add("@TCId", SqlDbType.UniqueIdentifier).Value = tcId;
+            cmd.Parameters.Add("@TenantId", SqlDbType.UniqueIdentifier).Value = tenantId;
+
+            await conn.OpenAsync();
+            using var reader = await cmd.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                // Verify student matches
+                var recordStudentId = (Guid)reader["StudentId"];
+                if (recordStudentId != studentId) return null;
+
+                return new TransferCertificatePrintViewModel
+                {
+                    TCId = (Guid)reader["TCId"],
+                    StudentId = recordStudentId,
+                    StudentName = reader["StudentName"]?.ToString() ?? string.Empty,
+                    StudentCode = reader["StudentCode"]?.ToString(),
+                    AdmissionNumber = reader["AdmissionNumber"]?.ToString(),
+                    Gender = reader["Gender"]?.ToString(),
+                    DateOfBirth = reader["DateOfBirth"] != DBNull.Value ? (DateTime?)reader["DateOfBirth"] : null,
+                    BloodGroup = reader["BloodGroup"]?.ToString(),
+                    Address = reader["Address"]?.ToString(),
+                    Phone = reader["Phone"]?.ToString(),
+                    Email = reader["Email"]?.ToString(),
+                    GuardianName = reader["GuardianName"]?.ToString(),
+                    CourseName = reader["CourseName"]?.ToString(),
+                    BatchName = reader["BatchName"]?.ToString(),
+                    AcademicYearName = reader["AcademicYearName"]?.ToString(),
+                    BranchName = reader["BranchName"]?.ToString(),
+                    OrganizationName = reader["OrganizationName"]?.ToString(),
+                    OrganizationAddress = reader["OrganizationAddress"]?.ToString(),
+                    OrganizationPhone = reader["OrganizationPhone"]?.ToString(),
+                    OrganizationEmail = reader["OrganizationEmail"]?.ToString(),
+                    ApplicationNumber = reader["ApplicationNumber"]?.ToString() ?? string.Empty,
+                    ApplicationDate = Convert.ToDateTime(reader["ApplicationDate"]),
+                    ExpectedLeavingDate = Convert.ToDateTime(reader["ExpectedLeavingDate"]),
+                    Reason = reader["Reason"]?.ToString() ?? string.Empty,
+                    LibraryClearance = Convert.ToBoolean(reader["LibraryClearance"]),
+                    FeeClearance = Convert.ToBoolean(reader["FeeClearance"]),
+                    LabClearance = Convert.ToBoolean(reader["LabClearance"]),
+                    Status = reader["Status"]?.ToString() ?? "Submitted",
+                    CertificateNumber = reader["CertificateNumber"]?.ToString() ?? string.Empty,
+                    IssuedDate = reader["IssuedDate"] != DBNull.Value ? Convert.ToDateTime(reader["IssuedDate"]) : DateTime.Today,
+                    Remarks = reader["Remarks"]?.ToString(),
+                    Conduct = reader["Conduct"]?.ToString() ?? "Good"
+                };
+            }
+
+            return null;
+        }
+
+        private static bool HasColumn(IDataRecord reader, string columnName)
+        {
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+                if (reader.GetName(i).Equals(columnName, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+            return false;
         }
     }
 }

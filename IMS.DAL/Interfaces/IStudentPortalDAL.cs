@@ -5,13 +5,13 @@ using IMS.Models.Portal;
 
 namespace IMS.DAL.Interfaces
 {
-    public interface IPortalDAL
+    public interface IStudentPortalDAL
     {
         Task<PortalAuthResult> AuthenticateByEmailAsync(string email);
         Task<PortalDashboardViewModel> GetDashboardAsync(Guid studentId, Guid tenantId);
         Task<StudentProfileViewModel> GetStudentProfileAsync(Guid studentId, Guid tenantId);
         Task<StudentIdCardViewModel> GetStudentIdCardDataAsync(Guid studentId, Guid tenantId);
-        Task<GuardianIdCardViewModel> GetGuardianIdCardDataAsync(Guid guardianId, Guid tenantId);
+        Task<GuardianIdCardViewModel> GetGuardianIdCardDataAsync(Guid? guardianId, Guid? studentId, Guid tenantId);
         Task<PortalAttendanceViewModel> GetAttendanceCalendarAsync(Guid studentId, Guid tenantId, int month, int year);
         Task<PortalTimetableViewModel> GetTimetableAsync(Guid studentId, Guid tenantId);
         Task<PortalClassDetailsViewModel> GetClassDetailsAsync(Guid studentId, Guid tenantId);
@@ -28,6 +28,9 @@ namespace IMS.DAL.Interfaces
         Task<PortalTransportViewModel> GetTransportDetailsAsync(Guid studentId, Guid tenantId);
         Task<bool> ApplyTCAsync(Guid tcId, Guid tenantId, Guid studentId, string reason, DateTime expectedLeavingDate);
         Task<List<TransferCertificateDto>> GetTCStatusAsync(Guid studentId, Guid tenantId);
+        Task<bool> DeleteLeaveAsync(Guid leaveId, Guid studentId, Guid tenantId);
+        Task<bool> DeleteTCAsync(Guid tcId, Guid studentId, Guid tenantId);
+        Task<TransferCertificatePrintViewModel?> GetTCForPrintAsync(Guid tcId, Guid studentId, Guid tenantId);
         Task<List<PortalNoticeDto>> GetNoticesAsync(Guid tenantId);
         Task<bool> UpdatePasswordAsync(Guid userId, string userType, string newPassword);
         Task<(bool Success, string Message, string? Token, string? FullName, string? UserType)> GeneratePasswordResetTokenAsync(string email, string token, string? otp, int expiryMinutes);

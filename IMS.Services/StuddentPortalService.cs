@@ -9,11 +9,11 @@ using IMS.Services.Interfaces;
 
 namespace IMS.Services
 {
-    public class PortalService : IPortalService
+    public class StuddentStuddentPortalService : IStuddentPortalService
     {
-        private readonly IPortalDAL _dal;
+        private readonly IStudentPortalDAL _dal;
 
-        public PortalService(IPortalDAL dal)
+        public StuddentStuddentPortalService(IStudentPortalDAL dal)
         {
             _dal = dal;
         }
@@ -78,9 +78,9 @@ namespace IMS.Services
             return _dal.GetStudentIdCardDataAsync(studentId, tenantId);
         }
 
-        public Task<GuardianIdCardViewModel> GetGuardianIdCardAsync(Guid guardianId, Guid tenantId)
+        public Task<GuardianIdCardViewModel> GetGuardianIdCardAsync(Guid? guardianId, Guid? studentId, Guid tenantId)
         {
-            return _dal.GetGuardianIdCardDataAsync(guardianId, tenantId);
+            return _dal.GetGuardianIdCardDataAsync(guardianId, studentId, tenantId);
         }
 
         public Task<PortalAttendanceViewModel> GetAttendanceCalendarAsync(Guid studentId, Guid tenantId, int? month, int? year)
@@ -183,6 +183,23 @@ namespace IMS.Services
         public Task<List<TransferCertificateDto>> GetTCStatusAsync(Guid studentId, Guid tenantId)
         {
             return _dal.GetTCStatusAsync(studentId, tenantId);
+        }
+
+        public async Task<(bool Success, string Message)> DeleteLeaveAsync(Guid leaveId, Guid studentId, Guid tenantId)
+        {
+            var ok = await _dal.DeleteLeaveAsync(leaveId, studentId, tenantId);
+            return ok ? (true, "Leave application deleted successfully.") : (false, "Could not delete leave application.");
+        }
+
+        public async Task<(bool Success, string Message)> DeleteTCAsync(Guid tcId, Guid studentId, Guid tenantId)
+        {
+            var ok = await _dal.DeleteTCAsync(tcId, studentId, tenantId);
+            return ok ? (true, "Transfer Certificate application deleted successfully.") : (false, "Could not delete TC application.");
+        }
+
+        public Task<TransferCertificatePrintViewModel?> GetTCForPrintAsync(Guid tcId, Guid studentId, Guid tenantId)
+        {
+            return _dal.GetTCForPrintAsync(tcId, studentId, tenantId);
         }
 
         public Task<List<PortalNoticeDto>> GetNoticesAsync(Guid tenantId)

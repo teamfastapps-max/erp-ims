@@ -480,6 +480,9 @@ namespace IMS.Models.Portal
     public class StudentLeaveDto
     {
         public Guid LeaveId { get; set; }
+        public Guid StudentId { get; set; }
+        public string StudentName { get; set; } = string.Empty;
+        public string? StudentCode { get; set; }
         public DateTime FromDate { get; set; }
         public DateTime ToDate { get; set; }
         public int TotalDays { get; set; }
@@ -489,6 +492,7 @@ namespace IMS.Models.Portal
         public string AppliedBy { get; set; } = string.Empty;
         public string? RejectionReason { get; set; }
         public DateTime AppliedAt { get; set; }
+        public DateTime? ApprovedAt { get; set; }
     }
 
     public class PortalTransportViewModel
@@ -525,6 +529,12 @@ namespace IMS.Models.Portal
     public class TransferCertificateDto
     {
         public Guid TCId { get; set; }
+        public Guid StudentId { get; set; }
+        public string StudentName { get; set; } = string.Empty;
+        public string? StudentCode { get; set; }
+        public string? AdmissionNumber { get; set; }
+        public string? CourseName { get; set; }
+        public string? BatchName { get; set; }
         public string ApplicationNumber { get; set; } = string.Empty;
         public DateTime ApplicationDate { get; set; }
         public string Reason { get; set; } = string.Empty;
@@ -536,6 +546,43 @@ namespace IMS.Models.Portal
         public string? CertificateNumber { get; set; }
         public DateTime? IssuedDate { get; set; }
         public string? Remarks { get; set; }
+        public DateTime? CreatedAt { get; set; }
+    }
+
+    public class TransferCertificatePrintViewModel
+    {
+        public Guid TCId { get; set; }
+        public Guid StudentId { get; set; }
+        public string StudentName { get; set; } = string.Empty;
+        public string? StudentCode { get; set; }
+        public string? AdmissionNumber { get; set; }
+        public string? Gender { get; set; }
+        public DateTime? DateOfBirth { get; set; }
+        public string? BloodGroup { get; set; }
+        public string? Address { get; set; }
+        public string? Phone { get; set; }
+        public string? Email { get; set; }
+        public string? GuardianName { get; set; }
+        public string? CourseName { get; set; }
+        public string? BatchName { get; set; }
+        public string? AcademicYearName { get; set; }
+        public string? BranchName { get; set; }
+        public string? OrganizationName { get; set; }
+        public string? OrganizationAddress { get; set; }
+        public string? OrganizationPhone { get; set; }
+        public string? OrganizationEmail { get; set; }
+        public string ApplicationNumber { get; set; } = string.Empty;
+        public DateTime ApplicationDate { get; set; }
+        public string Reason { get; set; } = string.Empty;
+        public DateTime ExpectedLeavingDate { get; set; }
+        public bool LibraryClearance { get; set; }
+        public bool FeeClearance { get; set; }
+        public bool LabClearance { get; set; }
+        public string Status { get; set; } = string.Empty;
+        public string CertificateNumber { get; set; } = string.Empty;
+        public DateTime IssuedDate { get; set; } = DateTime.Today;
+        public string? Remarks { get; set; }
+        public string Conduct { get; set; } = "Good";
     }
 
     public class PortalNoticeDto

@@ -5,13 +5,13 @@ using IMS.Models.Portal;
 
 namespace IMS.Services.Interfaces
 {
-    public interface IPortalService
+    public interface IStuddentPortalService
     {
         Task<PortalAuthResult> AuthenticateAsync(string email, string password);
         Task<PortalDashboardViewModel> GetDashboardAsync(Guid studentId, Guid tenantId);
         Task<StudentProfileViewModel> GetStudentProfileAsync(Guid studentId, Guid tenantId);
         Task<StudentIdCardViewModel> GetStudentIdCardAsync(Guid studentId, Guid tenantId);
-        Task<GuardianIdCardViewModel> GetGuardianIdCardAsync(Guid guardianId, Guid tenantId);
+        Task<GuardianIdCardViewModel> GetGuardianIdCardAsync(Guid? guardianId, Guid? studentId, Guid tenantId);
         Task<PortalAttendanceViewModel> GetAttendanceCalendarAsync(Guid studentId, Guid tenantId, int? month, int? year);
         Task<PortalTimetableViewModel> GetTimetableAsync(Guid studentId, Guid tenantId);
         Task<PortalClassDetailsViewModel> GetClassDetailsAsync(Guid studentId, Guid tenantId);
@@ -28,6 +28,9 @@ namespace IMS.Services.Interfaces
         Task<PortalTransportViewModel> GetTransportDetailsAsync(Guid studentId, Guid tenantId);
         Task<(bool Success, string Message)> ApplyTCAsync(Guid tenantId, Guid studentId, string reason, DateTime expectedLeavingDate);
         Task<List<TransferCertificateDto>> GetTCStatusAsync(Guid studentId, Guid tenantId);
+        Task<(bool Success, string Message)> DeleteLeaveAsync(Guid leaveId, Guid studentId, Guid tenantId);
+        Task<(bool Success, string Message)> DeleteTCAsync(Guid tcId, Guid studentId, Guid tenantId);
+        Task<TransferCertificatePrintViewModel?> GetTCForPrintAsync(Guid tcId, Guid studentId, Guid tenantId);
         Task<List<PortalNoticeDto>> GetNoticesAsync(Guid tenantId);
         Task<(bool Success, string Message)> ChangePasswordAsync(Guid userId, string userType, string currentPassword, string newPassword);
         Task<bool> SetPasswordDirectAsync(Guid userId, string userType, string plainPassword);

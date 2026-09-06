@@ -23,6 +23,11 @@ namespace IMS.Helpers.Constants
         public const string UpdateStudent = "UpdateStudent";
         public const string DeleteStudent = "DeleteStudent";
 
+        public const string ViewStudentLeave = "ViewStudentLeave";
+        public const string ApproveStudentLeave = "ApproveStudentLeave";
+        public const string ViewTransferCertificate = "ViewTransferCertificate";
+
+
         public const string ViewTeacher = "ViewTeacher";     
         public const string AddTeacher = "AddTeacher";
         public const string UpdateTeacher = "UpdateTeacher";
@@ -58,7 +63,12 @@ namespace IMS.Helpers.Constants
             new() { Id = AddStudent,    FeatureKey = StudentFeature, FeatureDisplayName = StudentFeatureDisplay, Description = "Add a student",  ServiceName = ServiceName },
             new() { Id = UpdateStudent, FeatureKey = StudentFeature, FeatureDisplayName = StudentFeatureDisplay, Description = "Update a student", ServiceName = ServiceName },
             new() { Id = DeleteStudent, FeatureKey = StudentFeature, FeatureDisplayName = StudentFeatureDisplay, Description = "Delete a student", ServiceName = ServiceName },
-            
+
+            new() { Id = ViewStudentLeave,        FeatureKey = StudentFeature, FeatureDisplayName = StudentFeatureDisplay, Description = "View student leave applications", ServiceName = ServiceName },
+            new() { Id = ApproveStudentLeave,     FeatureKey = StudentFeature, FeatureDisplayName = StudentFeatureDisplay, Description = "Approve or reject student leave", ServiceName = ServiceName },
+            new() { Id = ViewTransferCertificate, FeatureKey = StudentFeature, FeatureDisplayName = StudentFeatureDisplay, Description = "View transfer certificate applications", ServiceName = ServiceName },
+
+
             new() { Id = ViewTeacher,   FeatureKey = TeacherFeature, FeatureDisplayName = TeacherFeatureDisplay, Description = "View teachers",  ServiceName = ServiceName },
             new() { Id = AddTeacher,    FeatureKey = TeacherFeature, FeatureDisplayName = TeacherFeatureDisplay, Description = "Add a teacher",  ServiceName = ServiceName },
             new() { Id = UpdateTeacher, FeatureKey = TeacherFeature, FeatureDisplayName = TeacherFeatureDisplay, Description = "Update a teacher", ServiceName = ServiceName },

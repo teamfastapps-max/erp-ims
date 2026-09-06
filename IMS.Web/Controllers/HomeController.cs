@@ -69,24 +69,61 @@ namespace IMS.Web.Controllers
         {
             return View();
         }
+        [AllowAnonymous]
         public IActionResult About() => View();
+
+        [AllowAnonymous]
         public IActionResult Academics() => View();
-        public IActionResult Admission() => View();
+
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult Admission()
+        {
+            var vm = new IMS.Models.ViewModels.AdmissionApplicationFormViewModel();
+            return View(vm);
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ApplyAdmission(
+            IMS.Models.ViewModels.AdmissionApplicationFormViewModel model,
+            [FromServices] IAdmissionApplicationService admissionService)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("Admission", model);
+            }
+
+            if (string.IsNullOrWhiteSpace(model.AA_ApplicationNumber))
+            {
+                model.AA_ApplicationNumber = "APP-" + DateTime.UtcNow.ToString("yyyyMMdd") + "-" + new Random().Next(1000, 9999);
+            }
+
+            model.AA_Status = "Submitted";
+            var tenantId = HardcodedMasterData.CurrentTenantId;
+            var result = await admissionService.CreateAsync(model, tenantId);
+
+            if (result.Success)
+            {
+                TempData["AdmissionSuccess"] = $"Your application has been received! Your application reference number is: {model.AA_ApplicationNumber}. Our admissions office will contact you soon.";
+                return RedirectToAction(nameof(Admission));
+            }
+
+            ModelState.AddModelError(string.Empty, result.Message ?? "Failed to submit application. Please try again.");
+            return View("Admission", model);
+        }
+
+        [AllowAnonymous]
         public IActionResult Notices() => View();
+
+        [AllowAnonymous]
         public IActionResult Gallery() => View();
+
+        [AllowAnonymous]
         public IActionResult Calendar() => View();
+
+        [AllowAnonymous]
         public IActionResult Contact() => View();
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public IActionResult Contact(ContactViewModel model)
-        //{
-        //    if (!ModelState.IsValid)
-        //        return View(model);
-
-        //    TempData["ContactSuccess"] =
-        //        "Thank you! Your message has been received.";
-
-        //    return RedirectToAction(nameof(Contact));
-        //}
     }
 }

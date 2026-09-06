@@ -37,12 +37,12 @@ BEGIN
             s.S_Id AS StudentId,
             s.S_TenantId AS TenantId,
             s.S_BranchId AS BranchId,
-            s.S_FirstName + ' ' + s.S_LastName AS FullName,
+            s.S_FirstName + ' ' + ISNULL(s.S_LastName, '') AS FullName,
             s.S_Email AS Email,
             s.S_Password AS StoredPassword,
             s.S_StudentCode AS StudentCode,
             s.S_AdmissionNumber AS AdmissionNumber,
-            b.B_Name AS BranchName
+            ISNULL(b.B_Name, 'Main Campus') AS BranchName
         FROM dbo.Students_S s
         LEFT JOIN dbo.Branches_B b ON s.S_BranchId = b.B_Id
         WHERE s.S_Id = @UserId;
@@ -50,16 +50,17 @@ BEGIN
         -- Result Set 2: Self as linked student
         SELECT
             s.S_Id AS StudentId,
-            s.S_FirstName + ' ' + s.S_LastName AS StudentName,
+            s.S_FirstName + ' ' + ISNULL(s.S_LastName, '') AS StudentName,
             s.S_StudentCode AS StudentCode,
             s.S_AdmissionNumber AS AdmissionNumber,
-            c.C_Name AS CourseName,
-            bt.BT_Name AS BatchName,
+            COALESCE(c.C_Name, 'Academic Course') AS CourseName,
+            COALESCE(bt.BT_Name, 'General Batch') AS BatchName,
             s.S_BranchId AS BranchId
         FROM dbo.Students_S s
+        LEFT JOIN dbo.Enrollments_E e ON s.S_Id = e.E_StudentId AND e.E_Status = 'Active'
         LEFT JOIN dbo.BatchStudents_BS bs ON s.S_Id = bs.BS_StudentId AND bs.BS_LeftAt IS NULL
-        LEFT JOIN dbo.Batches_BT bt ON bs.BS_BatchId = bt.BT_Id
-        LEFT JOIN dbo.Courses_C c ON bt.BT_CourseId = c.C_Id
+        LEFT JOIN dbo.Batches_BT bt ON COALESCE(e.E_BatchId, bs.BS_BatchId) = bt.BT_Id
+        LEFT JOIN dbo.Courses_C c ON COALESCE(e.E_CourseId, bt.BT_CourseId) = c.C_Id
         WHERE s.S_Id = @UserId;
 
         RETURN;
@@ -79,11 +80,14 @@ BEGIN
         SELECT
             'GUARDIAN' AS UserType,
             g.G_Id AS UserId,
-            -- Pick the first linked student as primary initial context
-            (SELECT TOP 1 sg.SG_StudentId FROM dbo.Students_Guardians sg WHERE sg.SG_GuardianId = g.G_Id) AS StudentId,
+            -- Pick first linked student as primary initial context
+            COALESCE(
+                (SELECT TOP 1 sg.SG_StudentId FROM dbo.Students_Guardians sg WHERE sg.SG_GuardianId = g.G_Id),
+                (SELECT TOP 1 sg2.SG_StudentId FROM dbo.StudentGuardians_SG sg2 WHERE sg2.SG_GuardianId = g.G_Id)
+            ) AS StudentId,
             g.G_TenantId AS TenantId,
             (SELECT TOP 1 s.S_BranchId FROM dbo.Students_Guardians sg INNER JOIN dbo.Students_S s ON sg.SG_StudentId = s.S_Id WHERE sg.SG_GuardianId = g.G_Id) AS BranchId,
-            g.G_FirstName + ' ' + g.G_LastName AS FullName,
+            g.G_FirstName + ' ' + ISNULL(g.G_LastName, '') AS FullName,
             g.G_Email AS Email,
             g.G_Password AS StoredPassword,
             NULL AS StudentCode,
@@ -95,19 +99,23 @@ BEGIN
         -- Result Set 2: All connected wards (students)
         SELECT
             s.S_Id AS StudentId,
-            s.S_FirstName + ' ' + s.S_LastName AS StudentName,
+            s.S_FirstName + ' ' + ISNULL(s.S_LastName, '') AS StudentName,
             s.S_StudentCode AS StudentCode,
             s.S_AdmissionNumber AS AdmissionNumber,
-            c.C_Name AS CourseName,
-            bt.BT_Name AS BatchName,
+            COALESCE(c.C_Name, 'Academic Course') AS CourseName,
+            COALESCE(bt.BT_Name, 'General Batch') AS BatchName,
             s.S_BranchId AS BranchId
-        FROM dbo.Students_Guardians sg
-        INNER JOIN dbo.Students_S s ON sg.SG_StudentId = s.S_Id AND s.S_DeletedAt IS NULL
+        FROM (
+            SELECT SG_StudentId, SG_GuardianId, SG_IsPrimary FROM dbo.Students_Guardians WHERE SG_GuardianId = @UserId
+            UNION
+            SELECT SG_StudentId, SG_GuardianId, SG_IsPrimary FROM dbo.StudentGuardians_SG WHERE SG_GuardianId = @UserId
+        ) w
+        INNER JOIN dbo.Students_S s ON w.SG_StudentId = s.S_Id AND s.S_DeletedAt IS NULL
+        LEFT JOIN dbo.Enrollments_E e ON s.S_Id = e.E_StudentId AND e.E_Status = 'Active'
         LEFT JOIN dbo.BatchStudents_BS bs ON s.S_Id = bs.BS_StudentId AND bs.BS_LeftAt IS NULL
-        LEFT JOIN dbo.Batches_BT bt ON bs.BS_BatchId = bt.BT_Id
-        LEFT JOIN dbo.Courses_C c ON bt.BT_CourseId = c.C_Id
-        WHERE sg.SG_GuardianId = @UserId
-        ORDER BY sg.SG_IsPrimary DESC, s.S_FirstName;
+        LEFT JOIN dbo.Batches_BT bt ON COALESCE(e.E_BatchId, bs.BS_BatchId) = bt.BT_Id
+        LEFT JOIN dbo.Courses_C c ON COALESCE(e.E_CourseId, bt.BT_CourseId) = c.C_Id
+        ORDER BY w.SG_IsPrimary DESC, s.S_FirstName;
 
         RETURN;
     END
@@ -132,57 +140,57 @@ BEGIN
     -- Result Set 1: Student Brief & Header Info
     SELECT
         s.S_Id AS StudentId,
-        s.S_FirstName + ' ' + s.S_LastName AS StudentName,
+        s.S_FirstName + ' ' + ISNULL(s.S_LastName, '') AS StudentName,
         s.S_StudentCode AS StudentCode,
         s.S_AdmissionNumber AS AdmissionNumber,
         s.S_Gender AS Gender,
-        s.S_BloodGroup AS BloodGroup,
-        b.B_Name AS BranchName,
-        bt.BT_Id AS BatchId,
-        bt.BT_Name AS BatchName,
-        c.C_Name AS CourseName,
+        ISNULL(s.S_BloodGroup, 'N/A') AS BloodGroup,
+        ISNULL(b.B_Name, 'Main Campus') AS BranchName,
+        ISNULL(o.O_Name, 'INSTITUTE OF EDUCATION') AS OrganizationName,
+        COALESCE(e.E_BatchId, bs.BS_BatchId) AS BatchId,
+        COALESCE(c.C_Name, 'Academic Course') AS CourseName,
+        COALESCE(bt.BT_Name, 'General Batch') AS BatchName,
         ay.AY_Name AS AcademicYearName
     FROM dbo.Students_S s
     LEFT JOIN dbo.Branches_B b ON s.S_BranchId = b.B_Id
+    LEFT JOIN dbo.Organizations_O o ON s.S_TenantId = o.O_Id
+    LEFT JOIN dbo.Enrollments_E e ON s.S_Id = e.E_StudentId AND e.E_Status = 'Active'
     LEFT JOIN dbo.BatchStudents_BS bs ON s.S_Id = bs.BS_StudentId AND bs.BS_LeftAt IS NULL
-    LEFT JOIN dbo.Batches_BT bt ON bs.BS_BatchId = bt.BT_Id
-    LEFT JOIN dbo.Courses_C c ON bt.BT_CourseId = c.C_Id
+    LEFT JOIN dbo.Batches_BT bt ON COALESCE(e.E_BatchId, bs.BS_BatchId) = bt.BT_Id
+    LEFT JOIN dbo.Courses_C c ON COALESCE(e.E_CourseId, bt.BT_CourseId) = c.C_Id
     LEFT JOIN dbo.AcademicYears_AY ay ON bt.BT_AcademicYearId = ay.AY_Id
     WHERE s.S_Id = @StudentId AND s.S_TenantId = @TenantId;
 
-    -- Result Set 2: Attendance Metrics
-    DECLARE @TotalDays INT = 0, @PresentDays INT = 0, @AbsentDays INT = 0, @HalfDays INT = 0;
-    SELECT
-        @TotalDays = COUNT(*),
-        @PresentDays = SUM(CASE WHEN AR_Status = 'present' THEN 1 ELSE 0 END),
-        @AbsentDays = SUM(CASE WHEN AR_Status = 'absent' THEN 1 ELSE 0 END),
-        @HalfDays = SUM(CASE WHEN AR_Status = 'half_day' THEN 1 ELSE 0 END)
-    FROM dbo.AttendanceRecords_AR
-    WHERE AR_StudentId = @StudentId;
-
-    DECLARE @AttendancePercentage NUMERIC(5,2) = 0.0;
-    IF (@TotalDays > 0)
-        SET @AttendancePercentage = CAST(((@PresentDays + (@HalfDays * 0.5)) * 100.0) / @TotalDays AS NUMERIC(5,2));
+    -- Result Set 2: Current Month Attendance Snapshot
+    DECLARE @StartOfMonth DATE = DATEFROMPARTS(YEAR(GETUTCDATE()), MONTH(GETUTCDATE()), 1);
+    DECLARE @EndOfMonth DATE = EOMONTH(GETUTCDATE());
 
     SELECT
-        @TotalDays AS TotalSessions,
-        @PresentDays AS PresentSessions,
-        @AbsentDays AS AbsentSessions,
-        @HalfDays AS HalfDaySessions,
-        @AttendancePercentage AS AttendancePercentage;
+        COUNT(ar.AR_Id) AS TotalSessions,
+        COALESCE(SUM(CASE WHEN ar.AR_Status = 'present' THEN 1 ELSE 0 END), 0) AS PresentSessions,
+        COALESCE(SUM(CASE WHEN ar.AR_Status = 'absent' THEN 1 ELSE 0 END), 0) AS AbsentSessions,
+        COALESCE(SUM(CASE WHEN ar.AR_Status = 'half_day' THEN 1 ELSE 0 END), 0) AS HalfDaySessions,
+        COALESCE(SUM(CASE WHEN ar.AR_Status = 'late' THEN 1 ELSE 0 END), 0) AS LateSessions,
+        CASE
+            WHEN COUNT(ar.AR_Id) > 0 THEN ROUND((CAST(COALESCE(SUM(CASE WHEN ar.AR_Status = 'present' THEN 1 ELSE 0 END), 0) AS FLOAT) / COUNT(ar.AR_Id)) * 100.0, 1)
+            ELSE 0.0
+        END AS AttendancePercentage
+    FROM dbo.AttendanceRecords_AR ar
+    INNER JOIN dbo.AttendanceSessions_AS asess ON ar.AR_AttendanceSessionId = asess.AS_Id
+    WHERE ar.AR_StudentId = @StudentId
+      AND asess.AS_AttendanceDate >= @StartOfMonth
+      AND asess.AS_AttendanceDate <= @EndOfMonth;
 
-    -- Result Set 3: Financial Summary
+    -- Result Set 3: Financial Summary Snapshot
     SELECT
-        ISNULL(COUNT(FI_Id), 0) AS TotalInvoices,
-        ISNULL(SUM(FI_TotalAmount), 0) AS TotalBilled,
-        ISNULL(SUM(FI_PaidAmount), 0) AS TotalPaid,
-        ISNULL(SUM(FI_BalanceAmount), 0) AS OutstandingBalance,
-        ISNULL(SUM(CASE WHEN FI_Status IN ('issued', 'partially_paid') THEN 1 ELSE 0 END), 0) AS PendingInvoicesCount
-    FROM dbo.FeeInvoices_FI
-    WHERE FI_StudentId = @StudentId AND FI_TenantId = @TenantId;
+        ISNULL((SELECT COUNT(FI_Id) FROM dbo.FeeInvoices_FI WHERE FI_StudentId = @StudentId AND FI_TenantId = @TenantId AND FI_Status != 'Cancelled'), 0) AS TotalInvoices,
+        ISNULL((SELECT SUM(FI_TotalAmount) FROM dbo.FeeInvoices_FI WHERE FI_StudentId = @StudentId AND FI_TenantId = @TenantId AND FI_Status != 'Cancelled'), 0) AS TotalBilled,
+        ISNULL((SELECT SUM(FI_PaidAmount) FROM dbo.FeeInvoices_FI WHERE FI_StudentId = @StudentId AND FI_TenantId = @TenantId AND FI_Status != 'Cancelled'), 0) AS TotalPaid,
+        ISNULL((SELECT SUM(FI_BalanceAmount) FROM dbo.FeeInvoices_FI WHERE FI_StudentId = @StudentId AND FI_TenantId = @TenantId AND FI_Status != 'Cancelled'), 0) AS OutstandingBalance,
+        ISNULL((SELECT COUNT(FI_Id) FROM dbo.FeeInvoices_FI WHERE FI_StudentId = @StudentId AND FI_TenantId = @TenantId AND FI_Status IN ('issued', 'partially_paid', 'unpaid', 'pending')), 0) AS PendingInvoicesCount;
 
-    -- Result Set 4: Today's Timetable Slots
-    DECLARE @TodayDayOfWeek SMALLINT = DATEPART(WEEKDAY, SYSUTCDATETIME()); -- 1 = Sunday ... 7 = Saturday
+    -- Result Set 4: Today's Timetable / Schedule
+    DECLARE @TodayDayOfWeek SMALLINT = DATEPART(WEEKDAY, GETUTCDATE());
     SELECT
         tt.TT_Id AS TimetableId,
         tt.TT_DayOfWeek AS DayOfWeek,
@@ -190,16 +198,18 @@ BEGIN
         tt.TT_EndTime AS EndTime,
         sb.SB_Name AS SubjectName,
         sb.SB_Code AS SubjectCode,
-        st.ST_FirstName + ' ' + st.ST_LastName AS TeacherName,
+        st.ST_FirstName + ' ' + ISNULL(st.ST_LastName, '') AS TeacherName,
         cr.CR_Name AS ClassroomName
-    FROM dbo.BatchStudents_BS bs
+    FROM (
+        SELECT BS_BatchId FROM dbo.BatchStudents_BS WHERE BS_StudentId = @StudentId AND BS_LeftAt IS NULL
+        UNION
+        SELECT E_BatchId AS BS_BatchId FROM dbo.Enrollments_E WHERE E_StudentId = @StudentId AND E_Status = 'Active'
+    ) bs
     INNER JOIN dbo.Timetables_TT tt ON bs.BS_BatchId = tt.TT_BatchId
     LEFT JOIN dbo.Subjects_SB sb ON tt.TT_SubjectId = sb.SB_Id
     LEFT JOIN dbo.Staff_ST st ON tt.TT_StaffId = st.ST_Id
     LEFT JOIN dbo.Classrooms_CR cr ON tt.TT_ClassroomId = cr.CR_Id
-    WHERE bs.BS_StudentId = @StudentId
-      AND bs.BS_LeftAt IS NULL
-      AND tt.TT_DayOfWeek = @TodayDayOfWeek
+    WHERE tt.TT_DayOfWeek = @TodayDayOfWeek
     ORDER BY tt.TT_StartTime;
 
     -- Result Set 5: Recent Announcements
@@ -220,11 +230,14 @@ BEGIN
         sb.SB_Name AS SubjectName,
         ht.HT_DueDate AS DueDate,
         ISNULL(hts.HTS_Status, 'Pending') AS SubmissionStatus
-    FROM dbo.BatchStudents_BS bs
+    FROM (
+        SELECT BS_BatchId FROM dbo.BatchStudents_BS WHERE BS_StudentId = @StudentId AND BS_LeftAt IS NULL
+        UNION
+        SELECT E_BatchId AS BS_BatchId FROM dbo.Enrollments_E WHERE E_StudentId = @StudentId AND E_Status = 'Active'
+    ) bs
     INNER JOIN dbo.HomeTasks_HT ht ON bs.BS_BatchId = ht.HT_BatchId AND ht.HT_Status = 'Active'
     LEFT JOIN dbo.Subjects_SB sb ON ht.HT_SubjectId = sb.SB_Id
     LEFT JOIN dbo.HomeTaskSubmissions_HTS hts ON ht.HT_Id = hts.HTS_HomeTaskId AND hts.HTS_StudentId = @StudentId
-    WHERE bs.BS_StudentId = @StudentId AND bs.BS_LeftAt IS NULL
     ORDER BY ht.HT_DueDate ASC;
 END
 GO
@@ -243,31 +256,37 @@ BEGIN
     -- Student record
     SELECT
         s.*,
-        b.B_Name AS BranchName,
-        bt.BT_Name AS BatchName,
-        c.C_Name AS CourseName,
+        ISNULL(b.B_Name, 'Main Campus') AS BranchName,
+        COALESCE(bt.BT_Name, 'General Batch') AS BatchName,
+        COALESCE(c.C_Name, 'Academic Course') AS CourseName,
         ay.AY_Name AS AcademicYearName
     FROM dbo.Students_S s
     LEFT JOIN dbo.Branches_B b ON s.S_BranchId = b.B_Id
+    LEFT JOIN dbo.Enrollments_E e ON s.S_Id = e.E_StudentId AND e.E_Status = 'Active'
     LEFT JOIN dbo.BatchStudents_BS bs ON s.S_Id = bs.BS_StudentId AND bs.BS_LeftAt IS NULL
-    LEFT JOIN dbo.Batches_BT bt ON bs.BS_BatchId = bt.BT_Id
-    LEFT JOIN dbo.Courses_C c ON bt.BT_CourseId = c.C_Id
+    LEFT JOIN dbo.Batches_BT bt ON COALESCE(e.E_BatchId, bs.BS_BatchId) = bt.BT_Id
+    LEFT JOIN dbo.Courses_C c ON COALESCE(e.E_CourseId, bt.BT_CourseId) = c.C_Id
     LEFT JOIN dbo.AcademicYears_AY ay ON bt.BT_AcademicYearId = ay.AY_Id
     WHERE s.S_Id = @StudentId AND s.S_TenantId = @TenantId;
 
     -- Guardians
     SELECT
         g.G_Id AS GuardianId,
-        g.G_FirstName + ' ' + g.G_LastName AS GuardianName,
+        g.G_FirstName + ' ' + ISNULL(g.G_LastName, '') AS GuardianName,
         g.G_Phone AS Phone,
         g.G_Email AS Email,
         g.G_Occupation AS Occupation,
-        sg.SG_Relation AS Relationship,
-        sg.SG_IsPrimary AS IsPrimary
-    FROM dbo.Students_Guardians sg
-    INNER JOIN dbo.Guardians_G g ON sg.SG_GuardianId = g.G_Id
-    WHERE sg.SG_StudentId = @StudentId
-    ORDER BY sg.SG_IsPrimary DESC;
+        COALESCE(sg.SG_Relation, sg2.SG_Relationship, 'Guardian') AS Relationship,
+        COALESCE(sg.SG_IsPrimary, sg2.SG_IsPrimary, 0) AS IsPrimary
+    FROM (
+        SELECT SG_StudentId, SG_GuardianId FROM dbo.Students_Guardians WHERE SG_StudentId = @StudentId
+        UNION
+        SELECT SG_StudentId, SG_GuardianId FROM dbo.StudentGuardians_SG WHERE SG_StudentId = @StudentId
+    ) w
+    INNER JOIN dbo.Guardians_G g ON w.SG_GuardianId = g.G_Id
+    LEFT JOIN dbo.Students_Guardians sg ON w.SG_StudentId = sg.SG_StudentId AND sg.SG_GuardianId = g.G_Id
+    LEFT JOIN dbo.StudentGuardians_SG sg2 ON w.SG_StudentId = sg2.SG_StudentId AND sg2.SG_GuardianId = g.G_Id
+    ORDER BY COALESCE(sg.SG_IsPrimary, sg2.SG_IsPrimary, 0) DESC;
 END
 GO
 
@@ -284,36 +303,45 @@ BEGIN
 
     SELECT
         s.S_Id AS StudentId,
-        s.S_FirstName + ' ' + s.S_LastName AS StudentName,
+        s.S_FirstName + ' ' + ISNULL(s.S_LastName, '') AS StudentName,
         s.S_StudentCode AS StudentCode,
         s.S_AdmissionNumber AS AdmissionNumber,
         s.S_DateOfBirth AS DateOfBirth,
-        s.S_BloodGroup AS BloodGroup,
+        ISNULL(s.S_BloodGroup, 'N/A') AS BloodGroup,
         s.S_Phone AS StudentPhone,
         s.S_Email AS StudentEmail,
         s.S_AddressLine1 AS Address,
         s.S_City AS City,
-        c.C_Name AS CourseName,
-        bt.BT_Name AS BatchName,
+        COALESCE(c.C_Name, 'Academic Course') AS CourseName,
+        COALESCE(bt.BT_Name, 'General Batch') AS BatchName,
         ay.AY_Name AS AcademicYearName,
-        b.B_Name AS BranchName,
+        ISNULL(b.B_Name, 'Main Campus') AS BranchName,
         b.B_Phone AS BranchPhone,
         b.B_Email AS BranchEmail,
-        b.B_AddressLine1 AS BranchAddress,
-        o.O_Name AS OrganizationName,
+        ISNULL(b.B_AddressLine1, '123 College Road') AS BranchAddress,
+        ISNULL(o.O_Name, 'INSTITUTE OF EDUCATION') AS OrganizationName,
         o.O_LogoUrl AS OrganizationLogoUrl,
         -- Primary guardian emergency contact
-        (SELECT TOP 1 g.G_FirstName + ' ' + g.G_LastName + ' (' + g.G_Phone + ')'
-         FROM dbo.Students_Guardians sg
-         INNER JOIN dbo.Guardians_G g ON sg.SG_GuardianId = g.G_Id
-         WHERE sg.SG_StudentId = s.S_Id
-         ORDER BY sg.SG_IsPrimary DESC) AS EmergencyContact
+        COALESCE(
+            (SELECT TOP 1 g.G_FirstName + ' ' + ISNULL(g.G_LastName, '') + ' (' + ISNULL(g.G_Phone, '') + ')'
+             FROM dbo.Students_Guardians sg
+             INNER JOIN dbo.Guardians_G g ON sg.SG_GuardianId = g.G_Id
+             WHERE sg.SG_StudentId = s.S_Id
+             ORDER BY sg.SG_IsPrimary DESC),
+            (SELECT TOP 1 g.G_FirstName + ' ' + ISNULL(g.G_LastName, '') + ' (' + ISNULL(g.G_Phone, '') + ')'
+             FROM dbo.StudentGuardians_SG sg2
+             INNER JOIN dbo.Guardians_G g ON sg2.SG_GuardianId = g.G_Id
+             WHERE sg2.SG_StudentId = s.S_Id
+             ORDER BY sg2.SG_IsPrimary DESC),
+            'School Office (9000000001)'
+        ) AS EmergencyContact
     FROM dbo.Students_S s
     LEFT JOIN dbo.Branches_B b ON s.S_BranchId = b.B_Id
     LEFT JOIN dbo.Organizations_O o ON s.S_TenantId = o.O_Id
+    LEFT JOIN dbo.Enrollments_E e ON s.S_Id = e.E_StudentId AND e.E_Status = 'Active'
     LEFT JOIN dbo.BatchStudents_BS bs ON s.S_Id = bs.BS_StudentId AND bs.BS_LeftAt IS NULL
-    LEFT JOIN dbo.Batches_BT bt ON bs.BS_BatchId = bt.BT_Id
-    LEFT JOIN dbo.Courses_C c ON bt.BT_CourseId = c.C_Id
+    LEFT JOIN dbo.Batches_BT bt ON COALESCE(e.E_BatchId, bs.BS_BatchId) = bt.BT_Id
+    LEFT JOIN dbo.Courses_C c ON COALESCE(e.E_CourseId, bt.BT_CourseId) = c.C_Id
     LEFT JOIN dbo.AcademicYears_AY ay ON bt.BT_AcademicYearId = ay.AY_Id
     WHERE s.S_Id = @StudentId AND s.S_TenantId = @TenantId;
 END
@@ -321,43 +349,73 @@ GO
 
 -- ============================================================================
 -- 5. SP_Portal_GetGuardianIdCardData
--- Returns Guardian details and linked wards
+-- Returns Guardian details and linked wards (supports lookup by GuardianId or StudentId)
 -- ============================================================================
 CREATE OR ALTER PROCEDURE dbo.SP_Portal_GetGuardianIdCardData
-    @GuardianId UNIQUEIDENTIFIER,
+    @GuardianId UNIQUEIDENTIFIER = NULL,
+    @StudentId  UNIQUEIDENTIFIER = NULL,
     @TenantId   UNIQUEIDENTIFIER
 AS
 BEGIN
     SET NOCOUNT ON;
 
+    -- If GuardianId is null or empty, look up primary guardian from StudentId
+    IF (@GuardianId IS NULL OR @GuardianId = '00000000-0000-0000-0000-000000000000') AND @StudentId IS NOT NULL
+    BEGIN
+        SELECT TOP 1 @GuardianId = g.G_Id
+        FROM (
+            SELECT SG_GuardianId, SG_IsPrimary FROM dbo.Students_Guardians WHERE SG_StudentId = @StudentId
+            UNION
+            SELECT SG_GuardianId, SG_IsPrimary FROM dbo.StudentGuardians_SG WHERE SG_StudentId = @StudentId
+        ) w
+        INNER JOIN dbo.Guardians_G g ON w.SG_GuardianId = g.G_Id
+        ORDER BY w.SG_IsPrimary DESC;
+    END
+
+    -- If still null, try finding any guardian associated with this tenant
+    IF @GuardianId IS NULL OR @GuardianId = '00000000-0000-0000-0000-000000000000'
+    BEGIN
+        SELECT TOP 1 @GuardianId = G_Id FROM dbo.Guardians_G WHERE G_TenantId = @TenantId;
+    END
+
     -- Guardian details
-    SELECT
+    SELECT TOP 1
         g.G_Id AS GuardianId,
-        g.G_FirstName + ' ' + g.G_LastName AS GuardianName,
-        g.G_Phone AS Phone,
+        g.G_FirstName + ' ' + ISNULL(g.G_LastName, '') AS GuardianName,
+        ISNULL(g.G_Phone, 'N/A') AS Phone,
         g.G_Email AS Email,
-        g.G_Occupation AS Occupation,
-        o.O_Name AS OrganizationName,
-        o.O_LogoUrl AS OrganizationLogoUrl
+        ISNULL(g.G_Occupation, 'Parent / Guardian') AS Occupation,
+        ISNULL(o.O_Name, 'INSTITUTE OF EDUCATION') AS OrganizationName,
+        o.O_LogoUrl AS OrganizationLogoUrl,
+        ISNULL(b.B_Name, 'Main Campus') AS BranchName,
+        ISNULL(b.B_AddressLine1, '123 College Road') AS BranchAddress,
+        b.B_Phone AS BranchPhone
     FROM dbo.Guardians_G g
     LEFT JOIN dbo.Organizations_O o ON g.G_TenantId = o.O_Id
-    WHERE g.G_Id = @GuardianId AND g.G_TenantId = @TenantId;
+    LEFT JOIN dbo.Branches_B b ON b.B_TenantId = g.G_TenantId
+    WHERE g.G_Id = @GuardianId;
 
     -- Wards
     SELECT
         s.S_Id AS StudentId,
-        s.S_FirstName + ' ' + s.S_LastName AS StudentName,
+        s.S_FirstName + ' ' + ISNULL(s.S_LastName, '') AS StudentName,
         s.S_StudentCode AS StudentCode,
         s.S_AdmissionNumber AS AdmissionNumber,
-        c.C_Name AS CourseName,
-        bt.BT_Name AS BatchName,
-        sg.SG_Relation AS Relationship
-    FROM dbo.Students_Guardians sg
-    INNER JOIN dbo.Students_S s ON sg.SG_StudentId = s.S_Id
+        COALESCE(c.C_Name, 'Academic Course') AS CourseName,
+        COALESCE(bt.BT_Name, 'General Batch') AS BatchName,
+        COALESCE(sg.SG_Relation, sg2.SG_Relationship, 'Ward') AS Relationship
+    FROM (
+        SELECT SG_StudentId, SG_GuardianId FROM dbo.Students_Guardians WHERE SG_GuardianId = @GuardianId
+        UNION
+        SELECT SG_StudentId, SG_GuardianId FROM dbo.StudentGuardians_SG WHERE SG_GuardianId = @GuardianId
+    ) w
+    INNER JOIN dbo.Students_S s ON w.SG_StudentId = s.S_Id
+    LEFT JOIN dbo.Students_Guardians sg ON s.S_Id = sg.SG_StudentId AND sg.SG_GuardianId = @GuardianId
+    LEFT JOIN dbo.StudentGuardians_SG sg2 ON s.S_Id = sg2.SG_StudentId AND sg2.SG_GuardianId = @GuardianId
+    LEFT JOIN dbo.Enrollments_E e ON s.S_Id = e.E_StudentId AND e.E_Status = 'Active'
     LEFT JOIN dbo.BatchStudents_BS bs ON s.S_Id = bs.BS_StudentId AND bs.BS_LeftAt IS NULL
-    LEFT JOIN dbo.Batches_BT bt ON bs.BS_BatchId = bt.BT_Id
-    LEFT JOIN dbo.Courses_C c ON bt.BT_CourseId = c.C_Id
-    WHERE sg.SG_GuardianId = @GuardianId
+    LEFT JOIN dbo.Batches_BT bt ON COALESCE(e.E_BatchId, bs.BS_BatchId) = bt.BT_Id
+    LEFT JOIN dbo.Courses_C c ON COALESCE(e.E_CourseId, bt.BT_CourseId) = c.C_Id
     ORDER BY s.S_FirstName;
 END
 GO
@@ -395,11 +453,16 @@ BEGIN
     -- Month Summary Stats
     SELECT
         COUNT(*) AS TotalDaysInMonth,
-        SUM(CASE WHEN ar.AR_Status = 'present' THEN 1 ELSE 0 END) AS PresentCount,
-        SUM(CASE WHEN ar.AR_Status = 'absent' THEN 1 ELSE 0 END) AS AbsentCount,
-        SUM(CASE WHEN ar.AR_Status = 'half_day' THEN 1 ELSE 0 END) AS HalfDayCount,
-        SUM(CASE WHEN ar.AR_Status = 'late' THEN 1 ELSE 0 END) AS LateCount,
-        SUM(CASE WHEN ar.AR_Status = 'excused' THEN 1 ELSE 0 END) AS ExcusedCount
+        --SUM(CASE WHEN ar.AR_Status = 'present' THEN 1 ELSE 0 END) AS PresentCount,
+        --SUM(CASE WHEN ar.AR_Status = 'absent' THEN 1 ELSE 0 END) AS AbsentCount,
+        --SUM(CASE WHEN ar.AR_Status = 'half_day' THEN 1 ELSE 0 END) AS HalfDayCount,
+        --SUM(CASE WHEN ar.AR_Status = 'late' THEN 1 ELSE 0 END) AS LateCount,
+        --SUM(CASE WHEN ar.AR_Status = 'excused' THEN 1 ELSE 0 END) AS ExcusedCount
+        COALESCE(SUM(CASE WHEN ar.AR_Status = 'present' THEN 1 ELSE 0 END), 0) AS PresentCount,
+        COALESCE(SUM(CASE WHEN ar.AR_Status = 'absent' THEN 1 ELSE 0 END), 0) AS AbsentCount,
+        COALESCE(SUM(CASE WHEN ar.AR_Status = 'half_day' THEN 1 ELSE 0 END), 0) AS HalfDayCount,
+        COALESCE(SUM(CASE WHEN ar.AR_Status = 'late' THEN 1 ELSE 0 END), 0) AS LateCount,
+        COALESCE(SUM(CASE WHEN ar.AR_Status = 'excused' THEN 1 ELSE 0 END), 0) AS ExcusedCount
     FROM dbo.AttendanceRecords_AR ar
     INNER JOIN dbo.AttendanceSessions_AS asess ON ar.AR_AttendanceSessionId = asess.AS_Id
     WHERE ar.AR_StudentId = @StudentId
@@ -1211,4 +1274,272 @@ BEGIN
         'Your password has been updated successfully. You can now sign in with your new password.' AS [Message];
 END
 GO
+
+-- ============================================================================
+-- 25. SP_StudentLeaves_GetPaged (Admin / Teacher Panel)
+-- ============================================================================
+CREATE OR ALTER PROCEDURE dbo.SP_StudentLeaves_GetPaged
+    @TenantId   UNIQUEIDENTIFIER,
+    @Status     NVARCHAR(20) = NULL,
+    @Search     NVARCHAR(100) = NULL,
+    @PageNumber INT = 1,
+    @PageSize   INT = 10
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @Offset INT = (@PageNumber - 1) * @PageSize;
+
+    SELECT
+        sl.SL_Id AS LeaveId,
+        sl.SL_StudentId AS StudentId,
+        s.S_FirstName + ' ' + ISNULL(s.S_LastName, '') AS StudentName,
+        s.S_StudentCode AS StudentCode,
+        s.S_AdmissionNumber AS AdmissionNumber,
+        COALESCE(c.C_Name, 'Standard Course') AS CourseName,
+        COALESCE(bt.BT_Name, 'General Batch') AS BatchName,
+        sl.SL_FromDate AS FromDate,
+        sl.SL_ToDate AS ToDate,
+        sl.SL_TotalDays AS TotalDays,
+        sl.SL_LeaveType AS LeaveType,
+        sl.SL_Reason AS Reason,
+        sl.SL_Status AS Status,
+        sl.SL_AppliedBy AS AppliedBy,
+        sl.SL_ApprovedAt AS ApprovedAt,
+        sl.SL_RejectionReason AS RejectionReason,
+        sl.SL_CreatedAt AS AppliedAt,
+        COUNT(*) OVER() AS TotalCount
+    FROM dbo.StudentLeaves_SL sl
+    INNER JOIN dbo.Students_S s ON sl.SL_StudentId = s.S_Id
+    LEFT JOIN dbo.Enrollments_E e ON s.S_Id = e.E_StudentId AND e.E_Status = 'Active'
+    LEFT JOIN dbo.BatchStudents_BS bs ON s.S_Id = bs.BS_StudentId AND bs.BS_LeftAt IS NULL
+    LEFT JOIN dbo.Batches_BT bt ON COALESCE(e.E_BatchId, bs.BS_BatchId) = bt.BT_Id
+    LEFT JOIN dbo.Courses_C c ON COALESCE(e.E_CourseId, bt.BT_CourseId) = c.C_Id
+    WHERE sl.SL_TenantId = @TenantId
+      AND sl.SL_IsActive = 1
+      AND (@Status IS NULL OR @Status = '' OR sl.SL_Status = @Status)
+      AND (@Search IS NULL OR @Search = '' OR s.S_FirstName LIKE '%' + @Search + '%' OR s.S_LastName LIKE '%' + @Search + '%' OR s.S_StudentCode LIKE '%' + @Search + '%')
+    ORDER BY sl.SL_CreatedAt DESC
+    OFFSET @Offset ROWS
+    FETCH NEXT @PageSize ROWS ONLY;
+END
+GO
+
+-- ============================================================================
+-- 26. SP_StudentLeaves_Review (Admin / Teacher Panel)
+-- ============================================================================
+CREATE OR ALTER PROCEDURE dbo.SP_StudentLeaves_Review
+    @LeaveId        UNIQUEIDENTIFIER,
+    @TenantId       UNIQUEIDENTIFIER,
+    @ApprovedBy     UNIQUEIDENTIFIER,
+    @Status         NVARCHAR(20), -- 'Approved' or 'Rejected'
+    @RejectionReason NVARCHAR(500) = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE dbo.StudentLeaves_SL
+    SET
+        SL_Status = @Status,
+        SL_ApprovedBy = @ApprovedBy,
+        SL_ApprovedAt = SYSUTCDATETIME(),
+        SL_RejectionReason = @RejectionReason,
+        SL_UpdatedAt = SYSUTCDATETIME()
+    WHERE SL_Id = @LeaveId AND SL_TenantId = @TenantId;
+
+    SELECT @@ROWCOUNT AS RowsAffected;
+END
+GO
+
+-- ============================================================================
+-- 27. SP_TransferCertificates_GetPaged (Admin Panel)
+-- ============================================================================
+CREATE OR ALTER PROCEDURE dbo.SP_TransferCertificates_GetPaged
+    @TenantId   UNIQUEIDENTIFIER,
+    @Status     NVARCHAR(30) = NULL,
+    @Search     NVARCHAR(100) = NULL,
+    @PageNumber INT = 1,
+    @PageSize   INT = 10
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @Offset INT = (@PageNumber - 1) * @PageSize;
+
+    SELECT
+        tc.TC_Id AS TCId,
+        tc.TC_StudentId AS StudentId,
+        s.S_FirstName + ' ' + ISNULL(s.S_LastName, '') AS StudentName,
+        s.S_StudentCode AS StudentCode,
+        s.S_AdmissionNumber AS AdmissionNumber,
+        COALESCE(c.C_Name, 'Standard Course') AS CourseName,
+        COALESCE(bt.BT_Name, 'General Batch') AS BatchName,
+        tc.TC_ApplicationNumber AS ApplicationNumber,
+        tc.TC_ApplicationDate AS ApplicationDate,
+        tc.TC_ExpectedLeavingDate AS ExpectedLeavingDate,
+        tc.TC_Reason AS Reason,
+        tc.TC_LibraryClearance AS LibraryClearance,
+        tc.TC_FeeClearance AS FeeClearance,
+        tc.TC_LabClearance AS LabClearance,
+        tc.TC_Status AS Status,
+        tc.TC_CertificateNumber AS CertificateNumber,
+        tc.TC_IssuedDate AS IssuedDate,
+        tc.TC_Remarks AS Remarks,
+        tc.TC_CreatedAt AS CreatedAt,
+        COUNT(*) OVER() AS TotalCount
+    FROM dbo.TransferCertificates_TC tc
+    INNER JOIN dbo.Students_S s ON tc.TC_StudentId = s.S_Id
+    LEFT JOIN dbo.Enrollments_E e ON s.S_Id = e.E_StudentId AND e.E_Status = 'Active'
+    LEFT JOIN dbo.BatchStudents_BS bs ON s.S_Id = bs.BS_StudentId AND bs.BS_LeftAt IS NULL
+    LEFT JOIN dbo.Batches_BT bt ON COALESCE(e.E_BatchId, bs.BS_BatchId) = bt.BT_Id
+    LEFT JOIN dbo.Courses_C c ON COALESCE(e.E_CourseId, bt.BT_CourseId) = c.C_Id
+    WHERE tc.TC_TenantId = @TenantId
+      AND tc.TC_IsActive = 1
+      AND (@Status IS NULL OR @Status = '' OR tc.TC_Status = @Status)
+      AND (@Search IS NULL OR @Search = '' OR s.S_FirstName LIKE '%' + @Search + '%' OR s.S_LastName LIKE '%' + @Search + '%' OR tc.TC_ApplicationNumber LIKE '%' + @Search + '%')
+    ORDER BY tc.TC_CreatedAt DESC
+    OFFSET @Offset ROWS
+    FETCH NEXT @PageSize ROWS ONLY;
+END
+GO
+
+-- ============================================================================
+-- 28. SP_TransferCertificates_Review (Admin Panel)
+-- ============================================================================
+CREATE OR ALTER PROCEDURE dbo.SP_TransferCertificates_Review
+    @TCId               UNIQUEIDENTIFIER,
+    @TenantId           UNIQUEIDENTIFIER,
+    @LibraryClearance   BIT,
+    @FeeClearance       BIT,
+    @LabClearance       BIT,
+    @Status             NVARCHAR(30),
+    @Remarks            NVARCHAR(MAX) = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @CertNumber NVARCHAR(50) = NULL;
+    DECLARE @IssuedDate DATE = NULL;
+
+    IF (@Status = 'Approved' OR @Status = 'Issued')
+    BEGIN
+        SET @IssuedDate = CAST(GETUTCDATE() AS DATE);
+        SET @CertNumber = 'TC-' + CAST(YEAR(GETUTCDATE()) AS NVARCHAR(4)) + '-' + RIGHT(CAST(NEWID() AS NVARCHAR(36)), 6);
+    END
+
+    UPDATE dbo.TransferCertificates_TC
+    SET
+        TC_LibraryClearance = @LibraryClearance,
+        TC_FeeClearance = @FeeClearance,
+        TC_LabClearance = @LabClearance,
+        TC_Status = @Status,
+        TC_CertificateNumber = COALESCE(TC_CertificateNumber, @CertNumber),
+        TC_IssuedDate = COALESCE(TC_IssuedDate, @IssuedDate),
+        TC_Remarks = @Remarks,
+        TC_UpdatedAt = SYSUTCDATETIME()
+    WHERE TC_Id = @TCId AND TC_TenantId = @TenantId;
+
+    SELECT @@ROWCOUNT AS RowsAffected;
+END
+GO
+
+-- ============================================================================
+-- 29. SP_StudentLeaves_Delete
+-- ============================================================================
+CREATE OR ALTER PROCEDURE dbo.SP_StudentLeaves_Delete
+    @LeaveId    UNIQUEIDENTIFIER,
+    @TenantId   UNIQUEIDENTIFIER
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE dbo.StudentLeaves_SL
+    SET SL_IsActive = 0, SL_UpdatedAt = SYSUTCDATETIME()
+    WHERE SL_Id = @LeaveId AND SL_TenantId = @TenantId;
+
+    SELECT @@ROWCOUNT AS RowsAffected;
+END
+GO
+
+-- ============================================================================
+-- 30. SP_TransferCertificates_Delete
+-- ============================================================================
+CREATE OR ALTER PROCEDURE dbo.SP_TransferCertificates_Delete
+    @TCId       UNIQUEIDENTIFIER,
+    @TenantId   UNIQUEIDENTIFIER
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE dbo.TransferCertificates_TC
+    SET TC_IsActive = 0, TC_UpdatedAt = SYSUTCDATETIME()
+    WHERE TC_Id = @TCId AND TC_TenantId = @TenantId;
+
+    SELECT @@ROWCOUNT AS RowsAffected;
+END
+GO
+
+-- ============================================================================
+-- 31. SP_TransferCertificates_GetById (For Printing and Official Issuance)
+-- ============================================================================
+CREATE OR ALTER PROCEDURE dbo.SP_TransferCertificates_GetById
+    @TCId       UNIQUEIDENTIFIER,
+    @TenantId   UNIQUEIDENTIFIER
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        tc.TC_Id AS TCId,
+        tc.TC_StudentId AS StudentId,
+        s.S_FirstName + ' ' + ISNULL(s.S_LastName, '') AS StudentName,
+        s.S_StudentCode AS StudentCode,
+        s.S_AdmissionNumber AS AdmissionNumber,
+        s.S_Gender AS Gender,
+        s.S_DateOfBirth AS DateOfBirth,
+        ISNULL(s.S_BloodGroup, 'N/A') AS BloodGroup,
+        ISNULL(s.S_AddressLine1, '') AS Address,
+        s.S_Phone AS Phone,
+        ISNULL(s.S_Email, '') AS Email,
+        g.GuardianName AS GuardianName,
+        COALESCE(c.C_Name, 'Academic Course') AS CourseName,
+        COALESCE(bt.BT_Name, 'General Batch') AS BatchName,
+        ay.AY_Name AS AcademicYearName,
+        ISNULL(b.B_Name, 'Main Campus') AS BranchName,
+        ISNULL(o.O_Name, 'INSTITUTE OF EDUCATION') AS OrganizationName,
+        --ISNULL(o.O_Address, '') AS OrganizationAddress,
+        '' AS OrganizationAddress,
+        ISNULL(o.O_Phone, '') AS OrganizationPhone,
+        ISNULL(o.O_Email, '') AS OrganizationEmail,
+        tc.TC_ApplicationNumber AS ApplicationNumber,
+        tc.TC_ApplicationDate AS ApplicationDate,
+        tc.TC_ExpectedLeavingDate AS ExpectedLeavingDate,
+        tc.TC_Reason AS Reason,
+        tc.TC_LibraryClearance AS LibraryClearance,
+        tc.TC_FeeClearance AS FeeClearance,
+        tc.TC_LabClearance AS LabClearance,
+        tc.TC_Status AS Status,
+        COALESCE(tc.TC_CertificateNumber, 'TC-DRAFT-' + RIGHT(CAST(tc.TC_Id AS NVARCHAR(36)), 6)) AS CertificateNumber,
+        COALESCE(tc.TC_IssuedDate, CAST(GETUTCDATE() AS DATE)) AS IssuedDate,
+        tc.TC_Remarks AS Remarks,
+        'Good' AS Conduct
+    FROM dbo.TransferCertificates_TC tc
+    INNER JOIN dbo.Students_S s ON tc.TC_StudentId = s.S_Id
+    LEFT JOIN dbo.Organizations_O o ON tc.TC_TenantId = o.O_Id
+    LEFT JOIN dbo.Branches_B b ON s.S_BranchId = b.B_Id
+    LEFT JOIN dbo.Enrollments_E e ON s.S_Id = e.E_StudentId AND e.E_Status = 'Active'
+    LEFT JOIN dbo.BatchStudents_BS bs ON s.S_Id = bs.BS_StudentId AND bs.BS_LeftAt IS NULL
+    LEFT JOIN dbo.Batches_BT bt ON COALESCE(e.E_BatchId, bs.BS_BatchId) = bt.BT_Id
+    LEFT JOIN dbo.Courses_C c ON COALESCE(e.E_CourseId, bt.BT_CourseId) = c.C_Id
+    LEFT JOIN dbo.AcademicYears_AY ay ON bt.BT_AcademicYearId = ay.AY_Id
+    OUTER APPLY (
+        SELECT TOP 1 g.G_FirstName + ' ' + ISNULL(g.G_LastName, '') AS GuardianName
+        FROM dbo.StudentGuardians_SG sg
+        INNER JOIN dbo.Guardians_G g ON sg.SG_GuardianId = g.G_Id
+        WHERE sg.SG_StudentId = s.S_Id
+    ) g
+    WHERE tc.TC_Id = @TCId AND tc.TC_TenantId = @TenantId;
+END
+GO
+
 

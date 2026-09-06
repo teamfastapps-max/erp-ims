@@ -7,11 +7,11 @@ namespace IMS.Web.Areas.StudentPortal.Controllers
 {
     public class AcademicsController : StudentPortalBaseController
     {
-        private readonly IPortalService _portalService;
+        private readonly IStuddentPortalService _StuddentPortalService;
 
-        public AcademicsController(IPortalService portalService)
+        public AcademicsController(IStuddentPortalService StuddentPortalService)
         {
-            _portalService = portalService;
+            _StuddentPortalService = StuddentPortalService;
         }
 
         [HttpGet]
@@ -20,7 +20,7 @@ namespace IMS.Web.Areas.StudentPortal.Controllers
             var studentId = CurrentStudentId;
             if (studentId == Guid.Empty) return View("NoStudentLinked");
 
-            var vm = await _portalService.GetAttendanceCalendarAsync(studentId, CurrentTenantId, month, year);
+            var vm = await _StuddentPortalService.GetAttendanceCalendarAsync(studentId, CurrentTenantId, month, year);
             return View(vm);
         }
 
@@ -30,7 +30,7 @@ namespace IMS.Web.Areas.StudentPortal.Controllers
             var studentId = CurrentStudentId;
             if (studentId == Guid.Empty) return View("NoStudentLinked");
 
-            var vm = await _portalService.GetTimetableAsync(studentId, CurrentTenantId);
+            var vm = await _StuddentPortalService.GetTimetableAsync(studentId, CurrentTenantId);
             return View(vm);
         }
 
@@ -40,7 +40,7 @@ namespace IMS.Web.Areas.StudentPortal.Controllers
             var studentId = CurrentStudentId;
             if (studentId == Guid.Empty) return View("NoStudentLinked");
 
-            var vm = await _portalService.GetSyllabusAsync(studentId, CurrentTenantId);
+            var vm = await _StuddentPortalService.GetSyllabusAsync(studentId, CurrentTenantId);
             return View(vm);
         }
 
@@ -50,7 +50,7 @@ namespace IMS.Web.Areas.StudentPortal.Controllers
             var studentId = CurrentStudentId;
             if (studentId == Guid.Empty) return View("NoStudentLinked");
 
-            var vm = await _portalService.GetClassDetailsAsync(studentId, CurrentTenantId);
+            var vm = await _StuddentPortalService.GetClassDetailsAsync(studentId, CurrentTenantId);
             return View(vm);
         }
     }

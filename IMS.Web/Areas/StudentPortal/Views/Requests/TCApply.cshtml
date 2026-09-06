@@ -66,10 +66,10 @@
                     <div class="p-3 d-flex flex-column gap-3">
                         @foreach (var app in Model.Applications)
                         {
-                            <div class="p-3 border rounded-3 bg-light">
+                            <div class="p-3 border rounded-3 bg-light" id="portal-tc-card-@app.TCId">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <span class="fw-bold text-dark fs-6">@app.ApplicationNumber</span>
-                                    <span class="badge @(app.Status.ToLower() == "issued" ? "bg-success" : (app.Status.ToLower() == "approved" ? "bg-primary" : "bg-warning text-dark")) px-3 py-1">
+                                    <span class="badge @(app.Status.ToLower() == "issued" ? "bg-success" : (app.Status.ToLower() == "approved" ? "bg-primary" : (app.Status.ToLower() == "rejected" ? "bg-danger" : "bg-warning text-dark"))) px-3 py-1">
                                         @app.Status.ToUpper()
                                     </span>
                                 </div>
@@ -98,15 +98,33 @@
 
                                 @if (!string.IsNullOrEmpty(app.CertificateNumber))
                                 {
-                                    <div class="alert alert-success py-2 px-3 small mt-3 mb-0">
-                                        <i class="fa-solid fa-award me-1"></i>
-                                        <strong>Certificate No:</strong> @app.CertificateNumber
-                                        @if (app.IssuedDate.HasValue)
-                                        {
-                                            <span class="ms-2">(Issued on @app.IssuedDate.Value.ToString("dd MMM yyyy"))</span>
-                                        }
+                                    <div class="alert alert-success py-2 px-3 small mt-3 mb-2 d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <i class="fa-solid fa-award me-1"></i>
+                                            <strong>Certificate No:</strong> @app.CertificateNumber
+                                            @if (app.IssuedDate.HasValue)
+                                            {
+                                                <span class="ms-1">(@app.IssuedDate.Value.ToString("dd MMM yyyy"))</span>
+                                            }
+                                        </div>
                                     </div>
                                 }
+
+                                <!-- Actions Bar (Download & Cancel) -->
+                                <div class="d-flex justify-content-end gap-2 mt-3 pt-2 border-top">
+                                    @if (string.Equals(app.Status, "Approved", StringComparison.OrdinalIgnoreCase) || string.Equals(app.Status, "Issued", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <a href="@Url.Action("PrintTC", "Requests", new { area = "StudentPortal", id = app.TCId })" target="_blank" class="btn btn-sm btn-success rounded-pill px-3 py-1">
+                                            <i class="fa-solid fa-file-arrow-down me-1"></i>Download / Print Certificate
+                                        </a>
+                                    }
+                                    @if (string.Equals(app.Status, "Submitted", StringComparison.OrdinalIgnoreCase) || string.Equals(app.Status, "UnderReview", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3 py-1" onclick="cancelPortalTC('@app.TCId')">
+                                            <i class="fa-solid fa-trash-can me-1"></i>Cancel Request
+                                        </button>
+                                    }
+                                </div>
                             </div>
                         }
                     </div>
@@ -115,3 +133,31 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+<script>
+    function cancelPortalTC(tcId) {
+        if (!confirm("Are you sure you want to cancel this Transfer Certificate request?")) return;
+
+        const token = $('input[name="__RequestVerificationToken"]').val();
+        $.ajax({
+            url: '@Url.Action("DeleteTC", "Requests", new { area = "StudentPortal" })',
+            type: 'POST',
+            data: { tcId: tcId, __RequestVerificationToken: token },
+            success: function (res) {
+                if (res.success) {
+                    if (window.toastr) toastr.success(res.message || "Transfer Certificate request cancelled.");
+                    $(`#portal-tc-card-${tcId}`).fadeOut(300, function() { $(this).remove(); });
+                } else {
+                    if (window.toastr) toastr.error(res.message || "Failed to cancel request.");
+                    else alert(res.message || "Failed to cancel request.");
+                }
+            },
+            error: function () {
+                if (window.toastr) toastr.error("Request failed. Please try again.");
+                else alert("Request failed. Please try again.");
+            }
+        });
+    }
+</script>
+}

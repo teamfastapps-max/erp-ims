@@ -1,0 +1,257 @@
+@model List<IMS.Models.Portal.TransferCertificateDto>
+@{
+    ViewData["Title"] = "Transfer Certificate (TC) Applications";
+    var currentStatus = ViewBag.CurrentStatus as string;
+    var search = ViewBag.Search as string;
+    int page = ViewBag.Page ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h4 class="fw-bold mb-1"><i class="bi bi-file-earmark-check text-primary me-2"></i>Transfer Certificate (TC) Applications</h4>
+        <p class="text-muted small mb-0">Manage 3-point department clearances, approve TC requests, and issue certificates</p>
+    </div>
+</div>
+
+@Html.AntiForgeryToken()
+
+<!-- Filters Bar -->
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body p-3">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                    <input type="text" name="search" class="form-control border-start-0" placeholder="Search by student name or app no..." value="@search" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select name="status" class="form-select" onchange="this.form.submit()">
+                    <option value="">All Statuses</option>
+                    <option value="Submitted" selected="@(currentStatus == "Submitted")">Submitted</option>
+                    <option value="UnderReview" selected="@(currentStatus == "UnderReview")">Under Review</option>
+                    <option value="Approved" selected="@(currentStatus == "Approved")">Approved</option>
+                    <option value="Issued" selected="@(currentStatus == "Issued")">Issued / Completed</option>
+                    <option value="Rejected" selected="@(currentStatus == "Rejected")">Rejected</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100 rounded-3">Filter</button>
+            </div>
+            <div class="col-md-2">
+                <a href="@Url.Action("Index", "TransferCertificate")" class="btn btn-outline-secondary w-100 rounded-3">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Applications Table -->
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="ps-4">Student &amp; App No</th>
+                    <th>Application Date</th>
+                    <th>Reason</th>
+                    <th>Clearance Status (Lib/Fee/Lab)</th>
+                    <th>TC Number</th>
+                    <th>Status</th>
+                    <th class="text-end pe-4">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var item in Model)
+                    {
+                        <tr id="tc-row-@item.TCId">
+                            <td class="ps-4">
+                                <div class="fw-bold text-dark">@item.StudentName</div>
+                                <div class="text-muted small">App: <strong class="text-primary">@item.ApplicationNumber</strong></div>
+                            </td>
+                            <td>
+                                <div class="fw-semibold">@item.ApplicationDate.ToString("dd MMM yyyy")</div>
+                                <div class="text-muted small" style="font-size: 0.72rem;">Leaving: @item.ExpectedLeavingDate.ToString("dd MMM yyyy")</div>
+                            </td>
+                            <td style="max-width: 200px;">
+                                <div class="text-truncate" title="@item.Reason">@item.Reason</div>
+                            </td>
+                            <td>
+                                <div class="d-flex gap-1">
+                                    <span class="badge @(item.LibraryClearance ? "bg-success-subtle text-success border border-success-subtle" : "bg-danger-subtle text-danger border border-danger-subtle")">
+                                        <i class="bi @(item.LibraryClearance ? "bi-check" : "bi-x")"></i> Lib
+                                    </span>
+                                    <span class="badge @(item.FeeClearance ? "bg-success-subtle text-success border border-success-subtle" : "bg-danger-subtle text-danger border border-danger-subtle")">
+                                        <i class="bi @(item.FeeClearance ? "bi-check" : "bi-x")"></i> Fee
+                                    </span>
+                                    <span class="badge @(item.LabClearance ? "bg-success-subtle text-success border border-success-subtle" : "bg-danger-subtle text-danger border border-danger-subtle")">
+                                        <i class="bi @(item.LabClearance ? "bi-check" : "bi-x")"></i> Lab
+                                    </span>
+                                </div>
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.CertificateNumber))
+                                {
+                                    <span class="badge bg-light text-dark border fw-mono">@item.CertificateNumber</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">Not Issued</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.Status == "Issued" || item.Status == "Approved")
+                                {
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1">@item.Status</span>
+                                }
+                                else if (item.Status == "Rejected")
+                                {
+                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-1">Rejected</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-3 py-1">@item.Status</span>
+                                }
+                            </td>
+                            <td class="text-end pe-4">
+                                <button type="button" class="btn btn-sm btn-primary rounded-pill px-3 me-1 open-tc-review-btn"
+                                        data-id="@item.TCId"
+                                        data-name="@item.StudentName"
+                                        data-appno="@item.ApplicationNumber"
+                                        data-lib="@(item.LibraryClearance ? "true" : "false")"
+                                        data-fee="@(item.FeeClearance ? "true" : "false")"
+                                        data-lab="@(item.LabClearance ? "true" : "false")"
+                                        data-status="@item.Status"
+                                        data-remarks="@(item.Remarks ?? "")">
+                                    <i class="bi bi-pencil-square me-1"></i>Review
+                                </button>
+
+                                @if (item.Status == "Approved" || item.Status == "Issued")
+                                {
+                                    <a href="@Url.Action("Print", "TransferCertificate", new { id = item.TCId })" target="_blank" class="btn btn-sm btn-outline-success rounded-pill px-2 me-1" title="Print / Download Official Certificate">
+                                        <i class="bi bi-printer"></i>
+                                    </a>
+                                }
+
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-2 delete-tc-btn"
+                                        data-id="@item.TCId" data-name="@item.StudentName" title="Delete TC Application">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-muted">
+                            <i class="bi bi-inbox fs-1 d-block mb-2 text-secondary"></i>
+                            No Transfer Certificate applications found.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@if (totalPages > 1)
+{
+    <nav class="mt-3">
+        <ul class="pagination justify-content-center">
+            <li class="page-item @(page <= 1 ? "disabled" : "")">
+                <a class="page-link" href="@Url.Action("Index", new { status = currentStatus, search, page = page - 1 })">Previous</a>
+            </li>
+            @for (int p = 1; p <= totalPages; p++)
+            {
+                <li class="page-item @(p == page ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { status = currentStatus, search, page = p })">@p</a>
+                </li>
+            }
+            <li class="page-item @(page >= totalPages ? "disabled" : "")">
+                <a class="page-link" href="@Url.Action("Index", new { status = currentStatus, search, page = page + 1 })">Next</a>
+            </li>
+        </ul>
+    </nav>
+}
+
+<!-- Review Modal -->
+<div class="modal fade" id="reviewModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow rounded-4">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold text-primary"><i class="bi bi-shield-check me-2"></i>Review TC Application</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body py-3">
+                <input type="hidden" id="modalTcId" />
+                <div class="p-3 bg-light rounded-3 mb-3">
+                    <div class="fw-bold text-dark" id="modalStudentName"></div>
+                    <div class="text-muted small">Application: <span id="modalAppNumber"></span></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold small text-muted text-uppercase">Department Clearances</label>
+                    <div class="form-check form-switch mb-2">
+                        <input class="form-check-input" type="checkbox" id="modalLibClearance">
+                        <label class="form-check-label fw-semibold" for="modalLibClearance">Library Clearance (Books Returned &amp; No Dues)</label>
+                    </div>
+                    <div class="form-check form-switch mb-2">
+                        <input class="form-check-input" type="checkbox" id="modalFeeClearance">
+                        <label class="form-check-label fw-semibold" for="modalFeeClearance">Fee &amp; Accounts Clearance (Zero Balance)</label>
+                    </div>
+                    <div class="form-check form-switch mb-2">
+                        <input class="form-check-input" type="checkbox" id="modalLabClearance">
+                        <label class="form-check-label fw-semibold" for="modalLabClearance">Science / Computer Lab Clearance</label>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold small text-muted">Application Status</label>
+                    <select id="modalStatus" class="form-select rounded-3">
+                        <option value="Submitted">Submitted</option>
+                        <option value="UnderReview">Under Review</option>
+                        <option value="Approved">Approve &amp; Generate TC</option>
+                        <option value="Issued">Issue Certificate</option>
+                        <option value="Rejected">Reject</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold small text-muted">Admin / Clearance Remarks</label>
+                    <textarea id="modalRemarks" class="form-control rounded-3" rows="2" placeholder="Clearance verified by staff..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="saveTCReviewBtn" class="btn btn-primary rounded-pill px-4">Save Clearance &amp; Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteTcModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow rounded-4">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold text-danger"><i class="bi bi-trash me-2"></i>Delete Transfer Certificate</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body py-3">
+                <input type="hidden" id="deleteTcId" />
+                <p class="text-muted mb-0">Are you sure you want to delete the Transfer Certificate request for <strong id="deleteStudentName"></strong>?</p>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="confirmDeleteTcBtn" class="btn btn-danger rounded-pill px-4">Delete Record</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/transferCertificate.js"></script>
+}

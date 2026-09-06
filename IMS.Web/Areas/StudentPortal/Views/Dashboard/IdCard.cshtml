@@ -8,66 +8,73 @@
         <h4 class="fw-bold mb-1"><i class="fa-solid fa-address-card text-primary me-2"></i>Student Identity Card</h4>
         <p class="text-muted small mb-0">Official institutional digital identity card for verification and printing</p>
     </div>
-    <button onclick="window.print()" class="btn btn-primary rounded-pill">
+    <button onclick="window.print()" class="btn btn-primary rounded-pill px-4 shadow-sm">
         <i class="fa-solid fa-print me-2"></i>Print I-Card
     </button>
 </div>
 
 <!-- Digital I-Card Container -->
-<div class="id-card-container">
-    <div class="id-card-header">
-        <div class="fw-bold fs-5 text-uppercase letter-spacing-1">@(Model.OrganizationName ?? "INSTITUTE OF EDUCATION")</div>
-        <div class="small opacity-75">@(Model.BranchName ?? "Main Campus")</div>
-        <div class="small opacity-50" style="font-size: 0.72rem;">@(Model.BranchAddress ?? "")</div>
-        <div class="mt-2 text-center">
-            <span class="badge bg-light text-dark fw-bold px-3 py-1 text-uppercase">Student ID Card</span>
-        </div>
-    </div>
-
-    <div class="id-card-body">
-        <div class="id-card-photo">
-            <i class="fa-solid fa-user"></i>
+<div class="id-card-wrapper">
+    <div class="id-card-container">
+        <div class="id-card-header">
+            <div class="id-card-lanyard-hole"></div>
+            <div class="fw-bold fs-5 text-uppercase letter-spacing-1 mt-2">@(Model.OrganizationName ?? "INSTITUTE OF EDUCATION")</div>
+            <div class="small opacity-90 fw-medium">@(Model.BranchName ?? "Main Campus")</div>
+            <div class="small opacity-75" style="font-size: 0.72rem;">@(Model.BranchAddress ?? "123 College Road")</div>
+            <div class="mt-2 text-center">
+                <span class="badge bg-white text-primary fw-bold px-3 py-1 text-uppercase shadow-sm" style="font-size: 0.7rem; letter-spacing: 0.5px;">STUDENT ID CARD</span>
+            </div>
         </div>
 
-        <h5 class="fw-bold text-dark mb-1">@Model.StudentName</h5>
-        <div class="badge bg-primary text-white mb-3">Roll: @(Model.StudentCode ?? Model.AdmissionNumber ?? "N/A")</div>
+        <div class="id-card-body">
+            <div class="id-card-photo-wrapper">
+                <div class="id-card-photo">
+                    <i class="fa-solid fa-user-graduate"></i>
+                </div>
+            </div>
 
-        <table class="id-card-info-table">
-            <tr>
-                <td>Admission No:</td>
-                <td class="fw-bold text-dark">@(Model.AdmissionNumber ?? "N/A")</td>
-            </tr>
-            <tr>
-                <td>Course:</td>
-                <td>@(Model.CourseName ?? "General")</td>
-            </tr>
-            <tr>
-                <td>Batch:</td>
-                <td>@(Model.BatchName ?? "Active")</td>
-            </tr>
-            <tr>
-                <td>Blood Group:</td>
-                <td class="fw-bold text-danger">@(Model.BloodGroup ?? "N/A")</td>
-            </tr>
-            <tr>
-                <td>Date of Birth:</td>
-                <td>@(Model.DateOfBirth ?? "N/A")</td>
-            </tr>
-            <tr>
-                <td>Emergency Contact:</td>
-                <td class="text-danger fw-semibold">@(Model.EmergencyContact ?? Model.StudentPhone ?? "N/A")</td>
-            </tr>
-        </table>
+            <h5 class="fw-bold text-dark mb-1">@(string.IsNullOrWhiteSpace(Model.StudentName) ? "Student" : Model.StudentName)</h5>
+            <div class="badge bg-primary-subtle text-primary border border-primary-subtle mb-3 px-3 py-1">
+                Roll / ID: @(Model.StudentCode ?? Model.AdmissionNumber ?? "STU-001")
+            </div>
 
-        <!-- QR Code Placeholder Block -->
-        <div class="p-2 border rounded-3 bg-light d-inline-block text-center mt-2">
-            <i class="fa-solid fa-qrcode fs-1 text-dark"></i>
-            <div class="text-muted" style="font-size: 0.65rem;">@Model.AdmissionNumber</div>
+            <table class="id-card-info-table">
+                <tr>
+                    <td>Admission No:</td>
+                    <td class="fw-bold text-dark">@(Model.AdmissionNumber ?? "ADM-2026-0001")</td>
+                </tr>
+                <tr>
+                    <td>Course:</td>
+                    <td class="fw-semibold text-dark">@(Model.CourseName ?? "Academic Course")</td>
+                </tr>
+                <tr>
+                    <td>Batch / Class:</td>
+                    <td class="fw-semibold text-dark">@(Model.BatchName ?? "General Batch")</td>
+                </tr>
+                <tr>
+                    <td>Blood Group:</td>
+                    <td class="fw-bold text-danger">@(Model.BloodGroup ?? "N/A")</td>
+                </tr>
+                <tr>
+                    <td>Date of Birth:</td>
+                    <td>@(Model.DateOfBirth ?? "N/A")</td>
+                </tr>
+                <tr>
+                    <td>Emergency:</td>
+                    <td class="text-danger fw-semibold" style="font-size: 0.8rem;">@(Model.EmergencyContact ?? Model.StudentPhone ?? "+91-9000000001")</td>
+                </tr>
+            </table>
+
+            <!-- QR Code Block -->
+            <div class="p-2 border rounded-3 bg-light d-inline-block text-center mt-1">
+                <i class="fa-solid fa-qrcode fs-2 text-dark"></i>
+                <div class="text-muted fw-mono" style="font-size: 0.65rem;">@(Model.AdmissionNumber ?? Model.StudentCode ?? "VALIDATED")</div>
+            </div>
         </div>
-    </div>
 
-    <div class="id-card-footer">
-        <div>If found, please return to: @(Model.BranchAddress ?? "School Administration")</div>
-        <div class="fw-semibold text-dark mt-1">Phone: @(Model.BranchPhone ?? "+91-XXXXXXXXXX")</div>
+        <div class="id-card-footer">
+            <div>If found, please return to: <strong>@(Model.BranchAddress ?? "123 College Road")</strong></div>
+            <div class="fw-semibold text-dark mt-1">Phone: @(Model.BranchPhone ?? "9000000001")</div>
+        </div>
     </div>
 </div>

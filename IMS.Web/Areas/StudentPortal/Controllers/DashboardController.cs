@@ -7,11 +7,11 @@ namespace IMS.Web.Areas.StudentPortal.Controllers
 {
     public class DashboardController : StudentPortalBaseController
     {
-        private readonly IPortalService _portalService;
+        private readonly IStuddentPortalService _StuddentPortalService;
 
-        public DashboardController(IPortalService portalService)
+        public DashboardController(IStuddentPortalService StuddentPortalService)
         {
-            _portalService = portalService;
+            _StuddentPortalService = StuddentPortalService;
         }
 
         [HttpGet]
@@ -23,7 +23,7 @@ namespace IMS.Web.Areas.StudentPortal.Controllers
                 return View("NoStudentLinked");
             }
 
-            var vm = await _portalService.GetDashboardAsync(studentId, CurrentTenantId);
+            var vm = await _StuddentPortalService.GetDashboardAsync(studentId, CurrentTenantId);
             return View(vm);
         }
 
@@ -33,7 +33,7 @@ namespace IMS.Web.Areas.StudentPortal.Controllers
             var studentId = CurrentStudentId;
             if (studentId == Guid.Empty) return View("NoStudentLinked");
 
-            var vm = await _portalService.GetStudentProfileAsync(studentId, CurrentTenantId);
+            var vm = await _StuddentPortalService.GetStudentProfileAsync(studentId, CurrentTenantId);
             return View(vm);
         }
 
@@ -43,22 +43,23 @@ namespace IMS.Web.Areas.StudentPortal.Controllers
             var studentId = CurrentStudentId;
             if (studentId == Guid.Empty) return View("NoStudentLinked");
 
-            var vm = await _portalService.GetStudentIdCardAsync(studentId, CurrentTenantId);
+            var vm = await _StuddentPortalService.GetStudentIdCardAsync(studentId, CurrentTenantId);
             return View(vm);
         }
 
         [HttpGet]
         public async Task<IActionResult> GuardianIdCard()
         {
-            var guardianId = CurrentUserId;
-            var vm = await _portalService.GetGuardianIdCardAsync(guardianId, CurrentTenantId);
+            Guid? guardianId = CurrentUserType == "GUARDIAN" ? CurrentUserId : null;
+            Guid? studentId = CurrentStudentId;
+            var vm = await _StuddentPortalService.GetGuardianIdCardAsync(guardianId, studentId, CurrentTenantId);
             return View(vm);
         }
 
         [HttpGet]
         public async Task<IActionResult> Notices()
         {
-            var notices = await _portalService.GetNoticesAsync(CurrentTenantId);
+            var notices = await _StuddentPortalService.GetNoticesAsync(CurrentTenantId);
             return View(notices);
         }
     }

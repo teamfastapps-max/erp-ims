@@ -14,11 +14,11 @@ namespace IMS.Web.Areas.StudentPortal.Controllers
     [Area("StudentPortal")]
     public class AuthController : Controller
     {
-        private readonly IPortalService _portalService;
+        private readonly IStuddentPortalService _StuddentPortalService;
 
-        public AuthController(IPortalService portalService)
+        public AuthController(IStuddentPortalService StuddentPortalService)
         {
-            _portalService = portalService;
+            _StuddentPortalService = StuddentPortalService;
         }
 
         [AllowAnonymous]
@@ -44,7 +44,7 @@ namespace IMS.Web.Areas.StudentPortal.Controllers
                 return View(model);
             }
 
-            var result = await _portalService.AuthenticateAsync(model.Email.Trim(), model.Password);
+            var result = await _StuddentPortalService.AuthenticateAsync(model.Email.Trim(), model.Password);
             if (!result.IsAuthenticated)
             {
                 ModelState.AddModelError(string.Empty, result.ErrorMessage ?? "Invalid credentials. Please check your email and password.");
@@ -171,7 +171,7 @@ namespace IMS.Web.Areas.StudentPortal.Controllers
             }
 
             var baseUrl = $"{Request.Scheme}://{Request.Host}";
-            var res = await _portalService.ForgotPasswordAsync(model.Email.Trim(), baseUrl);
+            var res = await _StuddentPortalService.ForgotPasswordAsync(model.Email.Trim(), baseUrl);
 
             model.EmailSent = res.Success;
             if (res.Success)
@@ -209,7 +209,7 @@ namespace IMS.Web.Areas.StudentPortal.Controllers
                 return View(model);
             }
 
-            var res = await _portalService.ResetPasswordWithTokenAsync(model.Token, model.NewPassword);
+            var res = await _StuddentPortalService.ResetPasswordWithTokenAsync(model.Token, model.NewPassword);
             if (res.Success)
             {
                 model.IsSuccess = true;
@@ -246,7 +246,7 @@ namespace IMS.Web.Areas.StudentPortal.Controllers
                 return RedirectToAction("Login");
             }
 
-            var res = await _portalService.ChangePasswordAsync(userId, userType, model.CurrentPassword, model.NewPassword);
+            var res = await _StuddentPortalService.ChangePasswordAsync(userId, userType, model.CurrentPassword, model.NewPassword);
             if (res.Success)
             {
                 TempData["SuccessMessage"] = "Password updated successfully!";

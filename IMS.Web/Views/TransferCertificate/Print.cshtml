@@ -1,0 +1,505 @@
+@model IMS.Models.Portal.TransferCertificatePrintViewModel
+@{
+    ViewData["Title"] = $"Transfer Certificate - {Model.StudentName}";
+    Layout = null; // Standalone printable document layout
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <style>
+        :root {
+            --tc-primary: #1e3a8a;
+            --tc-gold: #b45309;
+            --tc-dark: #0f172a;
+            --tc-border: #cbd5e1;
+            --tc-bg: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #e2e8f0;
+            color: #1e293b;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Top Action Bar (No Print) */
+        .tc-actions {
+            width: 100%;
+            max-width: 820px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 12px 20px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: #ffffff;
+        }
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+        }
+        .btn-outline:hover {
+            background: #f1f5f9;
+        }
+
+        /* Certificate Document Sheet */
+        .tc-sheet {
+            width: 100%;
+            max-width: 820px;
+            background: #ffffff;
+            padding: 36px 44px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+            border: 12px double #1e3a8a;
+            outline: 2px solid #b45309;
+            outline-offset: -8px;
+        }
+
+        /* Background Watermark */
+        .tc-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 72px;
+            font-weight: 800;
+            color: rgba(30, 58, 138, 0.035);
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            pointer-events: none;
+            white-space: nowrap;
+            user-select: none;
+            z-index: 1;
+        }
+
+        .tc-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Header */
+        .tc-header {
+            text-align: center;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 16px;
+            margin-bottom: 20px;
+        }
+
+        .tc-emblem {
+            width: 68px;
+            height: 68px;
+            margin: 0 auto 10px;
+            background: #eff6ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #1e3a8a;
+            color: #1e3a8a;
+            font-size: 30px;
+        }
+
+        .tc-org-name {
+            font-family: 'Cinzel', serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: #1e3a8a;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .tc-org-meta {
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.4;
+        }
+
+        .tc-title-badge {
+            display: inline-block;
+            margin-top: 14px;
+            padding: 6px 28px;
+            background: linear-gradient(135deg, #1e3a8a, #0f172a);
+            color: #ffffff;
+            font-family: 'Cinzel', serif;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            border-radius: 30px;
+            box-shadow: 0 2px 8px rgba(30, 58, 138, 0.25);
+            text-transform: uppercase;
+        }
+
+        /* Meta Info Top Bar */
+        .tc-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .tc-meta-item strong {
+            color: #1e3a8a;
+        }
+
+        /* Particulars Table */
+        .tc-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13.5px;
+            margin-bottom: 24px;
+        }
+
+        .tc-table tr {
+            border-bottom: 1px dashed #cbd5e1;
+        }
+
+        .tc-table tr:last-child {
+            border-bottom: none;
+        }
+
+        .tc-table td {
+            padding: 8px 6px;
+            vertical-align: top;
+        }
+
+        .tc-table td.tc-num {
+            width: 30px;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .tc-table td.tc-label {
+            width: 320px;
+            color: #334155;
+            font-weight: 500;
+        }
+
+        .tc-table td.tc-val {
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .tc-clearance-pills {
+            display: inline-flex;
+            gap: 8px;
+        }
+
+        .pill-cleared {
+            background: #dcfce7;
+            color: #166534;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11.5px;
+            font-weight: 600;
+        }
+
+        /* Verification Statement */
+        .tc-declaration {
+            font-size: 12.5px;
+            color: #475569;
+            line-height: 1.5;
+            margin-bottom: 32px;
+            padding: 10px 14px;
+            border-left: 3px solid #1e3a8a;
+            background: #f8fafc;
+            border-radius: 0 6px 6px 0;
+        }
+
+        /* Signatures Footer */
+        .tc-signatures {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-top: 24px;
+            margin-top: 10px;
+        }
+
+        .tc-sig-block {
+            text-align: center;
+            width: 180px;
+        }
+
+        .tc-sig-line {
+            border-top: 1.5px solid #334155;
+            margin-bottom: 6px;
+        }
+
+        .tc-sig-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #1e3a8a;
+            text-transform: uppercase;
+        }
+
+        .tc-sig-sub {
+            font-size: 10.5px;
+            color: #64748b;
+        }
+
+        .tc-seal-box {
+            width: 110px;
+            height: 70px;
+            border: 1.5px dashed #94a3b8;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        /* Print Media Styles */
+        @@media print {
+            body {
+                background: #ffffff !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .tc-actions {
+                display: none !important;
+            }
+
+            .tc-sheet {
+                max-width: 100% !important;
+                width: 100% !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                margin: 0 !important;
+                padding: 24px 32px !important;
+                page-break-inside: avoid !important;
+                page-break-after: avoid !important;
+            }
+
+            @@page {
+                size: A4 portrait;
+                margin: 8mm;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Print / Download Bar -->
+    <div class="tc-actions">
+        <div>
+            <span style="font-weight: 700; color: #1e3a8a; font-size: 16px;">
+                <i class="fa-solid fa-certificate me-2 text-primary"></i>Transfer Certificate Preview
+            </span>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button onclick="window.print()" class="btn btn-primary">
+                <i class="fa-solid fa-print"></i> Print / Download PDF
+            </button>
+            <button onclick="window.close(); if(history.length > 1) history.back();" class="btn btn-outline">
+                <i class="fa-solid fa-arrow-left"></i> Back
+            </button>
+        </div>
+    </div>
+
+    <!-- Official Certificate Document Sheet -->
+    <div class="tc-sheet">
+        <div class="tc-watermark">TRANSFER CERTIFICATE</div>
+        <div class="tc-content">
+
+            <!-- Institution Header -->
+            <div class="tc-header">
+                <div class="tc-emblem">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div class="tc-org-name">@Model.OrganizationName</div>
+                <div class="tc-org-meta">
+                    @if (!string.IsNullOrEmpty(Model.BranchName)) { <span>@Model.BranchName Campus &bull; </span> }
+                    @if (!string.IsNullOrEmpty(Model.OrganizationAddress)) { <span>@Model.OrganizationAddress &bull; </span> }
+                    @if (!string.IsNullOrEmpty(Model.OrganizationPhone)) { <span>Phone: @Model.OrganizationPhone</span> }
+                </div>
+                <div>
+                    <span class="tc-title-badge">Transfer Certificate</span>
+                </div>
+            </div>
+
+            <!-- Meta Top Row -->
+            <div class="tc-meta-row">
+                <div class="tc-meta-item">
+                    <span>TC No: </span><strong>@(string.IsNullOrEmpty(Model.CertificateNumber) ? "DRAFT" : Model.CertificateNumber)</strong>
+                </div>
+                <div class="tc-meta-item">
+                    <span>Application No: </span><strong>@Model.ApplicationNumber</strong>
+                </div>
+                <div class="tc-meta-item">
+                    <span>Date of Issue: </span><strong>@Model.IssuedDate.ToString("dd-MM-yyyy")</strong>
+                </div>
+            </div>
+
+            <!-- Particulars Table -->
+            <table class="tc-table">
+                <tbody>
+                    <tr>
+                        <td class="tc-num">1.</td>
+                        <td class="tc-label">Name of the Student</td>
+                        <td class="tc-val">@Model.StudentName.ToUpper()</td>
+                    </tr>
+                    <tr>
+                        <td class="tc-num">2.</td>
+                        <td class="tc-label">Student ID / Roll Code</td>
+                        <td class="tc-val">@(Model.StudentCode ?? "N/A")</td>
+                    </tr>
+                    <tr>
+                        <td class="tc-num">3.</td>
+                        <td class="tc-label">Admission Number</td>
+                        <td class="tc-val">@(Model.AdmissionNumber ?? "N/A")</td>
+                    </tr>
+                    <tr>
+                        <td class="tc-num">4.</td>
+                        <td class="tc-label">Father's / Guardian's Name</td>
+                        <td class="tc-val">@(string.IsNullOrEmpty(Model.GuardianName) ? "N/A" : Model.GuardianName.ToUpper())</td>
+                    </tr>
+                    <tr>
+                        <td class="tc-num">5.</td>
+                        <td class="tc-label">Date of Birth (in figures)</td>
+                        <td class="tc-val">@(Model.DateOfBirth.HasValue ? Model.DateOfBirth.Value.ToString("dd MMMM yyyy") : "As per official records")</td>
+                    </tr>
+                    <tr>
+                        <td class="tc-num">6.</td>
+                        <td class="tc-label">Gender &amp; Blood Group</td>
+                        <td class="tc-val">@(Model.Gender ?? "N/A") &bull; Blood Group: @(Model.BloodGroup ?? "N/A")</td>
+                    </tr>
+                    <tr>
+                        <td class="tc-num">7.</td>
+                        <td class="tc-label">Course / Class &amp; Batch</td>
+                        <td class="tc-val">@Model.CourseName (@Model.BatchName)</td>
+                    </tr>
+                    <tr>
+                        <td class="tc-num">8.</td>
+                        <td class="tc-label">Academic Session</td>
+                        <td class="tc-val">@(Model.AcademicYearName ?? "Current Academic Session")</td>
+                    </tr>
+                    <tr>
+                        <td class="tc-num">9.</td>
+                        <td class="tc-label">Date of Application for Certificate</td>
+                        <td class="tc-val">@Model.ApplicationDate.ToString("dd MMMM yyyy")</td>
+                    </tr>
+                    <tr>
+                        <td class="tc-num">10.</td>
+                        <td class="tc-label">Expected / Actual Date of Leaving</td>
+                        <td class="tc-val">@Model.ExpectedLeavingDate.ToString("dd MMMM yyyy")</td>
+                    </tr>
+                    <tr>
+                        <td class="tc-num">11.</td>
+                        <td class="tc-label">Reason for Leaving Institution</td>
+                        <td class="tc-val">@Model.Reason</td>
+                    </tr>
+                    <tr>
+                        <td class="tc-num">12.</td>
+                        <td class="tc-label">Institutional Clearance Status</td>
+                        <td class="tc-val">
+                            <div class="tc-clearance-pills">
+                                <span class="pill-cleared"><i class="fa-solid fa-check me-1"></i>Library Cleared</span>
+                                <span class="pill-cleared"><i class="fa-solid fa-check me-1"></i>Accounts/Dues Paid</span>
+                                <span class="pill-cleared"><i class="fa-solid fa-check me-1"></i>Lab No-Dues</span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tc-num">13.</td>
+                        <td class="tc-label">General Conduct &amp; Character</td>
+                        <td class="tc-val" style="color: #15803d;">@Model.Conduct</td>
+                    </tr>
+                    <tr>
+                        <td class="tc-num">14.</td>
+                        <td class="tc-label">Remarks / Special Notes</td>
+                        <td class="tc-val">@(string.IsNullOrEmpty(Model.Remarks) ? "All institutional requirements fulfilled satisfactorily." : Model.Remarks)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Verification Statement -->
+            <div class="tc-declaration">
+                This is to certify that the above information is in accordance with the official records of the institution.
+                The pupil has cleared all dues and has been relieved of institution rolls.
+            </div>
+
+            <!-- Signatures Section -->
+            <div class="tc-signatures">
+                <div class="tc-sig-block">
+                    <div class="tc-sig-line"></div>
+                    <div class="tc-sig-title">Class Teacher / In-Charge</div>
+                    <div class="tc-sig-sub">Prepared &amp; Verified</div>
+                </div>
+
+                <div class="tc-sig-block" style="display: flex; justify-content: center;">
+                    <div class="tc-seal-box">
+                        <i class="fa-solid fa-stamp mb-1"></i>
+                        <span>Official Seal</span>
+                    </div>
+                </div>
+
+                <div class="tc-sig-block">
+                    <div class="tc-sig-line"></div>
+                    <div class="tc-sig-title">Principal / Headmaster</div>
+                    <div class="tc-sig-sub">Authorized Signatory</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

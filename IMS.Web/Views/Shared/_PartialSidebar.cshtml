@@ -93,7 +93,7 @@
 
             <permission-check code="@Permissions.ViewStudent">
                 <li class="nav-item">
-                    <a class="nav-link @isActive("Student", "Student")"
+                    <a class="nav-link @isActive("", "Students")"
                        asp-controller="Students"
                        asp-action="Index">
                         <i class="fa-solid fa-user-graduate"></i>
@@ -101,6 +101,54 @@
                     </a>
                 </li>
             </permission-check>
+
+            <li class="nav-item">
+                <a class="nav-link @isActive("", "StudentLeave")"
+                   asp-controller="StudentLeave"
+                   asp-action="Index">
+                    <i class="fa-solid fa-user-clock"></i>
+                    <span>Student Leaves</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link @isActive("", "TransferCertificate")"
+                   asp-controller="TransferCertificate"
+                   asp-action="Index">
+                    <i class="fa-solid fa-file-shield"></i>
+                    <span>Transfer Certificates (TC)</span>
+                </a>
+            </li>
+            @* <permission-check code="@Permissions.ViewStudentLeave">
+                <li class="nav-item">
+                    <a class="nav-link @isActive("", "StudentLeave")"
+                       asp-controller="StudentLeave"
+                       asp-action="Index">
+                        <i class="fa-solid fa-user-clock"></i>
+                        <span>Student Leaves</span>
+                    </a>
+                </li>
+            </permission-check>
+
+            <permission-check code="@Permissions.ViewTransferCertificate">
+                <li class="nav-item">
+                    <a class="nav-link @isActive("", "TransferCertificate")"
+                       asp-controller="TransferCertificate"
+                       asp-action="Index">
+                        <i class="fa-solid fa-file-shield"></i>
+                        <span>Transfer Certificates (TC)</span>
+                    </a>
+                </li>
+            </permission-check> *@
+
+            <li class="nav-item">
+                <a class="nav-link @isActive("", "AdmissionApplication")"
+                   asp-controller="AdmissionApplication"
+                   asp-action="Index">
+                    <i class="fa-solid fa-address-book"></i>
+                    <span>Admissions</span>
+                </a>
+            </li>
 
             <li class="nav-item">
                 <a class="nav-link @isActive("", "Staff")"

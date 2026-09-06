@@ -8,11 +8,11 @@ namespace IMS.Web.Areas.StudentPortal.Controllers
 {
     public class RequestsController : StudentPortalBaseController
     {
-        private readonly IPortalService _portalService;
+        private readonly IStuddentPortalService _StuddentPortalService;
 
-        public RequestsController(IPortalService portalService)
+        public RequestsController(IStuddentPortalService StuddentPortalService)
         {
-            _portalService = portalService;
+            _StuddentPortalService = StuddentPortalService;
         }
 
         [HttpGet]
@@ -21,7 +21,7 @@ namespace IMS.Web.Areas.StudentPortal.Controllers
             var studentId = CurrentStudentId;
             if (studentId == Guid.Empty) return View("NoStudentLinked");
 
-            var leaves = await _portalService.GetLeavesAsync(studentId, CurrentTenantId);
+            var leaves = await _StuddentPortalService.GetLeavesAsync(studentId, CurrentTenantId);
             var vm = new PortalLeaveApplyViewModel
             {
                 Leaves = leaves,
@@ -40,11 +40,11 @@ namespace IMS.Web.Areas.StudentPortal.Controllers
 
             if (!ModelState.IsValid)
             {
-                model.Leaves = await _portalService.GetLeavesAsync(studentId, CurrentTenantId);
+                model.Leaves = await _StuddentPortalService.GetLeavesAsync(studentId, CurrentTenantId);
                 return View(model);
             }
 
-            var res = await _portalService.ApplyLeaveAsync(
+            var res = await _StuddentPortalService.ApplyLeaveAsync(
                 CurrentTenantId,
                 studentId,
                 model.FromDate!.Value,
@@ -61,7 +61,7 @@ namespace IMS.Web.Areas.StudentPortal.Controllers
             }
 
             ModelState.AddModelError(string.Empty, res.Message);
-            model.Leaves = await _portalService.GetLeavesAsync(studentId, CurrentTenantId);
+            model.Leaves = await _StuddentPortalService.GetLeavesAsync(studentId, CurrentTenantId);
             return View(model);
         }
 
@@ -71,7 +71,7 @@ namespace IMS.Web.Areas.StudentPortal.Controllers
             var studentId = CurrentStudentId;
             if (studentId == Guid.Empty) return View("NoStudentLinked");
 
-            var vm = await _portalService.GetTransportDetailsAsync(studentId, CurrentTenantId);
+            var vm = await _StuddentPortalService.GetTransportDetailsAsync(studentId, CurrentTenantId);
             return View(vm);
         }
 
@@ -81,7 +81,7 @@ namespace IMS.Web.Areas.StudentPortal.Controllers
             var studentId = CurrentStudentId;
             if (studentId == Guid.Empty) return View("NoStudentLinked");
 
-            var list = await _portalService.GetTCStatusAsync(studentId, CurrentTenantId);
+            var list = await _StuddentPortalService.GetTCStatusAsync(studentId, CurrentTenantId);
             var vm = new PortalTCApplyViewModel
             {
                 Applications = list
@@ -98,11 +98,11 @@ namespace IMS.Web.Areas.StudentPortal.Controllers
 
             if (!ModelState.IsValid)
             {
-                model.Applications = await _portalService.GetTCStatusAsync(studentId, CurrentTenantId);
+                model.Applications = await _StuddentPortalService.GetTCStatusAsync(studentId, CurrentTenantId);
                 return View(model);
             }
 
-            var res = await _portalService.ApplyTCAsync(
+            var res = await _StuddentPortalService.ApplyTCAsync(
                 CurrentTenantId,
                 studentId,
                 model.Reason,
@@ -116,8 +116,42 @@ namespace IMS.Web.Areas.StudentPortal.Controllers
             }
 
             ModelState.AddModelError(string.Empty, res.Message);
-            model.Applications = await _portalService.GetTCStatusAsync(studentId, CurrentTenantId);
+            model.Applications = await _StuddentPortalService.GetTCStatusAsync(studentId, CurrentTenantId);
             return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteLeave(Guid leaveId)
+        {
+            var studentId = CurrentStudentId;
+            if (studentId == Guid.Empty) return Json(new { success = false, message = "No active student found." });
+
+            var res = await _StuddentPortalService.DeleteLeaveAsync(leaveId, studentId, CurrentTenantId);
+            return Json(new { success = res.Success, message = res.Message });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteTC(Guid tcId)
+        {
+            var studentId = CurrentStudentId;
+            if (studentId == Guid.Empty) return Json(new { success = false, message = "No active student found." });
+
+            var res = await _StuddentPortalService.DeleteTCAsync(tcId, studentId, CurrentTenantId);
+            return Json(new { success = res.Success, message = res.Message });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> PrintTC(Guid id)
+        {
+            var studentId = CurrentStudentId;
+            if (studentId == Guid.Empty) return View("NoStudentLinked");
+
+            var vm = await _StuddentPortalService.GetTCForPrintAsync(id, studentId, CurrentTenantId);
+            if (vm == null) return NotFound("Transfer Certificate record not found.");
+
+            return View("~/Views/TransferCertificate/Print.cshtml", vm);
         }
     }
 }

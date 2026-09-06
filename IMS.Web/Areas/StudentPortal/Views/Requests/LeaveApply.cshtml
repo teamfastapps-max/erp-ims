@@ -86,19 +86,20 @@
                                     <th>Type</th>
                                     <th>Reason</th>
                                     <th>Status</th>
+                                    <th class="text-end pe-3">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var l in Model.Leaves)
                                 {
-                                    <tr>
+                                    <tr id="portal-leave-row-@l.LeaveId">
                                         <td class="text-start ps-3">
                                             <div class="fw-semibold text-dark">@l.FromDate.ToString("dd MMM") - @l.ToDate.ToString("dd MMM yyyy")</div>
                                             <div class="text-muted" style="font-size: 0.72rem;">Applied by: @l.AppliedBy</div>
                                         </td>
                                         <td>@l.TotalDays</td>
                                         <td><span class="badge bg-light text-dark border">@l.LeaveType</span></td>
-                                        <td class="text-truncate" style="max-width: 160px;" title="@l.Reason">@l.Reason</td>
+                                        <td class="text-truncate" style="max-width: 140px;" title="@l.Reason">@l.Reason</td>
                                         <td>
                                             @if (string.Equals(l.Status, "Approved", StringComparison.OrdinalIgnoreCase))
                                             {
@@ -113,6 +114,18 @@
                                                 <span class="badge bg-warning-subtle text-warning px-3 py-1 rounded-pill">@(l.Status ?? "Pending")</span>
                                             }
                                         </td>
+                                        <td class="text-end pe-3">
+                                            @if (string.Equals(l.Status, "Pending", StringComparison.OrdinalIgnoreCase))
+                                            {
+                                                <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-2 py-1" onclick="cancelPortalLeave('@l.LeaveId')" title="Cancel/Delete Leave Request">
+                                                    <i class="fa-solid fa-trash-can"></i>
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">&mdash;</span>
+                                            }
+                                        </td>
                                     </tr>
                                 }
                             </tbody>
@@ -123,3 +136,31 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+<script>
+    function cancelPortalLeave(leaveId) {
+        if (!confirm("Are you sure you want to cancel this leave application?")) return;
+
+        const token = $('input[name="__RequestVerificationToken"]').val();
+        $.ajax({
+            url: '@Url.Action("DeleteLeave", "Requests", new { area = "StudentPortal" })',
+            type: 'POST',
+            data: { leaveId: leaveId, __RequestVerificationToken: token },
+            success: function (res) {
+                if (res.success) {
+                    if (window.toastr) toastr.success(res.message || "Leave application cancelled.");
+                    $(`#portal-leave-row-${leaveId}`).fadeOut(300, function() { $(this).remove(); });
+                } else {
+                    if (window.toastr) toastr.error(res.message || "Failed to cancel leave.");
+                    else alert(res.message || "Failed to cancel leave.");
+                }
+            },
+            error: function () {
+                if (window.toastr) toastr.error("Request failed. Please try again.");
+                else alert("Request failed. Please try again.");
+            }
+        });
+    }
+</script>
+}
