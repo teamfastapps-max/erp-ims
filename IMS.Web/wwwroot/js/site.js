@@ -349,6 +349,14 @@ window.IMSConfirm = (function () {
     };
 })();
 
+// Capture-phase prevention to stop Bootstrap 5 native toggle from opening duplicate inline modal
+document.addEventListener('click', function (e) {
+    var btn = e.target.closest && e.target.closest('.confirm-delete-btn, [data-confirm-delete], .btn-delete-confirm, .action-delete-btn');
+    if (btn && btn.getAttribute('data-bs-toggle') === 'modal') {
+        btn.removeAttribute('data-bs-toggle');
+    }
+}, true);
+
 // Global interceptor for delete buttons across all modules
 $(document).on('click', '.confirm-delete-btn, [data-confirm-delete], .btn-delete-confirm, .action-delete-btn', function (e) {
     var $btn = $(this);
@@ -358,6 +366,11 @@ $(document).on('click', '.confirm-delete-btn, [data-confirm-delete], .btn-delete
     if ($inlineModal.length && $inlineModal.hasClass('modal')) {
         e.preventDefault();
         e.stopImmediatePropagation();
+
+        if (window.bootstrap && bootstrap.Modal) {
+            var bsInstance = bootstrap.Modal.getInstance($inlineModal[0]);
+            if (bsInstance) bsInstance.hide();
+        }
 
         var modalMsg = $inlineModal.find('.modal-body').html() || '';
         modalMsg = modalMsg.trim();

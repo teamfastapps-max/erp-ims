@@ -1,71 +1,261 @@
 @model IMS.Models.ViewModels.AttendanceMarkViewModel
-@{ ViewData["Title"] = "Mark Attendance"; }
+@{
+    ViewData["Title"] = "Mark Attendance — " + Model.BatchName;
+}
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h3 class="mb-0"><i class="fa-solid fa-check-double me-2"></i>Mark Attendance</h3>
-    <a asp-controller="Attendance" asp-action="Index" class="btn btn-outline-secondary btn-sm">Back to List</a>
+@section Styles {
+    <link rel="stylesheet" href="~/css/attendance.css" />
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1 small">
+                <li class="breadcrumb-item"><a asp-controller="Attendance" asp-action="Index">Attendance</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Mark Attendance</li>
+            </ol>
+        </nav>
+        <h3 class="mb-0 fw-bold">
+            <i class="fa-solid fa-calendar-check text-primary me-2"></i>Class Attendance Sheet
+        </h3>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+        <a asp-controller="Attendance" asp-action="Index" class="btn btn-outline-secondary btn-sm">
+            <i class="fa-solid fa-arrow-left me-1"></i> Back to Sessions
+        </a>
+        <button type="button" id="saveAttendanceBtn" class="btn btn-primary btn-sm px-3 shadow-sm">
+            <i class="fa-solid fa-floppy-disk me-1"></i> Save Attendance
+        </button>
+    </div>
 </div>
 
-<div class="card shadow-sm mb-3">
-    <div class="card-body">
-        <div class="row g-3">
-            <div class="col-md-4">
-                <label class="form-label text-muted">Batch</label>
-                <div class="fw-semibold">@Model.BatchName</div>
+<!-- Session Metadata & Live Metrics Hero -->
+<div class="card border-0 shadow-sm mb-4" style="border-radius: 1rem; overflow: hidden;">
+    <div class="p-3 text-white" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
+        <div class="row align-items-center gy-3">
+            <div class="col-lg-7">
+                <div class="d-flex flex-wrap gap-2 mb-2">
+                    <span class="session-info-badge">
+                        <i class="fa-solid fa-users-rectangle text-info"></i>
+                        <strong>Batch:</strong> @Model.BatchName
+                    </span>
+                    @if (!string.IsNullOrWhiteSpace(Model.SubjectName) && Model.SubjectName != "-")
+                    {
+                        <span class="session-info-badge">
+                            <i class="fa-solid fa-book-bookmark text-warning"></i>
+                            <strong>Subject:</strong> @Model.SubjectName
+                        </span>
+                    }
+                    <span class="session-info-badge">
+                        <i class="fa-solid fa-calendar-day text-success"></i>
+                        @Model.AttendanceDate.ToString("dd-MMM-yyyy (dddd)")
+                    </span>
+                    @if (!string.IsNullOrWhiteSpace(Model.StartTime))
+                    {
+                        <span class="session-info-badge">
+                            <i class="fa-solid fa-clock text-secondary"></i>
+                            @Model.StartTime - @Model.EndTime
+                        </span>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.StaffName) && Model.StaffName != "-")
+                    {
+                        <span class="session-info-badge">
+                            <i class="fa-solid fa-chalkboard-user text-primary"></i>
+                            @Model.StaffName
+                        </span>
+                    }
+                </div>
+                <div class="small text-slate-300 text-light opacity-75">
+                    Click status buttons to mark each student or use the bulk actions below. Approved leaves are automatically locked.
+                </div>
             </div>
-            <div class="col-md-4">
-                <label class="form-label text-muted">Subject</label>
-                <div class="fw-semibold">@Model.SubjectName</div>
-            </div>
-            <div class="col-md-4">
-                <label class="form-label text-muted">Date</label>
-                <div class="fw-semibold">@Model.AttendanceDate.ToString("dd-MMM-yyyy")</div>
+
+            <div class="col-lg-5">
+                <div class="d-flex justify-content-between align-items-center text-white mb-1">
+                    <span class="small text-light opacity-75 fw-semibold">Attendance Rate</span>
+                    <span id="statAttendanceRate" class="fw-bold fs-5 text-emerald-400 text-success">100%</span>
+                </div>
+                <div class="attendance-rate-bar mb-2">
+                    <div id="statRateProgressBar" class="attendance-rate-bar-fill" style="width: 100%;"></div>
+                </div>
+                <div class="d-flex justify-content-between text-center small text-light opacity-75">
+                    <span>Present: <strong id="statPresentCount" class="text-success">0</strong></span>
+                    <span>Absent: <strong id="statAbsentCount" class="text-danger">0</strong></span>
+                    <span>Late: <strong id="statLateCount" class="text-warning">0</strong></span>
+                    <span>Leave: <strong id="statLeaveCount" class="text-info">0</strong></span>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="card shadow-sm">
-    <div class="card-body">
-        <form id="markAttendanceForm">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="SessionId" value="@Model.SessionId" />
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
+<!-- Interactive Toolbar -->
+<div class="attendance-toolbar mb-3">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div class="d-flex flex-wrap align-items-center gap-1">
+            <button type="button" class="filter-chip active" data-filter="all">
+                All <span id="chipCountAll" class="chip-count">@Model.TotalStudents</span>
+            </button>
+            <button type="button" class="filter-chip" data-filter="present">
+                <i class="fa-solid fa-circle text-success" style="font-size:0.55rem;"></i> Present 
+                <span id="chipCountPresent" class="chip-count">0</span>
+            </button>
+            <button type="button" class="filter-chip" data-filter="absent">
+                <i class="fa-solid fa-circle text-danger" style="font-size:0.55rem;"></i> Absent 
+                <span id="chipCountAbsent" class="chip-count">0</span>
+            </button>
+            <button type="button" class="filter-chip" data-filter="late">
+                <i class="fa-solid fa-circle text-warning" style="font-size:0.55rem;"></i> Late 
+                <span id="chipCountLate" class="chip-count">0</span>
+            </button>
+            <button type="button" class="filter-chip" data-filter="onleave">
+                <i class="fa-solid fa-circle text-info" style="font-size:0.55rem;"></i> On Leave 
+                <span id="chipCountLeave" class="chip-count">0</span>
+            </button>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+            <div class="attendance-search-box">
+                <i class="fa-solid fa-search"></i>
+                <input type="text" id="studentSearchInput" class="form-control form-control-sm" placeholder="Search roll or name..." />
+            </div>
+
+            <button type="button" id="btnMarkAllPresent" class="btn btn-sm btn-outline-success">
+                <i class="fa-solid fa-check-double me-1"></i> All Present
+            </button>
+            <button type="button" id="btnMarkAllAbsent" class="btn btn-sm btn-outline-danger">
+                <i class="fa-solid fa-xmark me-1"></i> All Absent
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Student Roster Grid -->
+<div class="card shadow-sm border-0 mb-4" style="border-radius: 0.85rem; overflow: hidden;">
+    <form id="markAttendanceForm">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="SessionId" value="@Model.SessionId" />
+
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead class="table-light text-muted small text-uppercase">
+                    <tr>
+                        <th style="width: 60px;" class="text-center">#</th>
+                        <th>Student Details</th>
+                        <th style="width: 280px;" class="text-center">Attendance Status</th>
+                        <th>Remarks / Note</th>
+                    </tr>
+                </thead>
+                <tbody id="studentRosterBody">
+                    @if (Model.Students == null || Model.Students.Count == 0)
+                    {
                         <tr>
-                            <th>Code</th>
-                            <th>Student Name</th>
-                            <th style="width:200px">Status</th>
-                            <th style="width:200px">Remarks</th>
+                            <td colspan="4" class="text-center text-muted py-5">
+                                <i class="fa-solid fa-user-graduate fs-2 d-block mb-2 text-secondary opacity-50"></i>
+                                No active students found in this batch.
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @for (int i = 0; i < Model.Students.Count; i++)
+                    }
+                    else
+                    {
+                        for (int i = 0; i < Model.Students.Count; i++)
                         {
                             var s = Model.Students[i];
-                            <tr>
-                                <td>@s.StudentCode</td>
-                                <td>@s.StudentName</td>
-                                <td>
-                                    <select name="Records[@i].Status" class="form-select form-select-sm attendance-status-select" data-selected-value="@(s.Status)"></select>
-                                    <input type="hidden" name="Records[@i].StudentId" value="@s.StudentId" />
+                            var statusLower = (s.Status ?? "present").ToLower();
+                            var initials = "";
+                            if (!string.IsNullOrWhiteSpace(s.StudentName))
+                            {
+                                var parts = s.StudentName.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                                initials = parts.Length > 1 
+                                    ? $"{parts[0][0]}{parts[parts.Length - 1][0]}".ToUpper() 
+                                    : $"{parts[0][0]}".ToUpper();
+                            }
+                            else
+                            {
+                                initials = "ST";
+                            }
+
+                            <tr class="student-roster-row @(statusLower == "absent" ? "row-absent" : (statusLower == "late" ? "row-late" : (s.IsOnLeave ? "row-onleave" : "")))"
+                                data-student-id="@s.StudentId"
+                                data-student-name="@s.StudentName"
+                                data-student-code="@s.StudentCode"
+                                data-current-status="@statusLower"
+                                data-is-leave="@(s.IsOnLeave ? "true" : "false")">
+                                
+                                <td class="text-center fw-semibold text-muted">
+                                    @(i + 1)
                                 </td>
+
                                 <td>
-                                    <input type="text" name="Records[@i].Remarks" class="form-control form-control-sm" value="@s.Remarks" placeholder="Optional" />
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="student-avatar">
+                                            @initials
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-dark">@s.StudentName</div>
+                                            <div class="text-muted small">
+                                                <i class="fa-solid fa-id-card me-1 text-secondary opacity-75"></i>
+                                                @(string.IsNullOrWhiteSpace(s.StudentCode) ? "No Roll #" : s.StudentCode)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td class="text-center">
+                                    <input type="hidden" name="Records[@i].StudentId" value="@s.StudentId" />
+                                    <input type="hidden" name="Records[@i].Status" class="attendance-hidden-status" value="@(s.IsOnLeave ? "onleave" : statusLower)" />
+
+                                    @if (s.IsOnLeave)
+                                    {
+                                        <div class="leave-locked-badge" title="@s.LeaveReason">
+                                            <i class="fa-solid fa-calendar-xmark"></i>
+                                            On Leave @(!string.IsNullOrWhiteSpace(s.LeaveReason) ? $"({s.LeaveReason})" : "")
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="status-pill-group">
+                                            <button type="button" class="status-pill-btn @(statusLower == "present" || statusLower == "p" ? "active" : "")" data-status="present">
+                                                <i class="fa-solid fa-check"></i> P
+                                            </button>
+                                            <button type="button" class="status-pill-btn @(statusLower == "absent" || statusLower == "a" ? "active" : "")" data-status="absent">
+                                                <i class="fa-solid fa-xmark"></i> A
+                                            </button>
+                                            <button type="button" class="status-pill-btn @(statusLower == "late" || statusLower == "l" ? "active" : "")" data-status="late">
+                                                <i class="fa-solid fa-clock"></i> L
+                                            </button>
+                                            <button type="button" class="status-pill-btn @(statusLower == "halfday" || statusLower == "h" ? "active" : "")" data-status="halfday">
+                                                <i class="fa-solid fa-adjust"></i> H
+                                            </button>
+                                        </div>
+                                    }
+                                </td>
+
+                                <td>
+                                    <input type="text" name="Records[@i].Remarks" 
+                                           class="form-control form-control-sm attendance-remarks-input" 
+                                           value="@s.Remarks" 
+                                           placeholder="Optional note..." />
                                 </td>
                             </tr>
                         }
-                    </tbody>
-                </table>
-            </div>
-            <div class="d-flex justify-content-end gap-2 mt-4">
-                <button type="button" id="saveAttendanceBtn" class="btn btn-primary">
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="p-3 bg-light border-top d-flex justify-content-between align-items-center attendance-sticky-footer">
+            <span class="text-muted small">
+                <i class="fa-solid fa-circle-info me-1 text-primary"></i> Changes will be saved upon clicking "Save Attendance".
+            </span>
+            <div class="d-flex gap-2">
+                <a asp-controller="Attendance" asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                <button type="button" id="saveAttendanceBtnBottom" class="btn btn-primary px-4 shadow-sm">
                     <i class="fa-solid fa-check me-1"></i> Save Attendance
                 </button>
             </div>
-        </form>
-    </div>
+        </div>
+    </form>
 </div>
 
 @section Scripts {
@@ -73,9 +263,6 @@
     <script>
         $(function () {
             IMSAttendanceMark.init('@Model.SessionId');
-            $('.attendance-status-select').each(function () {
-                Dropdown.load({ element: this, entityType: 'AttendanceStatus', defaultText: '-- Select --', includeDefault: false, selectedValue: $(this).data('selected-value') });
-            });
         });
     </script>
 }
