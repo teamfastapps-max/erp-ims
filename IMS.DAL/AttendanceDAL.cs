@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using IMS.DAL.Common;
 using IMS.DAL.Interfaces;
 using IMS.Models.Entities;
+using IMS.Models.ViewModels;
 
 namespace IMS.DAL.Repositories
 {
@@ -191,6 +192,36 @@ namespace IMS.DAL.Repositories
             }
 
             return true;
+        }
+
+        public async Task<List<AttendanceStudentItemViewModel>> GetStudentsByBatchAsync(Guid tenantId, Guid? batchId)
+        {
+            var students = new List<AttendanceStudentItemViewModel>();
+            using var conn = _dbHelper.GetConnection();
+            using var cmd = _dbHelper.CreateCommand("SP_Attendance_GetStudentsByBatch", conn);
+            cmd.Parameters.Add("@TenantId", SqlDbType.UniqueIdentifier).Value = tenantId;
+            cmd.Parameters.Add("@BatchId", SqlDbType.UniqueIdentifier).Value = (object)batchId ?? DBNull.Value;
+
+            await conn.OpenAsync();
+            using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                var id = reader.GetGuid(reader.GetOrdinal("S_Id"));
+                var code = reader["S_StudentCode"]?.ToString() ?? "";
+                var first = reader["S_FirstName"]?.ToString() ?? "";
+                var last = reader["S_LastName"]?.ToString() ?? "";
+                var name = $"{first} {last}".Trim();
+
+                students.Add(new AttendanceStudentItemViewModel
+                {
+                    StudentId = id,
+                    StudentCode = code,
+                    StudentName = name,
+                    Status = "present"
+                });
+            }
+
+            return students;
         }
     }
 }

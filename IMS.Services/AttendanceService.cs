@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using IMS.DAL.Interfaces;
 using IMS.Helpers.Constants;
 using IMS.Models.Entities;
+using IMS.Models.Portal;
 using IMS.Models.ViewModels;
 using IMS.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -16,12 +17,18 @@ namespace IMS.Services
         private readonly IAttendanceSessionDAL _sessionDAL;
         private readonly IAttendanceRecordDAL _recordDAL;
         private readonly IMasterService _masterService;
+        private readonly IStudentLeaveDAL _studentLeaveDAL;
 
-        public AttendanceService(IAttendanceSessionDAL sessionDAL, IAttendanceRecordDAL recordDAL, IMasterService masterService)
+        public AttendanceService(
+            IAttendanceSessionDAL sessionDAL,
+            IAttendanceRecordDAL recordDAL,
+            IMasterService masterService,
+            IStudentLeaveDAL studentLeaveDAL)
         {
             _sessionDAL = sessionDAL;
             _recordDAL = recordDAL;
             _masterService = masterService;
+            _studentLeaveDAL = studentLeaveDAL;
         }
 
         public async Task<AttendanceSessionIndexViewModel> GetSessionListAsync(
@@ -125,38 +132,74 @@ namespace IMS.Services
             var existingRecords = await _recordDAL.GetBySessionIdAsync(sessionId);
             var existingDict = existingRecords.ToDictionary(r => r.AR_StudentId, r => r);
 
-            var students = _masterService.GetAll("Student") ?? new List<Dictionary<string, object>>();
-            var batchStudentItems = _masterService.GetAll("Student");
+            // Fetch approved student leaves for tenant
+            var (approvedLeaves, _) = await _studentLeaveDAL.GetPagedAsync(tenantId, "Approved", null, 1, 500);
+            var sessionDate = session.AS_AttendanceDate.Date;
+            var leaveByStudent = approvedLeaves?
+                .Where(l => sessionDate >= l.FromDate.Date && sessionDate <= l.ToDate.Date)
+                .GroupBy(l => l.StudentId)
+                .ToDictionary(g => g.Key, g => g.First());
+
+            // Get students for this batch from database
+            var batchStudents = await _recordDAL.GetStudentsByBatchAsync(tenantId, session.AS_BatchId);
 
             var vm = new AttendanceMarkViewModel
             {
                 SessionId = sessionId,
+                BranchName = session.BranchName ?? "Main Branch",
                 BatchName = session.BatchName ?? "-",
                 SubjectName = session.SubjectName ?? "-",
-                AttendanceDate = session.AS_AttendanceDate
+                StaffName = session.StaffName ?? "-",
+                AttendanceDate = session.AS_AttendanceDate,
+                StartTime = session.AS_StartTime?.ToString(@"hh\:mm") ?? "",
+                EndTime = session.AS_EndTime?.ToString(@"hh\:mm") ?? ""
             };
 
-            foreach (var student in batchStudentItems)
+            var processedStudentIds = new HashSet<Guid>();
+
+            foreach (var student in batchStudents)
             {
-                var idEntry = student.FirstOrDefault(kvp => kvp.Key.EndsWith("_Id"));
-                if (idEntry.Value == null) continue;
-                var studentId = Guid.Parse(idEntry.Value.ToString());
+                processedStudentIds.Add(student.StudentId);
+                existingDict.TryGetValue(student.StudentId, out var existing);
 
-                var firstName = student.FirstOrDefault(kvp => kvp.Key.EndsWith("_FirstName")).Value?.ToString() ?? "";
-                var lastName = student.FirstOrDefault(kvp => kvp.Key.EndsWith("_LastName")).Value?.ToString() ?? "";
-                var studentName = $"{firstName} {lastName}".Trim();
-                var studentCode = student.FirstOrDefault(kvp => kvp.Key.EndsWith("_StudentCode")).Value?.ToString() ?? "";
+                StudentLeaveDto? leaveInfo = null;
+                bool hasApprovedLeave = leaveByStudent != null && leaveByStudent.TryGetValue(student.StudentId, out leaveInfo);
 
-                existingDict.TryGetValue(studentId, out var existing);
+                var status = existing?.AR_Status;
+                if (string.IsNullOrWhiteSpace(status))
+                {
+                    status = hasApprovedLeave ? "onleave" : "present";
+                }
 
                 vm.Students.Add(new AttendanceStudentItemViewModel
                 {
-                    StudentId = studentId,
-                    StudentCode = studentCode,
-                    StudentName = studentName,
-                    Status = existing?.AR_Status ?? "present",
-                    Remarks = existing?.AR_Remarks
+                    StudentId = student.StudentId,
+                    StudentCode = string.IsNullOrWhiteSpace(student.StudentCode) ? (existing?.StudentCode ?? "-") : student.StudentCode,
+                    StudentName = string.IsNullOrWhiteSpace(student.StudentName) ? (existing?.StudentName ?? "Student") : student.StudentName,
+                    Status = status,
+                    Remarks = existing?.AR_Remarks,
+                    IsOnLeave = hasApprovedLeave,
+                    LeaveReason = hasApprovedLeave && leaveInfo != null ? (leaveInfo.Reason ?? leaveInfo.LeaveType) : null
                 });
+            }
+
+            foreach (var rec in existingRecords)
+            {
+                if (!processedStudentIds.Contains(rec.AR_StudentId))
+                {
+                    StudentLeaveDto? leaveInfo = null;
+                    bool hasApprovedLeave = leaveByStudent != null && leaveByStudent.TryGetValue(rec.AR_StudentId, out leaveInfo);
+                    vm.Students.Add(new AttendanceStudentItemViewModel
+                    {
+                        StudentId = rec.AR_StudentId,
+                        StudentCode = rec.StudentCode ?? "-",
+                        StudentName = rec.StudentName ?? "Student",
+                        Status = rec.AR_Status ?? (hasApprovedLeave ? "onleave" : "present"),
+                        Remarks = rec.AR_Remarks,
+                        IsOnLeave = hasApprovedLeave,
+                        LeaveReason = hasApprovedLeave && leaveInfo != null ? (leaveInfo.Reason ?? leaveInfo.LeaveType) : null
+                    });
+                }
             }
 
             return vm;
@@ -169,7 +212,7 @@ namespace IMS.Services
                 AR_Id = Guid.NewGuid(),
                 AR_AttendanceSessionId = model.SessionId,
                 AR_StudentId = r.StudentId,
-                AR_Status = r.Status,
+                AR_Status = NormalizeAttendanceStatus(r.Status),
                 AR_Remarks = r.Remarks
             }).ToList();
 
@@ -177,6 +220,21 @@ namespace IMS.Services
             return success
                 ? ServiceResult.Ok("Attendance saved successfully.")
                 : ServiceResult.Fail("Failed to save attendance.");
+        }
+
+        private static string NormalizeAttendanceStatus(string status)
+        {
+            if (string.IsNullOrWhiteSpace(status)) return "present";
+            var s = status.Trim().ToLowerInvariant();
+            return s switch
+            {
+                "present" or "p" => "present",
+                "absent" or "a" => "absent",
+                "late" or "l" => "late",
+                "half_day" or "halfday" or "h" => "half_day",
+                "excused" or "onleave" or "e" => "excused",
+                _ => "present"
+            };
         }
 
         public void PopulateSessionDropdowns(AttendanceSessionFormViewModel vm)

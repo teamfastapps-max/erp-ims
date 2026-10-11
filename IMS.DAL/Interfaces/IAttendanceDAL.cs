@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using IMS.Models.Entities;
+using IMS.Models.ViewModels;
 
 namespace IMS.DAL.Interfaces
 {
@@ -20,5 +21,6 @@ namespace IMS.DAL.Interfaces
     {
         Task<List<AttendanceRecord>> GetBySessionIdAsync(Guid sessionId);
         Task<bool> SaveRecordsAsync(Guid sessionId, List<AttendanceRecord> records);
+        Task<List<AttendanceStudentItemViewModel>> GetStudentsByBatchAsync(Guid tenantId, Guid? batchId);
     }
 }

@@ -2,17 +2,17 @@
 @{
     ViewData["Title"] = "Class Timetable";
     var days = new[] {
-        new { Id = 2, Name = "Monday" },
-        new { Id = 3, Name = "Tuesday" },
-        new { Id = 4, Name = "Wednesday" },
-        new { Id = 5, Name = "Thursday" },
-        new { Id = 6, Name = "Friday" },
-        new { Id = 7, Name = "Saturday" },
-        new { Id = 1, Name = "Sunday" }
+        new { Id = 1, Name = "Monday" },
+        new { Id = 2, Name = "Tuesday" },
+        new { Id = 3, Name = "Wednesday" },
+        new { Id = 4, Name = "Thursday" },
+        new { Id = 5, Name = "Friday" },
+        new { Id = 6, Name = "Saturday" },
+        new { Id = 7, Name = "Sunday" }
     };
-    int currentDayOfWeek = (int)DateTime.Now.DayOfWeek;
-    // System.DayOfWeek: 0 = Sunday, 1 = Monday ... map to SQL: 1=Sun, 2=Mon
-    int sqlToday = currentDayOfWeek == 0 ? 1 : currentDayOfWeek + 1;
+    // System standard: 1 = Monday ... 7 = Sunday
+    // .NET DayOfWeek: Sunday = 0, Monday = 1 ... Saturday = 6
+    int todayId = DateTime.Now.DayOfWeek == DayOfWeek.Sunday ? 7 : (int)DateTime.Now.DayOfWeek;
 }
 
 <div class="d-flex align-items-center justify-content-between mb-4 no-print">
@@ -29,7 +29,7 @@
 <ul class="nav nav-pills mb-3 gap-2 no-print" id="timetableTabs" role="tablist">
     @foreach (var d in days)
     {
-        var isToday = d.Id == sqlToday;
+        var isToday = d.Id == todayId;
         <li class="nav-item" role="presentation">
             <button class="nav-link rounded-pill px-3 py-2 fw-semibold @(isToday ? "active" : "")"
                     id="tab-@d.Id"
@@ -50,7 +50,7 @@
 <div class="tab-content" id="timetableTabContent">
     @foreach (var d in days)
     {
-        var isToday = d.Id == sqlToday;
+        var isToday = d.Id == todayId;
         var daySlots = Model.Slots.Where(s => s.DayOfWeek == d.Id).OrderBy(s => s.StartTime).ToList();
 
         <div class="tab-pane fade @(isToday ? "show active" : "")" id="content-@d.Id" role="tabpanel">
