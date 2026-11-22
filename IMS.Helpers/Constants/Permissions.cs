@@ -1,10 +1,3 @@
-using Microsoft.AspNetCore.Http.Features;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace IMS.Helpers.Constants
 {
     public class AppPermissionDefinition
@@ -15,6 +8,8 @@ namespace IMS.Helpers.Constants
         public string Description { get; set; }
         public string ServiceName { get; set; }
     }
+
+
 
     public static class Permissions
     {
@@ -32,7 +27,7 @@ namespace IMS.Helpers.Constants
         public const string UpdateEnrollment = "UpdateEnrollment";
         public const string DeleteEnrollment = "DeleteEnrollment";
 
-        public const string ViewStudent = "ViewStudent";      
+        public const string ViewStudent = "ViewStudent";
         public const string AddStudent = "AddStudent";
         public const string UpdateStudent = "UpdateStudent";
         public const string DeleteStudent = "DeleteStudent";
@@ -81,7 +76,7 @@ namespace IMS.Helpers.Constants
         public const string MarkOwnTeacherAttendance = "MarkOwnTeacherAttendance";
 
         // ─── HR & Faculty ────────────────────────────────────────────────
-        public const string ViewTeacher = "ViewTeacher";     
+        public const string ViewTeacher = "ViewTeacher";
         public const string AddTeacher = "AddTeacher";
         public const string UpdateTeacher = "UpdateTeacher";
         public const string DeleteTeacher = "DeleteTeacher";
@@ -92,8 +87,8 @@ namespace IMS.Helpers.Constants
         public const string DeleteStaff = "DeleteStaff";
 
         public const string ViewTeacherLeave = "ViewTeacherLeave";
-        public const string ApplyTeacherLeave = "ApplyTeacherLeave";      
-        public const string ApproveTeacherLeave = "ApproveTeacherLeave";  
+        public const string ApplyTeacherLeave = "ApplyTeacherLeave";
+        public const string ApproveTeacherLeave = "ApproveTeacherLeave";
 
         // ─── Examinations ────────────────────────────────────────────────
         public const string ViewExam = "ViewExam";
