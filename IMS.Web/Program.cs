@@ -8,8 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Redis connection
 var redisConnection = builder.Configuration["Redis:Connection"]?? throw new InvalidOperationException("Redis connection string is not configured.");
-
-builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConnection));
+var redisOptions = ConfigurationOptions.Parse(redisConnection);
+redisOptions.AbortOnConnectFail = false;
+redisOptions.ConnectTimeout = 10000;
+builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisOptions));
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();

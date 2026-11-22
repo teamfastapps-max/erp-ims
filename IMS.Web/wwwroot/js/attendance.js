@@ -1,8 +1,23 @@
-/* Attendance Module — client-side logic */
-(function () {
+/* ==========================================================================
+   IMS Student Attendance — Interactive Client-Side Engine
+   ========================================================================== */
+
+(function ($) {
     "use strict";
 
-    var IMSAttendanceSessionForm = {
+    // Toast helpers
+    function showNotification(type, message) {
+        if (window.toastr) {
+            toastr[type](message);
+        } else {
+            alert(message);
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // 1. Session Create / Edit Form Handling
+    // -------------------------------------------------------------------------
+    window.IMSAttendanceSessionForm = {
         init: function (ajaxUrl) {
             $(document).on("submit", "#attendanceCreateForm, #attendanceEditForm", function (e) {
                 e.preventDefault();
@@ -10,7 +25,7 @@
                 if (!validateSessionForm($form)) return;
 
                 var $submitBtn = $form.find("button[type='submit']");
-                var originalText = $submitBtn.html();
+                var originalHtml = $submitBtn.html();
                 $submitBtn.prop("disabled", true).html('<span class="spinner-border spinner-border-sm me-1"></span> Saving...');
 
                 $.ajax({
@@ -19,62 +34,23 @@
                     data: $form.serialize(),
                     success: function (response) {
                         if (response.success) {
-                            if (window.toastr) toastr.success(response.message || "Saved successfully.");
-                            setTimeout(function () { window.location.href = "/Attendance/Index"; }, 700);
+                            showNotification("success", response.message || "Attendance session saved successfully.");
+                            setTimeout(function () {
+                                if (response.id && window.location.pathname.indexOf("Create") !== -1) {
+                                    // Option to go directly to marking sheet
+                                    window.location.href = "/Attendance/MarkAttendance?id=" + response.id;
+                                } else {
+                                    window.location.href = "/Attendance/Index";
+                                }
+                            }, 600);
                         } else {
-                            if (window.toastr) toastr.error(response.message || "Something went wrong.");
-                            $submitBtn.prop("disabled", false).html(originalText);
+                            showNotification("error", response.message || "Something went wrong.");
+                            $submitBtn.prop("disabled", false).html(originalHtml);
                         }
                     },
                     error: function (xhr) {
-                        if (window.toastr) toastr.error("Request failed: " + (xhr.responseText || xhr.statusText));
-                        $submitBtn.prop("disabled", false).html(originalText);
-                    }
-                });
-            });
-        }
-    };
-
-    var IMSAttendanceMark = {
-        init: function (sessionId) {
-            $("#saveAttendanceBtn").on("click", function () {
-                var $btn = $(this);
-                var $form = $("#markAttendanceForm");
-
-                var records = [];
-                $form.find("select[name$='.Status']").each(function () {
-                    var name = $(this).attr("name");
-                    var idx = name.match(/\[(\d+)\]/)[1];
-                    var studentId = $form.find("input[name='Records[" + idx + "].StudentId']").val();
-                    var status = $(this).val();
-                    var remarks = $form.find("input[name='Records[" + idx + "].Remarks']").val();
-                    records.push({ StudentId: studentId, Status: status, Remarks: remarks });
-                });
-
-                var payload = {
-                    SessionId: sessionId,
-                    Records: records,
-                    __RequestVerificationToken: $form.find("input[name='__RequestVerificationToken']").val()
-                };
-
-                $btn.prop("disabled", true).html('<span class="spinner-border spinner-border-sm me-1"></span> Saving...');
-
-                $.ajax({
-                    url: "/Attendance/SaveAttendance",
-                    type: "POST",
-                    data: payload,
-                    success: function (r) {
-                        if (r.success) {
-                            if (window.toastr) toastr.success(r.message || "Attendance saved.");
-                            setTimeout(function () { window.location.href = "/Attendance/Index"; }, 700);
-                        } else {
-                            if (window.toastr) toastr.error(r.message || "Save failed.");
-                            $btn.prop("disabled", false).html('<i class="fa-solid fa-check me-1"></i> Save Attendance');
-                        }
-                    },
-                    error: function () {
-                        if (window.toastr) toastr.error("Request failed.");
-                        $btn.prop("disabled", false).html('<i class="fa-solid fa-check me-1"></i> Save Attendance');
+                        showNotification("error", "Request failed: " + (xhr.responseText || xhr.statusText));
+                        $submitBtn.prop("disabled", false).html(originalHtml);
                     }
                 });
             });
@@ -86,7 +62,7 @@
         $form.find(".field-error").text("");
         var valid = true;
 
-        function required(name, label) {
+        function requireField(name, label) {
             var $f = $form.find("[name='" + name + "']");
             if (!$f.val() || !$f.val().toString().trim()) {
                 $f.addClass("is-invalid");
@@ -95,46 +71,269 @@
             }
         }
 
-        required("AS_BranchId", "Branch");
-        required("AS_BatchId", "Batch");
-        required("AS_AttendanceDate", "Date");
+        requireField("AS_BranchId", "Branch");
+        requireField("AS_BatchId", "Batch");
+        requireField("AS_AttendanceDate", "Date");
 
-        if (!valid && window.toastr) toastr.error("Please correct the highlighted fields.");
         return valid;
     }
 
-    function wireDelete() {
-        $(document).on("click", ".confirm-delete-btn", function () {
-            var id = $(this).data("id");
-            var $modal = $("#deleteModal-" + id);
-            $modal.find(".do-delete-btn").off("click").on("click", function () {
+    // -------------------------------------------------------------------------
+    // 2. Interactive Mark Attendance Sheet
+    // -------------------------------------------------------------------------
+    window.IMSAttendanceMark = {
+        init: function (sessionId) {
+            var $roster = $("#studentRosterBody");
+
+            // Recalculate metrics
+            function recalculateStats() {
+                var total = $roster.find(".student-roster-row").length;
+                var present = 0, absent = 0, late = 0, onleave = 0;
+
+                $roster.find(".student-roster-row").each(function () {
+                    var status = $(this).attr("data-current-status") || "present";
+                    status = status.toLowerCase();
+
+                    if (status === "present" || status === "p") present++;
+                    else if (status === "absent" || status === "a") absent++;
+                    else if (status === "late" || status === "l") late++;
+                    else if (status === "onleave" || status === "excused") onleave++;
+                });
+
+                $("#statTotalStudents").text(total);
+                $("#statPresentCount").text(present);
+                $("#statAbsentCount").text(absent);
+                $("#statLateCount").text(late);
+                $("#statLeaveCount").text(onleave);
+
+                // Update filter chips count
+                $("#chipCountAll").text(total);
+                $("#chipCountPresent").text(present);
+                $("#chipCountAbsent").text(absent);
+                $("#chipCountLate").text(late);
+                $("#chipCountLeave").text(onleave);
+
+                var rate = total > 0 ? Math.round((present / total) * 100) : 0;
+                $("#statAttendanceRate").text(rate + "%");
+                $("#statRateProgressBar").css("width", rate + "%");
+            }
+
+            // Status Pill Button Click
+            $(document).on("click", ".status-pill-btn", function (e) {
+                e.preventDefault();
                 var $btn = $(this);
-                $btn.prop("disabled", true).html('<span class="spinner-border spinner-border-sm me-1"></span> Deleting...');
-                $.ajax({
-                    url: "/Attendance/DeleteSession/" + id,
-                    type: "POST",
-                    data: { __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val() },
-                    success: function (r) {
-                        if (r.success) {
-                            if (window.toastr) toastr.success(r.message || "Deleted.");
-                            setTimeout(function () { $("#session-row-" + id).fadeOut(300, function () { $(this).remove(); }); }, 500);
+                var $row = $btn.closest(".student-roster-row");
+
+                if ($row.attr("data-is-leave") === "true") {
+                    showNotification("info", "This student has an approved leave for today.");
+                    return;
+                }
+
+                var targetStatus = $btn.attr("data-status");
+                var $group = $btn.closest(".status-pill-group");
+
+                $group.find(".status-pill-btn").removeClass("active");
+                $btn.addClass("active");
+
+                // Update hidden input
+                $row.find(".attendance-hidden-status").val(targetStatus);
+                $row.attr("data-current-status", targetStatus);
+
+                // Update row styling
+                $row.removeClass("row-absent row-late row-onleave");
+                if (targetStatus === "absent") $row.addClass("row-absent");
+                else if (targetStatus === "late") $row.addClass("row-late");
+
+                recalculateStats();
+            });
+
+            // "Mark All Present" Action
+            $("#btnMarkAllPresent").on("click", function () {
+                $roster.find(".student-roster-row").each(function () {
+                    var $row = $(this);
+                    if ($row.attr("data-is-leave") === "true") return; // Keep leave intact
+
+                    $row.find(".status-pill-btn").removeClass("active");
+                    $row.find(".status-pill-btn[data-status='present']").addClass("active");
+                    $row.find(".attendance-hidden-status").val("present");
+                    $row.attr("data-current-status", "present");
+                    $row.removeClass("row-absent row-late row-onleave");
+                });
+
+                recalculateStats();
+                showNotification("success", "Marked all active students as Present.");
+            });
+
+            // "Mark All Absent" Action
+            $("#btnMarkAllAbsent").on("click", function () {
+                $roster.find(".student-roster-row").each(function () {
+                    var $row = $(this);
+                    if ($row.attr("data-is-leave") === "true") return;
+
+                    $row.find(".status-pill-btn").removeClass("active");
+                    $row.find(".status-pill-btn[data-status='absent']").addClass("active");
+                    $row.find(".attendance-hidden-status").val("absent");
+                    $row.attr("data-current-status", "absent");
+                    $row.removeClass("row-late row-onleave").addClass("row-absent");
+                });
+
+                recalculateStats();
+            });
+
+            // Filter Chips
+            $(".filter-chip").on("click", function () {
+                var $chip = $(this);
+                $(".filter-chip").removeClass("active");
+                $chip.addClass("active");
+
+                var filter = $chip.attr("data-filter");
+                applyRowFilters();
+            });
+
+            // Instant Student Search
+            $("#studentSearchInput").on("input", function () {
+                applyRowFilters();
+            });
+
+            function applyRowFilters() {
+                var activeFilter = $(".filter-chip.active").attr("data-filter") || "all";
+                var searchQuery = ($("#studentSearchInput").val() || "").toLowerCase().trim();
+
+                $roster.find(".student-roster-row").each(function () {
+                    var $row = $(this);
+                    var status = ($row.attr("data-current-status") || "present").toLowerCase();
+                    var name = ($row.attr("data-student-name") || "").toLowerCase();
+                    var code = ($row.attr("data-student-code") || "").toLowerCase();
+
+                    var matchesFilter = true;
+                    if (activeFilter !== "all") {
+                        if (activeFilter === "onleave") {
+                            matchesFilter = (status === "onleave" || status === "excused" || $row.attr("data-is-leave") === "true");
                         } else {
-                            if (window.toastr) toastr.error(r.message || "Delete failed.");
+                            matchesFilter = (status === activeFilter);
                         }
-                        $btn.prop("disabled", false).html("Delete");
-                        $modal.modal("hide");
+                    }
+
+                    var matchesSearch = true;
+                    if (searchQuery.length > 0) {
+                        matchesSearch = (name.indexOf(searchQuery) !== -1 || code.indexOf(searchQuery) !== -1);
+                    }
+
+                    if (matchesFilter && matchesSearch) {
+                        $row.show();
+                    } else {
+                        $row.hide();
+                    }
+                });
+            }
+
+            // Save Attendance AJAX
+            $("#saveAttendanceBtn, #saveAttendanceBtnBottom").on("click", function () {
+                var $btn = $(this);
+                var $form = $("#markAttendanceForm");
+
+                var records = [];
+                $form.find(".student-roster-row").each(function () {
+                    var $row = $(this);
+                    var studentId = $row.attr("data-student-id");
+                    var status = $row.find(".attendance-hidden-status").val() || "present";
+                    var remarks = $row.find(".attendance-remarks-input").val();
+
+                    records.push({
+                        StudentId: studentId,
+                        Status: status,
+                        Remarks: remarks
+                    });
+                });
+
+                var payload = {
+                    SessionId: sessionId,
+                    Records: records,
+                    __RequestVerificationToken: $form.find("input[name='__RequestVerificationToken']").val()
+                };
+
+                var originalHtml = $btn.html();
+                $btn.prop("disabled", true).html('<span class="spinner-border spinner-border-sm me-1"></span> Saving...');
+
+                $.ajax({
+                    url: "/Attendance/SaveAttendance",
+                    type: "POST",
+                    data: payload,
+                    success: function (res) {
+                        if (res.success) {
+                            showNotification("success", res.message || "Attendance saved successfully.");
+                            setTimeout(function () {
+                                window.location.href = "/Attendance/Index";
+                            }, 600);
+                        } else {
+                            showNotification("error", res.message || "Failed to save attendance.");
+                            $btn.prop("disabled", false).html(originalHtml);
+                        }
                     },
                     error: function () {
-                        if (window.toastr) toastr.error("Request failed.");
-                        $btn.prop("disabled", false).html("Delete");
-                        $modal.modal("hide");
+                        showNotification("error", "A network error occurred while saving attendance.");
+                        $btn.prop("disabled", false).html(originalHtml);
                     }
                 });
             });
-        });
-    }
 
-    window.IMSAttendanceSessionForm = IMSAttendanceSessionForm;
-    window.IMSAttendanceMark = IMSAttendanceMark;
-    $(function () { wireDelete(); });
-})();
+            // Initial calculation
+            recalculateStats();
+        }
+    };
+
+    // -------------------------------------------------------------------------
+    // 3. Index Page Session Delete Handling (Single Unified IMSConfirm Modal)
+    // -------------------------------------------------------------------------
+    $(document).on("click", ".delete-session-btn", function (e) {
+        e.preventDefault();
+        var $btn = $(this);
+        var sessionId = $btn.data("id");
+        var batchName = $btn.data("batch") || "this batch";
+        var dateStr = $btn.data("date") || "";
+        var token = $("input[name='__RequestVerificationToken']").val();
+
+        var message = "Are you sure you want to delete the attendance session for <strong>" + batchName + "</strong> on <strong>" + dateStr + "</strong>?<br><small class='text-muted'>All marked records for this session will be permanently deleted.</small>";
+
+        function executeDelete(done) {
+            $btn.prop("disabled", true);
+            $.ajax({
+                url: "/Attendance/DeleteSession",
+                type: "POST",
+                data: { id: sessionId, __RequestVerificationToken: token },
+                success: function (r) {
+                    if (r.success) {
+                        showNotification("success", r.message || "Attendance session deleted successfully.");
+                        $("#session-row-" + sessionId).fadeOut(300, function () { $(this).remove(); });
+                    } else {
+                        showNotification("error", r.message || "Unable to delete session.");
+                        $btn.prop("disabled", false);
+                    }
+                },
+                error: function () {
+                    showNotification("error", "Error connecting to server. Please try again.");
+                    $btn.prop("disabled", false);
+                },
+                complete: function () {
+                    if (typeof done === "function") done();
+                }
+            });
+        }
+
+        if (window.IMSConfirm && window.IMSConfirm.delete) {
+            IMSConfirm.delete({
+                title: "Delete Attendance Session",
+                message: message,
+                confirmText: "Delete Permanently",
+                onConfirm: function (done) {
+                    executeDelete(done);
+                }
+            });
+        } else {
+            if (confirm("Are you sure you want to delete the attendance session for " + batchName + " on " + dateStr + "?")) {
+                executeDelete();
+            }
+        }
+    });
+
+})(jQuery);
